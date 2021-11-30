@@ -13,8 +13,13 @@ const controller = require("../Controller/auth");
 // @route    GET api/auth
 // @desc     Get user by token
 // @access   Private
-router.get('/', controller.getAllUsers)
-router.post('/', controller.checkUser)
+// router.get('/', controller.getAllUsers)
+// router.post('/', controller.checkUser)
+
+/* Farzan */
+router.post('/signup', controller.signup);
+router.get('/signin', controller.signin);
+/* Farzan */
 
 
 module.exports = router;

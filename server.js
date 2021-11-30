@@ -4,6 +4,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const app = express();
 const users = require("./routes/users");
+const admin = require("./routes/admin");
 const bids = require("./routes/bids");
 const auth = require("./routes/auth");
 const searchBar = require("./routes/searchBar");
@@ -31,7 +32,7 @@ evokeRoutes(app);
 background(app);
 mongoose
   .connect(
-    "mongodb+srv://KhizerHameed98:KhizerHameed98@cluster0.yb8jq.mongodb.net/NFT?retryWrites=true&w=majority",
+    "mongodb+srv://Farzan:Mongodb@123@cluster0.gkqpe.mongodb.net/NoorNFT?retryWrites=true&w=majority",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -46,16 +47,22 @@ mongoose
 // Connect Database
 
 // Init Middleware
-// app.use(express.json());
+app.use(express.json());
 
 // Define Routes
-app.use("/api/users", users);
-app.use("/api/auth", auth);
-app.use("/api/auth", auth);
-app.use("/api/bids", bids);
-app.use("/api/search", searchBar);
 
-const PORT = 500;
+/* Farzan */
+app.use("/", auth);
+app.use("/admin", admin);
+app.use("/users", users);
+/* Farzan */
+
+// app.use("/api/auth", auth);
+// app.use("/api/auth", auth);
+// app.use("/api/bids", bids);
+// app.use("/api/search", searchBar);
+
+const PORT = 8080;
 
 app.listen(process.env.PORT || PORT, () =>
   console.log(`Server started on port ${PORT} and Domain is ${os.hostname()}`)

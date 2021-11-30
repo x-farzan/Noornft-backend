@@ -6,7 +6,7 @@ const normalize = require("normalize-url");
 const upload = require("../middleware/fileUpload");
 const User = require("../models/User");
 require("dotenv").config();
-
+const userFieldsValidator = require("../helpers/userFieldsValidator");
 
 postNewUser = // check(
   //   'password',
@@ -146,4 +146,26 @@ updateUserInfo = async (req, res) => {
   }
 };
 
-module.exports = { postNewUser, userById, updateUserInfo };
+const uploadnft = (req, res) => {
+  // let _errors = userFieldsValidator.userFieldsValidator(
+  //   ["image", "imagename", "artist", "extension"],
+  //   req.body
+  // );
+  // if (_errors.length > 0) {
+  //   res.send(_errors);
+  // }
+
+  // console.log("id", req.userData, req.userData.role);
+
+  // if (req.userData.role == "artist" && req.userData.reqStatus == "approved") {
+  //   console.log('uploaded');
+  // } else {
+  //   return res.json({
+  //     msg: "You are not able to upload.",
+  //   });
+  // }
+
+  
+};
+
+module.exports = { postNewUser, userById, updateUserInfo, uploadnft };
