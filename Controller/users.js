@@ -7,7 +7,10 @@ const upload = require("../middleware/fileUpload");
 const User = require("../models/User");
 require("dotenv").config();
 const userFieldsValidator = require("../helpers/userFieldsValidator");
-
+const fs = require("fs");
+const path = require("path");
+const pinataSDK = require("@pinata/sdk");
+const pinata = pinataSDK(process.env.pinatakey1, process.env.pinatakey2);
 postNewUser = // check(
   //   'password',
   //   'Please enter a password with 6 or more characters'
@@ -146,26 +149,21 @@ updateUserInfo = async (req, res) => {
   }
 };
 
-const uploadnft = (req, res) => {
-  // let _errors = userFieldsValidator.userFieldsValidator(
-  //   ["image", "imagename", "artist", "extension"],
-  //   req.body
-  // );
-  // if (_errors.length > 0) {
-  //   res.send(_errors);
-  // }
-
-  // console.log("id", req.userData, req.userData.role);
-
-  // if (req.userData.role == "artist" && req.userData.reqStatus == "approved") {
-  //   console.log('uploaded');
-  // } else {
-  //   return res.json({
-  //     msg: "You are not able to upload.",
-  //   });
-  // }
-
-  
+uploadnft = async (imageName) => {
+  try {
+    const isAuth = await pinata.testAuthentication();
+    console.log(isAuth);
+    console.log("yes");
+    const readableStreamForFile = fs.createReadStream(
+      path.join(__dirname, "../public/uploads", `${imageName}.jpg`)
+    );
+    console.log(readableStreamForFile.path);
+    const result = await pinata.pinFileToIPFS(readableStreamForFile);
+    console.log("file uploaded succesfully...", result);
+    const filehash = `https://gateway.ipfs.io/ipfs/${result.IpfsHash}`;
+    console.log("done", filehash);
+    return JSON.stringify(filehash);
+  } catch (error) {}
 };
 
 module.exports = { postNewUser, userById, updateUserInfo, uploadnft };

@@ -22,6 +22,9 @@ const { upload } = require("../middleware/avatarUpload");
 
 // router.put("/address/:address", controller.updateUserInfo);
 
-
+router.route("/upload/nft").post(async (req, res) => {
+  const value = await controller.uploadnft(1);
+  res.send(value);
+});
 
 module.exports = router;

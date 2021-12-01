@@ -4,9 +4,9 @@ const app = express();
 require("dotenv").config();
 const User = require("../models/User");
 
-getRequests = (req, res) => {
+getRequests = async (req, res) => {
   if (req.userData.role == "admin") {
-    User.find()
+    await User.find()
       .exec()
       .then((user) => {
         if (user.length < 1) {
@@ -37,12 +37,12 @@ getRequests = (req, res) => {
   }
 };
 
-respondRequest = (req, res) => {
+respondRequest = async (req, res) => {
   id = req.params.id;
   reqStatus = req.body.status;
   //   console.log(reqStatus);
   if (req.userData.role == "admin") {
-    User.findOne({ _id: id })
+    await User.findOne({ _id: id })
       .exec()
       .then((user) => {
         if (user.reqStatus == "approved" || user.reqStatus == "rejected") {

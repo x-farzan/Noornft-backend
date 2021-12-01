@@ -52,7 +52,7 @@ checkUser = async (req, res) => {
 };
 
 /* Farzan */
-signup = (req, res) => {
+signup = async (req, res) => {
   let _errors = userFieldsValidator.userFieldsValidator(
     ["flname", "email", "password", "address"],
     req.body
@@ -63,7 +63,7 @@ signup = (req, res) => {
 
   //checking for the email, if already exists!!
   if (validator.isEmail(req.body.email)) {
-    User.find({ email: req.body.email })
+    await User.find({ email: req.body.email })
       .exec()
       .then((user) => {
         if (user.length >= 1) {
@@ -131,7 +131,7 @@ signup = (req, res) => {
   }
 };
 
-signin = (req, res) => {
+signin = async (req, res) => {
   let _errors = userFieldsValidator.userFieldsValidator(
     ["email", "password"],
     req.body
@@ -140,7 +140,7 @@ signin = (req, res) => {
     res.send(_errors);
   }
   // checking for email, if exists
-  User.find({ email: req.body.email })
+  await User.find({ email: req.body.email })
     .exec()
     .then((user) => {
       if (user.length < 1) {
@@ -148,6 +148,13 @@ signin = (req, res) => {
           message: "Email not found.",
         });
       }
+
+      if (user[0].reqStatus !== "approved") {
+        return res.json({
+          msg: "Your request is currently under review. You can login after the reviewing process is completed.",
+        });
+      }
+
       // comparing passwords and assigning token in user's db
       bCrypt.compare(req.body.password, user[0].password, (err, result) => {
         if (result) {
