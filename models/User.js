@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema(
     address: {
       type: String,
       required: true,
-      // unique: true
+      unique: true
     },
 
     location: {
@@ -48,7 +48,7 @@ const UserSchema = new mongoose.Schema(
     website: {
       type: String,
       // required: true,
-      // unique: true
+      unique: true
     },
 
     images: {
@@ -59,7 +59,7 @@ const UserSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["collector", "artist", "admin"],
-      default: "artist"
+      default: "artist",
     },
 
     reqStatus: {
@@ -67,9 +67,9 @@ const UserSchema = new mongoose.Schema(
       enum: ["rejected", "approved"],
     },
 
-    token:{
-      type:String,
-    }
+    token: {
+      type: String,
+    },
   },
   {
     timestamps: true,

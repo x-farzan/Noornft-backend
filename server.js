@@ -11,6 +11,7 @@ const searchBar = require("./routes/searchBar");
 const upload = require("./routes/upload.route.js");
 const background = require("./routes/BackgroundImages");
 const bodyparser = require("body-parser");
+const api = require("./routes/api");
 require("dotenv").config();
 const os = require("os");
 
@@ -55,6 +56,7 @@ app.use(express.json());
 app.use("/", auth);
 app.use("/admin", admin);
 app.use("/users", users);
+app.use("/api/", api);
 /* Farzan */
 
 // app.use("/api/auth", auth);
