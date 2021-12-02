@@ -18,7 +18,7 @@ app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 global.__basedir = __dirname;
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "uploads")));
 
 const evokeRoutes = require("./routes/upload.route");
 app.use(cors());
@@ -48,6 +48,15 @@ mongoose
 
 // Init Middleware
 app.use(express.json());
+
+app.use("/uploads", express.static("uploads"));
+
+var corsOptions = {
+  origin: "http://52d4-103-105-211-114.ngrok.io",
+  optionsSuccessStatus: 200, // For legacy browser support
+};
+
+app.use(cors(corsOptions));
 
 // Define Routes
 

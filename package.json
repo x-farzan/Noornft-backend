@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@pinata/sdk": "^1.1.23",
+    "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
@@ -23,7 +25,7 @@
     "joi": "^13.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.5",
-    "multer": "^1.4.2",
+    "multer": "^1.4.3",
     "nodemon": "^2.0.15",
     "normalize-url": "^6.0.1",
     "path": "^0.12.7",

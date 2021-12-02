@@ -22,6 +22,30 @@ const { upload } = require("../middleware/avatarUpload");
 
 // router.put("/address/:address", controller.updateUserInfo);
 
+router
+  .route("/upload/nft")
+  .post(upload.single("assetImage"), async (req, res) => {
+    let imageName = req.file.path;
+    imageName = imageName.substring(8, imageName.length);
+    console.log("====================>>>>", imageName);
+    const value = await controller.uploadnft(imageName);
+    res.send(value);
+  });
 
+router.route("/upload/nft/info").post(async (req, res) => {
+  const data = req.body;
+  const value = await controller.uploadNftInfo(data);
+  res.send(value);
+});
+
+// router
+//   .route("/upload/nft/local")
+//   .post(upload.single("uploadLocal"), async (req, res) => {
+//     let imageName = req.file.path;
+//     imageName = imageName.substring(8, imageName.length);
+//     console.log("====================>>>>", imageName);
+//     const value = await controller.uploadnft(imageName);
+//     // return res.json(value)
+//   });
 
 module.exports = router;
