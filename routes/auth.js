@@ -18,7 +18,7 @@ const controller = require("../Controller/auth");
 
 /* Farzan */
 router.post('/signup', controller.signup);
-router.get('/signin', controller.signin);
+router.post('/signin', controller.signin);
 /* Farzan */
 
 

@@ -7,7 +7,7 @@ const Image = require("../models/Image");
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // console.log(req.body.tokenId )
-    cb(null, DIR);
+    cb(null, './uploads/');
   },
   filename: (req, file, cb) => {
     const fileName = file.originalname.toLowerCase().split(" ").join("-");
@@ -50,7 +50,8 @@ let upload = multer({
       );
     }
   },
-}).single("file");
+})
+//.single("file");
 
 // let fileUploadMiddleware = util.promisify(upload);
 

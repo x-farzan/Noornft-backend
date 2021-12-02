@@ -25,7 +25,7 @@
     "joi": "^13.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.5",
-    "multer": "^1.4.2",
+    "multer": "^1.4.3",
     "nodemon": "^2.0.15",
     "normalize-url": "^6.0.1",
     "path": "^0.12.7",

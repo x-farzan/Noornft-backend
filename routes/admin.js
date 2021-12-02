@@ -6,7 +6,7 @@ const User = require("../models/User");
 const controller = require("../Controller/admin");
 const { tokenVerifier } = require("../middleware/auth");
 
-router.get("/get/requests", tokenVerifier, getRequests);
-router.post("/respond/request/:id", tokenVerifier, respondRequest);
+router.get("/get/requests", getRequests);
+router.post("/respond/request/:id", respondRequest);
 
 module.exports = router;
