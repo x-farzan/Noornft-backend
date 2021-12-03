@@ -5,36 +5,36 @@ require("dotenv").config();
 const User = require("../models/User");
 
 getRequests = async (req, res) => {
-  if (req.userData.role == "admin") {
-    await User.find()
-      .exec()
-      .then((user) => {
-        if (user.length < 1) {
-          return res.json({
-            msg: "User not found.",
-            data: [],
-          });
+  // if (req.userData.role == "admin") {
+  await User.find()
+    .exec()
+    .then((user) => {
+      if (user.length < 1) {
+        return res.json({
+          msg: "User not found.",
+          data: [],
+        });
+      }
+      const getUser = [];
+      user.forEach((element) => {
+        if (element.role == "artist" && element.reqStatus !== "approved") {
+          getUser.push(element);
         }
-        const getUser = [];
-        user.forEach((element) => {
-          if (element.role == "artist" && element.reqStatus !== "approved") {
-            getUser.push(element);
-          }
-        });
-        return res.json({
-          getUser,
-        });
-      })
-      .catch((err) => {
-        return res.json({
-          msg: "vasdvasvqas",
-        });
       });
-  } else {
-    return res.json({
-      msg: "You are not allowed to access this route.",
+      return res.json({
+        getUser,
+      });
+    })
+    .catch((err) => {
+      return res.json({
+        msg: "vasdvasvqas",
+      });
     });
-  }
+  // } else {
+  //   return res.json({
+  //     msg: "You are not allowed to access this route.",
+  //   });
+  // }
 };
 
 respondRequest = async (req, res) => {

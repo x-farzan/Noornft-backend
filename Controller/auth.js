@@ -151,7 +151,8 @@ signin = async (req, res) => {
 
       if (user[0].reqStatus !== "approved") {
         return res.json({
-          msg: "Your request is currently under review. You can login after the reviewing process is completed.",
+          message:
+            "Your request is currently under review. You can login after the reviewing process is completed.",
         });
       }
 
@@ -174,7 +175,7 @@ signin = async (req, res) => {
           //req.token = token;
           return res.status(200).json({
             message: "Auth successfull",
-            user,
+            _id: user[0]._id
           });
         } else {
           return res.status(401).json({

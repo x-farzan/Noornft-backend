@@ -13,6 +13,7 @@ const background = require("./routes/BackgroundImages");
 const bodyparser = require("body-parser");
 require("dotenv").config();
 const os = require("os");
+const profile = require('./routes/profile');
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
@@ -64,6 +65,7 @@ app.use(cors(corsOptions));
 app.use("/", auth);
 app.use("/admin", admin);
 app.use("/users", users);
+app.use("/profile", profile);
 /* Farzan */
 
 // app.use("/api/auth", auth);
@@ -71,7 +73,7 @@ app.use("/users", users);
 // app.use("/api/bids", bids);
 // app.use("/api/search", searchBar);
 
-const PORT = 8080;
+const PORT = 5000;
 
 app.listen(process.env.PORT || PORT, () =>
   console.log(`Server started on port ${PORT} and Domain is ${os.hostname()}`)
