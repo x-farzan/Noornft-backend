@@ -156,7 +156,7 @@ uploadnft = async (imageName) => {
     console.log(readableStreamForFile.path);
     const result = await pinata.pinFileToIPFS(readableStreamForFile);
     console.log("file uploaded succesfully...", result);
-    const filehash = `https://gateway.pinata.cloud/ipfs/${result.IpfsHash}`;
+    const filehash = `${result.IpfsHash}`;
     console.log("done", filehash);
     return JSON.stringify(filehash);
   } catch (error) {}
@@ -165,7 +165,7 @@ uploadnft = async (imageName) => {
 uploadNftInfo = async (data) => {
   var config = {
     method: "post",
-    url: "https://api-testnet.nft-maker.io/UploadNft/04706398176f4a72afa0ae2ad52b740d/5082",
+    url: "https://api-testnet.nft-maker.io/UploadNft/04706398176f4a72afa0ae2ad52b740d/5091",
     headers: {
       "Content-Type": "application/json",
     },
@@ -201,7 +201,7 @@ getProfile = async (_id) => {
 mintAndSend = async (nftId, address) => {
   var config = {
     method: "get",
-    url: `https://api-testnet.nft-maker.io/MintAndSendSpecific/04706398176f4a72afa0ae2ad52b740d/5082/${nftId}/1/${address}`,
+    url: `https://api-testnet.nft-maker.io/MintAndSendSpecific/04706398176f4a72afa0ae2ad52b740d/5091/${nftId}/1/${address}`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -217,7 +217,7 @@ mintAndSend = async (nftId, address) => {
     })
     .catch(function (error) {
       console.log(error);
-      console.log("eror ==============>>>>", error.response.data.errorMessage);
+      console.log("eror ==============>>>>", error.response.data);
       const err = { error: error.response.data.errorMessage };
       return err;
     });

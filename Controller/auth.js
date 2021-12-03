@@ -175,7 +175,8 @@ signin = async (req, res) => {
           //req.token = token;
           return res.status(200).json({
             message: "Auth successfull",
-            _id: user[0]._id
+            _id: user[0]._id,
+            role: user[0].role,
           });
         } else {
           return res.status(401).json({
