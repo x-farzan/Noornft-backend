@@ -27,7 +27,7 @@ getRequests = async (req, res) => {
     })
     .catch((err) => {
       return res.json({
-        msg: "vasdvasvqas",
+        msg: "Something went wrong.",
       });
     });
   // } else {
