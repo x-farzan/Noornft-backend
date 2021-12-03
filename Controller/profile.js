@@ -8,13 +8,13 @@ getProfile = async (_id) => {
     .exec()
     .then((user) => {
       if (user.length < 1) {
-        return res.send(`User with this id doen't exists.`);
+        return JSON.stringify(`User with this id doen't exists.`);
       }
       console.log("USER C : ===============================>>>>", user[0]);
-      return res.send(user);
+      return user[0];
     })
     .catch((err) => {
-      return res.send("Something went wrong.");
+      return JSON.stringify("Something went wrong.");
     });
 };
 
