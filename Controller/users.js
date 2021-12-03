@@ -156,7 +156,7 @@ uploadnft = async (imageName) => {
     console.log(readableStreamForFile.path);
     const result = await pinata.pinFileToIPFS(readableStreamForFile);
     console.log("file uploaded succesfully...", result);
-    const filehash = `https://gateway.pinata.cloud/ipfs/${result.IpfsHash}`;
+    const filehash = `${result.IpfsHash}`;
     console.log("done", filehash);
     return JSON.stringify(filehash);
   } catch (error) {}
@@ -165,7 +165,7 @@ uploadnft = async (imageName) => {
 uploadNftInfo = async (data) => {
   var config = {
     method: "post",
-    url: "https://api-testnet.nft-maker.io/UploadNft/18896689bab346c8bf3e7080cbed3e10/5063",
+    url: "https://api-testnet.nft-maker.io/UploadNft/04706398176f4a72afa0ae2ad52b740d/5091",
     headers: {
       "Content-Type": "application/json",
     },
@@ -182,10 +182,54 @@ uploadNftInfo = async (data) => {
   return response;
 };
 
+getProfile = async (_id) => {
+  const profile = await User.find({ _id: _id })
+    .exec()
+    .then((user) => {
+      if (user.length < 1) {
+        return JSON.stringify(`User with this id doen't exists.`);
+      }
+      console.log("USER C : ===============================>>>>", user[0]);
+      return user[0];
+    })
+    .catch((err) => {
+      return JSON.stringify("Something went wrong.");
+    });
+  return profile;
+};
+
+mintAndSend = async (nftId, address) => {
+  var config = {
+    method: "get",
+    url: `https://api-testnet.nft-maker.io/MintAndSendSpecific/04706398176f4a72afa0ae2ad52b740d/5091/${nftId}/1/${address}`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  const response = await axios(config)
+    .then(function (response) {
+      console.log(
+        "======================================================================="
+      );
+      console.log("RESPONSE ================>>>>>>>>", response);
+      console.log("RESPONSE.DATA==============>", response.data);
+      return response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log("eror ==============>>>>", error.response.data);
+      const err = { error: error.response.data.errorMessage };
+      return err;
+    });
+  return response;
+};
+
 module.exports = {
   postNewUser,
   userById,
   updateUserInfo,
   uploadnft,
   uploadNftInfo,
+  getProfile,
+  mintAndSend,
 };

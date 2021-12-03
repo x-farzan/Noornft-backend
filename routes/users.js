@@ -38,6 +38,25 @@ router.route("/upload/nft/info").post(async (req, res) => {
   res.send(value);
 });
 
+router.route("/profile/:id").get(async (req, res) => {
+  const _id = req.params.id;
+  console.log("id : ;============================== >>>> ", _id);
+  const user = await controller.getProfile(_id);
+  console.log("USER : ===============================>>>>", user);
+  return res.json({
+    seccess: true,
+    user,
+  });
+});
+
+router.route("/mintAndSend/:nftId/:address").get(async (req, res) => {
+  nftId = req.params.nftId;
+  address = req.params.address;
+  const response = await controller.mintAndSend(nftId, address);
+  console.log("THIS IS RES : =====>>>>>>", response);
+  return res.json(response);
+});
+
 // router
 //   .route("/upload/nft/local")
 //   .post(upload.single("uploadLocal"), async (req, res) => {
