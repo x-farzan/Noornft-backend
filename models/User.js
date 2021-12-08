@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema(
     address: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
     },
 
     location: {
@@ -48,7 +48,17 @@ const UserSchema = new mongoose.Schema(
     website: {
       type: String,
       // required: true,
-      unique: true
+      unique: true,
+    },
+
+    // createProject: {
+    //   type: Boolean,
+    //   default: false,
+    // },
+
+    projectId: {
+      type: Number,
+      default: null,
     },
 
     images: {

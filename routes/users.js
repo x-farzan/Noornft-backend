@@ -67,9 +67,29 @@ router.route("/wallet/get/address/:nftId").get(async (req, res) => {
 
 router.route("/wallet/checkaddress/state/:address").get(async (req, res) => {
   address = req.params.address;
+  console.log("ADDRESS : ===>>> ", address);
   const response = await controller.checkAddress(address);
-  return res.json(response)
+  return res.json(response);
 });
+
+router.route("/createProject").post(async (req, res) => {
+  if (req.body.payoutWalletaddress == "") {
+    return res.json({
+      msg: `Artist wallet is not registered.`,
+    });
+  }
+  const data = req.body;
+  const response = await controller.createProject(data);
+  return res.json(response);
+});
+
+router.route("/projectId/:_id").post(async (req, res) => {
+  _id = req.params._id;
+  projectId = req.body.projectId;
+  const response = await controller.setProjectId(projectId, _id);
+  return res.json(response);
+});
+
 
 // router
 //   .route("/upload/nft/local")

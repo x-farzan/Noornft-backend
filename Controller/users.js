@@ -277,6 +277,56 @@ checkAddress = async (address) => {
   return response;
 };
 
+createProject = async (data) => {
+  var config = {
+    method: "post",
+    url: `https://api-testnet.nft-maker.io/CreateProject/4d66545234de4c8e83cd36547a68be35`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: data,
+  };
+  const response = await axios(config)
+    .then((response) => {
+      console.log(
+        "==============================CREATE PROJECT========================================="
+      );
+      console.log("RESPONSE ================>>>>>>>>", response);
+      // console.log("RESPONSE.DATA==============>", response.data);
+      return response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+      // console.log("eror ==============>>>>", error.response.data);
+      const err = { error: error.response.data.errorMessage };
+      return err;
+    });
+  return response;
+};
+
+setProjectId = async (projectId, _id) => {
+  const response = await User.find({ _id: _id })
+    .then((user) => {
+      if (user.length < 1) {
+        return { msg: "User with this id does not exists." };
+      }
+      if (!user[0].projectId || user[0].projectId == null) {
+        user[0].projectId = projectId;
+        user[0].save();
+        return user;
+      } else {
+        return { msg: `Your project is already created` };
+      }
+    })
+    .catch((error) => {
+      console.log("ERROR: ===>>> ", error);
+      return error;
+    });
+  return response;
+};
+
+
+
 module.exports = {
   postNewUser,
   userById,
@@ -287,4 +337,6 @@ module.exports = {
   mintAndSend,
   showAddress,
   checkAddress,
+  setProjectId,
+  createProject,
 };
