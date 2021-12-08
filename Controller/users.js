@@ -325,7 +325,57 @@ setProjectId = async (projectId, _id) => {
   return response;
 };
 
+getAllNftsProjectId = async () => {
+  var config = {
+    method: "get",
+    url: `https://api-testnet.nft-maker.io/ListProjects/4d66545234de4c8e83cd36547a68be35`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  const response = await axios(config)
+    .then((response) => {
+      console.log(
+        "==============================GET PROJECT ID's========================================="
+      );
+      console.log("RESPONSE ================>>>>>>>>", response);
+      // console.log("RESPONSE.DATA==============>", response.data);
+      return response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+      // console.log("eror ==============>>>>", error.response.data);
+      const err = { error: error.response.data.errorMessage };
+      return err;
+    });
+  return response;
+};
 
+getAllNfts = async (nftProjectId) => {
+  var config = {
+    method: "get",
+    url: `https://api-testnet.nft-maker.io/GetNfts/4d66545234de4c8e83cd36547a68be35/${nftProjectId}/free`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  const response = await axios(config)
+    .then((response) => {
+      console.log(
+        "==============================GET NFTS========================================="
+      );
+      // console.log("RESPONSE ================>>>>>>>>", response);
+      // console.log("RESPONSE.DATA==============>", response.data);
+      return response.data;
+    })
+    .catch(function (error) {
+      // console.log(error);
+      // console.log("eror ==============>>>>", error.response.data);
+      const err = { error: error.response.data.errorMessage };
+      return err;
+    });
+  return response;
+};
 
 module.exports = {
   postNewUser,
@@ -339,4 +389,6 @@ module.exports = {
   checkAddress,
   setProjectId,
   createProject,
+  getAllNftsProjectId,
+  getAllNfts,
 };
