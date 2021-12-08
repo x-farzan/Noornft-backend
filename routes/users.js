@@ -57,6 +57,20 @@ router.route("/mintAndSend/:nftId/:address").get(async (req, res) => {
   return res.json(response);
 });
 
+router.route("/wallet/get/address/:nftId").get(async (req, res) => {
+  nftId = req.params.nftId;
+  console.log("NFTID : ====>>> ", nftId);
+  const response = await controller.showAddress(nftId);
+  // console.log("RESPONSE: =====>>> ", response);
+  return res.send(response);
+});
+
+router.route("/wallet/checkaddress/state/:address").get(async (req, res) => {
+  address = req.params.address;
+  const response = await controller.checkAddress(address);
+  return res.json(response)
+});
+
 // router
 //   .route("/upload/nft/local")
 //   .post(upload.single("uploadLocal"), async (req, res) => {

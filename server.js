@@ -21,7 +21,7 @@ global.__basedir = __dirname;
 app.use(express.static(path.join(__dirname, "uploads")));
 
 const evokeRoutes = require("./routes/upload.route");
-app.use(cors());
+// app.use(cors());
 app.use(
   express.urlencoded({
     extended: true,
@@ -51,12 +51,12 @@ app.use(express.json());
 
 app.use("/uploads", express.static("uploads"));
 
-var corsOptions = {
-  origin: "http://52d4-103-105-211-114.ngrok.io",
-  optionsSuccessStatus: 200, // For legacy browser support
-};
+// var corsOptions = {
+//   origin: "http://52d4-103-105-211-114.ngrok.io",
+//   optionsSuccessStatus: 200, // For legacy browser support
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 // Define Routes
 

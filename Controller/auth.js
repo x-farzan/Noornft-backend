@@ -177,6 +177,7 @@ signin = async (req, res) => {
             message: "Auth successfull",
             _id: user[0]._id,
             role: user[0].role,
+            walletaddress: user[0].address,
           });
         } else {
           return res.status(401).json({
