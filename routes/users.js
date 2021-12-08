@@ -90,7 +90,35 @@ router.route("/projectId/:_id").post(async (req, res) => {
   return res.json(response);
 });
 
+router.route("/getnfts").get(async (req, res) => {
+  try {
+    let allNfts = [];
+    let projectIds = [];
+    const getAllNftsProjectId = await controller.getAllNftsProjectId();
+    // console.log("response : ===>>> ", getAllNftsProjectId);
 
+    getAllNftsProjectId.map((element) => {
+      console.log(element.id);
+      projectIds.push(element.id);
+    });
+
+    projectIds.forEach(async (element) => {
+      await controller
+        .getAllNfts(5116)
+        .then((result) => {
+          console.log("NFTS : ", result);
+          allNfts.push(...result);
+          // console.log("allNFts :", allNfts);
+        })
+        .catch(error);
+    });
+
+    console.log("allNfts", allNfts);
+    return res.json({ allNfts });
+  } catch (err) {
+    res.json(err);
+  }
+});
 // router
 //   .route("/upload/nft/local")
 //   .post(upload.single("uploadLocal"), async (req, res) => {
