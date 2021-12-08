@@ -163,9 +163,10 @@ uploadnft = async (imageName) => {
 };
 
 uploadNftInfo = async (data) => {
+  console.log("DATA ====>>>>  ", data);
   var config = {
     method: "post",
-    url: "https://api-testnet.nft-maker.io/UploadNft/04706398176f4a72afa0ae2ad52b740d/5091",
+    url: "https://api-testnet.nft-maker.io/UploadNft/4d66545234de4c8e83cd36547a68be35/5116",
     headers: {
       "Content-Type": "application/json",
     },
@@ -201,7 +202,7 @@ getProfile = async (_id) => {
 mintAndSend = async (nftId, address) => {
   var config = {
     method: "get",
-    url: `https://api-testnet.nft-maker.io/MintAndSendSpecific/04706398176f4a72afa0ae2ad52b740d/5091/${nftId}/1/${address}`,
+    url: `https://api-testnet.nft-maker.io/MintAndSendSpecific/4d66545234de4c8e83cd36547a68be35/5116/${nftId}/1/${address}`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -224,6 +225,58 @@ mintAndSend = async (nftId, address) => {
   return response;
 };
 
+showAddress = async (nftId) => {
+  var config = {
+    method: "get",
+    url: `https://api-testnet.nft-maker.io/GetAddressForSpecificNftSale/4d66545234de4c8e83cd36547a68be35/5116/${nftId}/1/6500000`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  const response = await axios(config)
+    .then((response) => {
+      console.log(
+        "==============================SHOW ADDRESS========================================="
+      );
+      console.log("RESPONSE ================>>>>>>>>", response);
+      // console.log("RESPONSE.DATA==============>", response.data);
+      return response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+      // console.log("eror ==============>>>>", error.response.data);
+      const err = { error: error.response.data.errorMessage };
+      return err;
+    });
+  return response;
+};
+
+checkAddress = async (address) => {
+  var config = {
+    method: "get",
+    url: `https://api-testnet.nft-maker.io/CheckAddress/4d66545234de4c8e83cd36547a68be35/5116/${address}`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  const response = await axios(config)
+    .then((response) => {
+      console.log(
+        "==============================CHECK ADDRESS========================================="
+      );
+      console.log("RESPONSE ================>>>>>>>>", response);
+      // console.log("RESPONSE.DATA==============>", response.data);
+      return response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+      // console.log("eror ==============>>>>", error.response.data);
+      const err = { error: error.response.data.errorMessage };
+      return err;
+    });
+  return response;
+};
+
 module.exports = {
   postNewUser,
   userById,
@@ -232,4 +285,6 @@ module.exports = {
   uploadNftInfo,
   getProfile,
   mintAndSend,
+  showAddress,
+  checkAddress,
 };
