@@ -107,8 +107,13 @@ router.route("/getnfts").get(async (req, res) => {
         .getAllNfts(element)
         .then((result) => {
           count++;
+          console.log("result : ", result);
           console.log("count : ", count);
           console.log("length : ", projectIds.length);
+          console.log("json length : ", result.length);
+          result.forEach((item) => {
+            item.pid = element;
+          });
           allNfts.push(...result);
           console.log("All NFTS : ===>>> ", allNfts);
           if (count == projectIds.length) {
@@ -117,7 +122,7 @@ router.route("/getnfts").get(async (req, res) => {
         })
         .catch((error) => {
           return res.json({
-            error: error,
+            error: error.message,
           });
         });
     });
