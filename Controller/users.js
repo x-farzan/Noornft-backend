@@ -352,6 +352,7 @@ getAllNftsProjectId = async () => {
 };
 
 getAllNfts = async (nftProjectId) => {
+  let allnfts = [];
   var config = {
     method: "get",
     url: `https://api-testnet.nft-maker.io/GetNfts/4d66545234de4c8e83cd36547a68be35/${nftProjectId}/free`,
@@ -359,7 +360,7 @@ getAllNfts = async (nftProjectId) => {
       "Content-Type": "application/json",
     },
   };
-  const response = await axios(config)
+  let response = await axios(config)
     .then((response) => {
       console.log(
         "==============================GET NFTS========================================="
