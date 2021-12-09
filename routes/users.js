@@ -94,39 +94,86 @@ router.route("/getnfts").get(async (req, res) => {
   try {
     let allNfts = [];
     let projectIds = [];
+    let count = 0;
     const getAllNftsProjectId = await controller.getAllNftsProjectId();
-    // console.log("response : ===>>> ", getAllNftsProjectId);
 
-    getAllNftsProjectId.map((element) => {
+    getAllNftsProjectId.map(async (element) => {
       console.log(element.id);
       projectIds.push(element.id);
     });
 
     projectIds.forEach(async (element) => {
       await controller
-        .getAllNfts(5116)
+        .getAllNfts(element)
         .then((result) => {
-          console.log("NFTS : ", result);
+          count++;
+          console.log("count : ", count);
+          console.log("length : ", projectIds.length);
           allNfts.push(...result);
-          // console.log("allNFts :", allNfts);
+          console.log("All NFTS : ===>>> ", allNfts);
+          if (count == projectIds.length) {
+            return res.json(allNfts);
+          }
         })
-        .catch(error);
+        .catch((error) => {
+          return res.json({
+            error: error,
+          });
+        });
     });
-
-    console.log("allNfts", allNfts);
-    return res.json({ allNfts });
   } catch (err) {
-    res.json(err);
+    return res.json(err);
   }
 });
-// router
-//   .route("/upload/nft/local")
-//   .post(upload.single("uploadLocal"), async (req, res) => {
-//     let imageName = req.file.path;
-//     imageName = imageName.substring(8, imageName.length);
-//     console.log("====================>>>>", imageName);
-//     const value = await controller.uploadnft(imageName);
-//     // return res.json(value)
-//   });
+
+router.route("/featured").get(async (req, res) => {
+  try {
+    let allNfts = [];
+    let projectIds = [];
+    let count = 0;
+    let randomIds = [];
+
+    const getAllNftsProjectId = await controller.getAllNftsProjectId();
+
+    // getting nft project ids;
+    getAllNftsProjectId.map(async (element) => {
+      console.log(element.id);
+      projectIds.push(element.id);
+    });
+
+    //getting '3' random project ids;
+    for (let i = 0; i < 3; i++) {
+      randomIds.push(projectIds[Math.floor(Math.random() * projectIds.length)]);
+    }
+
+    console.log("randomIds : ", randomIds);
+
+    //getting nfts of projects;
+    randomIds.forEach(async (element) => {
+      await controller
+        .getAllNfts(element)
+        .then((result) => {
+          count++;
+          console.log("count : ", count);
+          console.log("length : ", randomIds.length);
+          allNfts.push(result[Math.floor(Math.random() * result.length)]);
+          console.log("All NFTS : ===>>> ", allNfts);
+          if (count == randomIds.length) {
+            return res.json(allNfts);
+          }
+        })
+        .catch((error) => {
+          return res.json({
+            error: error,
+          });
+        });
+    });
+
+    console.log("random : ", randomIds);
+    console.log("projectIds ===>>> ", projectIds);
+  } catch (err) {
+    return res.json(err);
+  }
+});
 
 module.exports = router;
