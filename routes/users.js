@@ -98,8 +98,10 @@ router.route("/getnfts").get(async (req, res) => {
     const getAllNftsProjectId = await controller.getAllNftsProjectId();
 
     getAllNftsProjectId.map(async (element) => {
-      console.log(element.id);
-      projectIds.push(element.id);
+      if (element.free !== 0) {
+        console.log(element.id);
+        projectIds.push(element.id);
+      }
     });
 
     projectIds.forEach(async (element) => {
@@ -140,10 +142,12 @@ router.route("/featured").get(async (req, res) => {
 
     const getAllNftsProjectId = await controller.getAllNftsProjectId();
 
-    // getting nft project ids;
+    // getting nft project ids that contain some nfts, empty projects are not extracted;
     getAllNftsProjectId.map(async (element) => {
-      console.log(element.id);
-      projectIds.push(element.id);
+      if (element.free !== 0) {
+        console.log(element.id);
+        projectIds.push(element.id);
+      }
     });
 
     //getting '3' random project ids;
