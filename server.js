@@ -13,6 +13,7 @@ const background = require("./routes/BackgroundImages");
 const bodyparser = require("body-parser");
 require("dotenv").config();
 const os = require("os");
+const wallet = require("./routes/wallet");
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
@@ -64,6 +65,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/", auth);
 app.use("/admin", admin);
 app.use("/users", users);
+app.use("/wallet", wallet);
 
 /* Farzan */
 
