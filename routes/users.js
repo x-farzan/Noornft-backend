@@ -165,6 +165,9 @@ router.route("/featured").get(async (req, res) => {
           count++;
           console.log("count : ", count);
           console.log("length : ", randomIds.length);
+          result.forEach((item) => {
+            item.pid = element;
+          });
           allNfts.push(result[Math.floor(Math.random() * result.length)]);
           console.log("All NFTS : ===>>> ", allNfts);
           if (count == randomIds.length) {
