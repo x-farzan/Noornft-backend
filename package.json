@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@emurgo/cardano-serialization-lib-nodejs": "^9.1.2",
     "@pinata/sdk": "^1.1.23",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
