@@ -58,20 +58,24 @@ router.route("/mintAndSend/:nftId/:address").get(async (req, res) => {
   return res.json(response);
 });
 
-router.route("/wallet/get/address/:nftId").get(async (req, res) => {
+router.route("/wallet/get/address/:projectId/:nftId").get(async (req, res) => {
   nftId = req.params.nftId;
+  projectId = req.params.projectId;
   console.log("NFTID : ====>>> ", nftId);
-  const response = await controller.showAddress(nftId);
+  const response = await controller.showAddress(projectId, nftId);
   // console.log("RESPONSE: =====>>> ", response);
   return res.send(response);
 });
 
-router.route("/wallet/checkaddress/state/:address").get(async (req, res) => {
-  address = req.params.address;
-  console.log("ADDRESS : ===>>> ", address);
-  const response = await controller.checkAddress(address);
-  return res.json(response);
-});
+router
+  .route("/wallet/checkaddress/state/:projectId/:address")
+  .get(async (req, res) => {
+    address = req.params.address;
+    projectId = req.params.projectId;
+    console.log("ADDRESS : ===>>> ", address);
+    const response = await controller.checkAddress(projectId, address);
+    return res.json(response);
+  });
 
 router.route("/createProject").post(async (req, res) => {
   if (req.body.payoutWalletaddress == "") {

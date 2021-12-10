@@ -163,9 +163,10 @@ uploadnft = async (imageName) => {
 };
 
 uploadNftInfo = async (data) => {
+  console.log("DATA BEFORE ====>>>>  ", data);
   const projectId = data.projectId;
   delete data.projectId;
-  console.log("DATA ====>>>>  ", data);
+  console.log("DATA AFTER ====>>>>  ", data);
   var config = {
     method: "post",
     url: `https://api-testnet.nft-maker.io/UploadNft/4d66545234de4c8e83cd36547a68be35/${projectId}`,
@@ -227,10 +228,10 @@ mintAndSend = async (nftId, address) => {
   return response;
 };
 
-showAddress = async (nftId) => {
+showAddress = async (projectId, nftId) => {
   var config = {
     method: "get",
-    url: `https://api-testnet.nft-maker.io/GetAddressForSpecificNftSale/4d66545234de4c8e83cd36547a68be35/5116/${nftId}/1/6500000`,
+    url: `https://api-testnet.nft-maker.io/GetAddressForSpecificNftSale/4d66545234de4c8e83cd36547a68be35/${projectId}/${nftId}/1/6500000`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -253,10 +254,10 @@ showAddress = async (nftId) => {
   return response;
 };
 
-checkAddress = async (address) => {
+checkAddress = async (projectId, address) => {
   var config = {
     method: "get",
-    url: `https://api-testnet.nft-maker.io/CheckAddress/4d66545234de4c8e83cd36547a68be35/5116/${address}`,
+    url: `https://api-testnet.nft-maker.io/CheckAddress/4d66545234de4c8e83cd36547a68be35/${projectId}/${address}`,
     headers: {
       "Content-Type": "application/json",
     },
