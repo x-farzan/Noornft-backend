@@ -54,7 +54,7 @@ checkUser = async (req, res) => {
 /* Farzan */
 signup = async (req, res) => {
   let _errors = userFieldsValidator.userFieldsValidator(
-    ["flname", "email", "password", "address"],
+    ["flname", "email", "password", "walletaddress"],
     req.body
   );
   if (_errors.length > 0) {
@@ -72,7 +72,7 @@ signup = async (req, res) => {
           });
         } else {
           //
-          User.find({ address: req.body.address })
+          User.find({ address: req.body.walletaddress })
             .exec()
             .then((user) => {
               if (user.length >= 1) {
@@ -92,7 +92,7 @@ signup = async (req, res) => {
                       flname: req.body.flname,
                       email: req.body.email,
                       password: hash,
-                      address: req.body.address,
+                      address: req.body.walletaddress,
                       role: req.body.role,
                     });
                     user
@@ -178,6 +178,7 @@ signin = async (req, res) => {
             _id: user[0]._id,
             role: user[0].role,
             walletaddress: user[0].address,
+            projectId: user[0].projectId,
           });
         } else {
           return res.status(401).json({
