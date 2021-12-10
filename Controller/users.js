@@ -163,10 +163,12 @@ uploadnft = async (imageName) => {
 };
 
 uploadNftInfo = async (data) => {
+  const projectId = data.projectId;
+  delete data.projectId;
   console.log("DATA ====>>>>  ", data);
   var config = {
     method: "post",
-    url: "https://api-testnet.nft-maker.io/UploadNft/4d66545234de4c8e83cd36547a68be35/5116",
+    url: `https://api-testnet.nft-maker.io/UploadNft/4d66545234de4c8e83cd36547a68be35/${projectId}`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -278,6 +280,7 @@ checkAddress = async (address) => {
 };
 
 createProject = async (data) => {
+  // console.log('here is the data : ', data);
   var config = {
     method: "post",
     url: `https://api-testnet.nft-maker.io/CreateProject/4d66545234de4c8e83cd36547a68be35`,
@@ -305,24 +308,31 @@ createProject = async (data) => {
 };
 
 setProjectId = async (projectId, _id) => {
-  const response = await User.find({ _id: _id })
-    .then((user) => {
-      if (user.length < 1) {
-        return { msg: "User with this id does not exists." };
-      }
-      if (!user[0].projectId || user[0].projectId == null) {
-        user[0].projectId = projectId;
-        user[0].save();
-        return user;
-      } else {
-        return { msg: `Your project is already created` };
-      }
-    })
-    .catch((error) => {
-      console.log("ERROR: ===>>> ", error);
-      return error;
+  try {
+    console.log(`projectId is here : `, projectId);
+    const response = await User.findOne({ _id: _id })
+      .then(async (user) => {
+        if (user.length < 1) {
+          return { msg: "User with this id does not exists." };
+        }
+        if (!user.projectId || user.projectId == null) {
+          user.projectId = projectId;
+          await user.save();
+          return user;
+        } else {
+          return { msg: `Your project is already created` };
+        }
+      })
+      .catch((error) => {
+        console.log("ERROR: ===>>> ", error);
+        return error;
+      });
+    return response;
+  } catch (error) {
+    return res.json({
+      error: error.message,
     });
-  return response;
+  }
 };
 
 getAllNftsProjectId = async () => {

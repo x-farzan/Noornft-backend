@@ -34,6 +34,7 @@ router
 
 router.route("/upload/nft/info").post(async (req, res) => {
   const data = req.body;
+  // const projectId = req.body.projectid;
   const value = await controller.uploadNftInfo(data);
   res.send(value);
 });
@@ -79,13 +80,18 @@ router.route("/createProject").post(async (req, res) => {
     });
   }
   const data = req.body;
+  console.log(`here is the data `, data);
+  // return res.send(data)
   const response = await controller.createProject(data);
   return res.json(response);
 });
 
 router.route("/projectId/:_id").post(async (req, res) => {
-  _id = req.params._id;
-  projectId = req.body.projectId;
+  console.log("I am here to check");
+  let _id = req.params._id;
+  console.log(`route _id : `, _id);
+  let projectId = req.body.projectId;
+  console.log(`projectId : `, projectId);
   const response = await controller.setProjectId(projectId, _id);
   return res.json(response);
 });
@@ -129,7 +135,7 @@ router.route("/getnfts").get(async (req, res) => {
         });
     });
   } catch (err) {
-    return res.json(err);
+    return res.json({ err: err.message });
   }
 });
 
@@ -165,9 +171,10 @@ router.route("/featured").get(async (req, res) => {
           count++;
           console.log("count : ", count);
           console.log("length : ", randomIds.length);
-          result.forEach((item) => {
-            item.pid = element;
-          });
+          if (result)
+            result.forEach((item) => {
+              item.pid = element;
+            });
           allNfts.push(result[Math.floor(Math.random() * result.length)]);
           console.log("All NFTS : ===>>> ", allNfts);
           if (count == randomIds.length) {
@@ -176,7 +183,7 @@ router.route("/featured").get(async (req, res) => {
         })
         .catch((error) => {
           return res.json({
-            error: error,
+            error: error.message,
           });
         });
     });
@@ -184,7 +191,7 @@ router.route("/featured").get(async (req, res) => {
     console.log("random : ", randomIds);
     console.log("projectIds ===>>> ", projectIds);
   } catch (err) {
-    return res.json(err);
+    return res.json({ err: err.message });
   }
 });
 
