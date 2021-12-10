@@ -338,7 +338,7 @@ getAllNftsProjectId = async () => {
       console.log(
         "==============================GET PROJECT ID's========================================="
       );
-      console.log("RESPONSE ================>>>>>>>>", response);
+      console.log("RESPONSE ================>>>>>>>>", response.data);
       // console.log("RESPONSE.DATA==============>", response.data);
       return response.data;
     })
