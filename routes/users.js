@@ -58,20 +58,24 @@ router.route("/mintAndSend/:nftId/:address").get(async (req, res) => {
   return res.json(response);
 });
 
-router.route("/wallet/get/address/:nftId").get(async (req, res) => {
+router.route("/wallet/get/address/:projectId/:nftId").get(async (req, res) => {
   nftId = req.params.nftId;
+  projectId = req.params.projectId;
   console.log("NFTID : ====>>> ", nftId);
-  const response = await controller.showAddress(nftId);
+  const response = await controller.showAddress(projectId, nftId);
   // console.log("RESPONSE: =====>>> ", response);
   return res.send(response);
 });
 
-router.route("/wallet/checkaddress/state/:address").get(async (req, res) => {
-  address = req.params.address;
-  console.log("ADDRESS : ===>>> ", address);
-  const response = await controller.checkAddress(address);
-  return res.json(response);
-});
+router
+  .route("/wallet/checkaddress/state/:projectId/:address")
+  .get(async (req, res) => {
+    address = req.params.address;
+    projectId = req.params.projectId;
+    console.log("ADDRESS : ===>>> ", address);
+    const response = await controller.checkAddress(projectId, address);
+    return res.json(response);
+  });
 
 router.route("/createProject").post(async (req, res) => {
   if (req.body.payoutWalletaddress == "") {
@@ -190,6 +194,54 @@ router.route("/featured").get(async (req, res) => {
 
     console.log("random : ", randomIds);
     console.log("projectIds ===>>> ", projectIds);
+  } catch (err) {
+    return res.json({ err: err.message });
+  }
+});
+
+router.route("/getnftsofproject/:nftId").get(async (req, res) => {
+  try {
+    // let allNfts = [];
+    // let projectIds = [];
+    // let count = 0;
+    nftProjectId = req.params.nftId;
+    const getNftsOfProject = await controller.getAllNftsOfProject(nftProjectId);
+    console.log("here : ", getNftsOfProject);
+    return res.json({
+      nfts: getNftsOfProject,
+    });
+
+    // getAllNftsProjectId.map(async (element) => {
+    //   if (element.free !== 0) {
+    //     console.log(element.id);
+    //     projectIds.push(element.id);
+    //   }
+    // });
+
+    // projectIds.forEach(async (element) => {
+    //   await controller
+    //     .getAllNfts(element)
+    //     .then((result) => {
+    //       count++;
+    //       console.log("result : ", result);
+    //       console.log("count : ", count);
+    //       console.log("length : ", projectIds.length);
+    //       console.log("json length : ", result.length);
+    //       result.forEach((item) => {
+    //         item.pid = element;
+    //       });
+    //       allNfts.push(...result);
+    //       console.log("All NFTS : ===>>> ", allNfts);
+    //       if (count == projectIds.length) {
+    //         return res.json(allNfts);
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       return res.json({
+    //         error: error.message,
+    //       });
+    //     });
+    // });
   } catch (err) {
     return res.json({ err: err.message });
   }
