@@ -199,4 +199,52 @@ router.route("/featured").get(async (req, res) => {
   }
 });
 
+router.route("/getnftsofproject/:nftId").get(async (req, res) => {
+  try {
+    // let allNfts = [];
+    // let projectIds = [];
+    // let count = 0;
+    nftProjectId = req.params.nftId;
+    const getNftsOfProject = await controller.getAllNftsOfProject(nftProjectId);
+    console.log("here : ", getNftsOfProject);
+    return res.json({
+      nfts: getNftsOfProject,
+    });
+
+    // getAllNftsProjectId.map(async (element) => {
+    //   if (element.free !== 0) {
+    //     console.log(element.id);
+    //     projectIds.push(element.id);
+    //   }
+    // });
+
+    // projectIds.forEach(async (element) => {
+    //   await controller
+    //     .getAllNfts(element)
+    //     .then((result) => {
+    //       count++;
+    //       console.log("result : ", result);
+    //       console.log("count : ", count);
+    //       console.log("length : ", projectIds.length);
+    //       console.log("json length : ", result.length);
+    //       result.forEach((item) => {
+    //         item.pid = element;
+    //       });
+    //       allNfts.push(...result);
+    //       console.log("All NFTS : ===>>> ", allNfts);
+    //       if (count == projectIds.length) {
+    //         return res.json(allNfts);
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       return res.json({
+    //         error: error.message,
+    //       });
+    //     });
+    // });
+  } catch (err) {
+    return res.json({ err: err.message });
+  }
+});
+
 module.exports = router;
