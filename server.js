@@ -14,7 +14,7 @@ const bodyparser = require("body-parser");
 require("dotenv").config();
 const os = require("os");
 const wallet = require("./routes/wallet");
-const URI = process.env.MONDODB_URI;
+// const URI = process.env.MONDODB_URI;
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
@@ -33,10 +33,13 @@ app.use(
 evokeRoutes(app);
 background(app);
 mongoose
-  .connect(URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    "mongodb+srv://Farzan:Mongodb@123@cluster0.gkqpe.mongodb.net/NoorNFT?retryWrites=true&w=majority",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => {
     console.log("mongodb is connected");
   })
@@ -58,7 +61,6 @@ app.use("/uploads", express.static("uploads"));
 // app.use(cors(corsOptions));
 
 // Define Routes
-
 
 /* Farzan */
 app.use("/", auth);
