@@ -54,7 +54,15 @@ checkUser = async (req, res) => {
 /* Farzan */
 signup = async (req, res) => {
   let _errors = userFieldsValidator.userFieldsValidator(
-    ["flname", "email", "password", "walletaddress"],
+    [
+      "flname",
+      "email",
+      "password",
+      "walletaddress",
+      "username",
+      "description",
+      "city",
+    ],
     req.body
   );
   if (_errors.length > 0) {

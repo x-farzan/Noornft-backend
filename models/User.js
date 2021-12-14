@@ -11,10 +11,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
     },
 
-    // name: {
-    //   type: String,
-    //   required: true,
-    // },
+    username: {
+      type: String,
+      required: true,
+    },
 
     email: {
       type: String,
@@ -39,6 +39,10 @@ const UserSchema = new mongoose.Schema(
       // unique: true
     },
 
+    city: {
+      type: String,
+    },
+
     bio: {
       type: String,
       // required: true,
@@ -51,10 +55,10 @@ const UserSchema = new mongoose.Schema(
       unique: true,
     },
 
-    // createProject: {
-    //   type: Boolean,
-    //   default: false,
-    // },
+    description: {
+      type: Boolean,
+      default: false,
+    },
 
     projectId: {
       type: Number,
