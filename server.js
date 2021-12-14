@@ -14,7 +14,7 @@ const bodyparser = require("body-parser");
 require("dotenv").config();
 const os = require("os");
 const wallet = require("./routes/wallet");
-
+const uri = process.env.MONGODB_URI;
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 global.__basedir = __dirname;
@@ -32,13 +32,10 @@ app.use(
 evokeRoutes(app);
 background(app);
 mongoose
-  .connect(
-    "mongodb+srv://Farzan:Mongodb@123@cluster0.gkqpe.mongodb.net/NoorNFT?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log("mongodb is connected");
   })
