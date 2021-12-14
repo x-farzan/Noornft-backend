@@ -8,6 +8,7 @@ const { check, validationResult } = require("express-validator");
 
 const User = require("../models/User");
 const controller = require("../Controller/auth");
+const { upload } = require("../middleware/avatarUpload");
 
 // @route    GET api/auth
 // @desc     Get user by token
@@ -16,7 +17,7 @@ const controller = require("../Controller/auth");
 // router.post('/', controller.checkUser)
 
 /* Farzan */
-router.post("/signup", controller.signup);
+router.post("/signup", upload.single('image') , controller.signup);
 router.post("/signin", controller.signin);
 /* Farzan */
 

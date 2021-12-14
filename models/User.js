@@ -66,9 +66,8 @@ const UserSchema = new mongoose.Schema(
       default: null,
     },
 
-    images: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Image",
+    image: {
+      type: String,
     },
 
     role: {
