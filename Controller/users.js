@@ -11,7 +11,10 @@ const fs = require("fs");
 const path = require("path");
 var axios = require("axios");
 const pinataSDK = require("@pinata/sdk");
-const pinata = pinataSDK(process.env.pinatakey1, process.env.pinatakey2);
+const pinata = pinataSDK(
+  "2a43b0773cb246a17bdf",
+  "81a70cf364fd4cd321048de910bfada6698db57655cb0b192df80e8bd7c839f0"
+);
 
 postNewUser = async (req, res) => {
   const errors = validationResult(req);

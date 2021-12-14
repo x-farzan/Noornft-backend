@@ -32,10 +32,13 @@ app.use(
 evokeRoutes(app);
 background(app);
 mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    "mongodb+srv://Farzan:Mongodb@123@cluster0.gkqpe.mongodb.net/NoorNFT?retryWrites=true&w=majority",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => {
     console.log("mongodb is connected");
   })
@@ -73,6 +76,6 @@ app.use("/wallet", wallet);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(process.env.PORT || PORT, () =>
+app.listen(5000, () =>
   console.log(`Server started on port ${PORT} and Domain is ${os.hostname()}`)
 );
