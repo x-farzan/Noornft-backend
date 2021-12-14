@@ -56,8 +56,7 @@ const UserSchema = new mongoose.Schema(
     },
 
     description: {
-      type: Boolean,
-      default: false,
+      type: String,
     },
 
     projectId: {
