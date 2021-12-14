@@ -59,8 +59,8 @@ signup = async (req, res) => {
       "email",
       "password",
       "walletaddress",
-      "username",
       "description",
+      "username",
       "city",
     ],
     req.body
@@ -102,6 +102,9 @@ signup = async (req, res) => {
                       password: hash,
                       address: req.body.walletaddress,
                       role: req.body.role,
+                      description: req.body.description,
+                      city: req.body.city,
+                      username: req.body.username,
                     });
                     user
                       .save()

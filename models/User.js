@@ -41,6 +41,7 @@ const UserSchema = new mongoose.Schema(
 
     city: {
       type: String,
+      required: true,
     },
 
     bio: {
@@ -57,6 +58,7 @@ const UserSchema = new mongoose.Schema(
 
     description: {
       type: String,
+      required: true,
     },
 
     projectId: {
