@@ -74,8 +74,8 @@ app.use("/wallet", wallet);
 // app.use("/api/bids", bids);
 // app.use("/api/search", searchBar);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 
-app.listen(5000, () =>
+app.listen(8080, () =>
   console.log(`Server started on port ${PORT} and Domain is ${os.hostname()}`)
 );
