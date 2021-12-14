@@ -53,16 +53,28 @@ checkUser = async (req, res) => {
 
 /* Farzan */
 signup = async (req, res) => {
+  const imageName = req.file;
   let _errors = userFieldsValidator.userFieldsValidator(
-    ["flname", "email", "password", "walletaddress"],
+    [
+      "flname",
+      "email",
+      "password",
+      "walletaddress",
+      "city",
+      "username",
+      "description",
+    ],
     req.body
   );
   if (_errors.length > 0) {
     res.send(_errors);
   }
 
+  console.log(`REQ BODY : `, req.body);
+
   //checking for the email, if already exists!!
   if (validator.isEmail(req.body.email)) {
+    console.log(`entered`);
     await User.find({ email: req.body.email })
       .exec()
       .then((user) => {
@@ -87,6 +99,7 @@ signup = async (req, res) => {
                       message: "Password is required.",
                     });
                   } else {
+                    console.log(`in else block`);
                     const user = new User({
                       //_id = new mongoose.Types.ObjectId(),
                       flname: req.body.flname,
@@ -94,7 +107,12 @@ signup = async (req, res) => {
                       password: hash,
                       address: req.body.walletaddress,
                       role: req.body.role,
+                      description: req.body.description,
+                      city: req.body.city,
+                      username: req.body.username,
+                      // image: req.file,
                     });
+                    console.log(`displaying user : `, user);
                     user
                       .save()
                       .then((result) => {

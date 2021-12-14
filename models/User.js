@@ -11,10 +11,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
     },
 
-    // name: {
-    //   type: String,
-    //   required: true,
-    // },
+    username: {
+      type: String,
+      required: true,
+    },
 
     email: {
       type: String,
@@ -39,6 +39,11 @@ const UserSchema = new mongoose.Schema(
       // unique: true
     },
 
+    city: {
+      type: String,
+      required: true,
+    },
+
     bio: {
       type: String,
       // required: true,
@@ -51,19 +56,18 @@ const UserSchema = new mongoose.Schema(
       unique: true,
     },
 
-    // createProject: {
-    //   type: Boolean,
-    //   default: false,
-    // },
+    description: {
+      type: String,
+      required: true,
+    },
 
     projectId: {
       type: Number,
       default: null,
     },
 
-    images: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Image",
+    image: {
+      type: String,
     },
 
     role: {
