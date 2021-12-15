@@ -256,13 +256,71 @@ router.route("/postnftidandprice/:id/:price").post(async (req, res) => {
   });
 });
 
-router.route("/getNftIdAndPrice/:id").get(async (req, res) => {
-  _id = req.params.id;
+router.route("/getNftIdAndPrice").get(async (req, res) => {
+  // _id = req.params.id;
   // price = req.params.price;
-  const response = await controller.getNftIdAndPrice(_id);
-  return res.json({
-    msg: response,
-  });
+  // nftProjectId = req.params.nftProjectId;
+  try {
+    let allNfts = [];
+    let projectIds = [];
+    let count = 0;
+    const getAllNftsProjectId = await controller.getAllNftsProjectId();
+    // let tmp = [];
+    console.log(`heere : `, getAllNftsProjectId);
+
+    getAllNftsProjectId.map(async (element) => {
+      if (element.free !== 0) {
+        console.log(element.id);
+        projectIds.push(element.id);
+      }
+    });
+    console.log(projectIds);
+
+    // return
+    // for (let i = 0; i < projectIds.length; i++) {
+    //   console.log("I am in loop");
+    //   const allNFTs = await controller.getAllNfts(projectIds[i]);
+    //   console.log("all NFTS", allNFTs[i]?.id);
+    //   await controller.getNftIdAndPrice(allNFTs[i]?.id);
+    // }
+    projectIds.forEach(async (element) => {
+      await controller
+        .getAllNfts(element)
+        .then(async (result) => {
+          count++;
+          // await result.forEach(async (item) => {
+
+            for(let i=0;i<result.length;i++){
+
+
+
+            // item.pid = element;
+            const tmp = await controller.getNftIdAndPrice(result[i].id);
+            console.log(`tmp : `, tmp);
+            allNfts.push(tmp);
+            // console.log(`tmp : `, tmp);
+            // item.price = price;
+            // console.log("result ->->->: ", result);
+          // });
+            }
+          // console.log(tmp);
+          console.log("All NFTS ", allNfts);
+
+          if (count == projectIds.length) {
+            return res.json(allNfts);
+          }
+        })
+        .catch((error) => {
+          return res.json({
+            error: error.message,
+          });
+        });
+    });
+  } catch (err) {
+    return res.json({ err: err.message });
+  }
+  // const response = await controller.getNftIdAndPrice();
+  // return res.json(response);
 });
 
 module.exports = router;
