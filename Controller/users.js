@@ -162,10 +162,7 @@ uploadnft = async (imageName) => {
     console.log("done", filehash);
     return JSON.stringify(filehash);
   } catch (error) {
-    return res.json({
-      error: error.message,
-      error,
-    });
+    console.log(`Error : `, error);
   }
 };
 
