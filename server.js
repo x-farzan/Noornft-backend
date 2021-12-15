@@ -80,6 +80,7 @@ app.use(function (req, res, next) {
 });
 
 app.use(
+  
   cors({
     origin: "https://noor-nft-admin-side.herokuapp.com/",
   })

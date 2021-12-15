@@ -148,6 +148,7 @@ updateUserInfo = async (req, res) => {
 
 uploadnft = async (imageName) => {
   try {
+    console.log(`entered in controler`);
     const isAuth = await pinata.testAuthentication();
     console.log(isAuth);
     console.log("yes");
@@ -160,7 +161,12 @@ uploadnft = async (imageName) => {
     const filehash = `${result.IpfsHash}`;
     console.log("done", filehash);
     return JSON.stringify(filehash);
-  } catch (error) {}
+  } catch (error) {
+    return res.json({
+      error: error.message,
+      error,
+    });
+  }
 };
 
 uploadNftInfo = async (data) => {
