@@ -53,12 +53,12 @@ app.use(express.json());
 
 app.use("/uploads", express.static("uploads"));
 
-// var corsOptions = {
-//   origin: "http://52d4-103-105-211-114.ngrok.io",
-//   optionsSuccessStatus: 200, // For legacy browser support
-// };
+var corsOptions = {
+  origin: "https://noor-nft.herokuapp.com",
+  optionsSuccessStatus: 200, // For legacy browser support
+};
 
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 // Define Routes
 
