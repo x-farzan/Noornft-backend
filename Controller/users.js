@@ -419,42 +419,47 @@ getAllNftsOfProject = async (nftProjectId) => {
 
 postNftIdAndPrice = (_id, price) => {
   try {
-    const response = Nft.findOne({ _id: _id })
+    const response = Nft.find({ _id: _id })
       .then((result) => {
-        console.log(`result : `, result);
-        if (result) {
-          return `Already available`;
+        if (result.length > 0) {
+          console.log(`response : `, result);
+          result[0].price = price;
+          result[0].save();
+          console.log(`result : `, result);
+          return `posteddd`;
         }
         const nft = new Nft({
           _id: _id,
           price: price,
         });
-        console.log(`nft`, nft);
         nft.save();
-        return `Posted`;
+        return `posted`;
       })
       .catch((error) => {
         return res.json(error);
       });
-    return response;
   } catch (error) {
     return res.json(error);
   }
 };
 
-getNftIdAndPrice = (_id) => {
+getNftIdAndPrice = async (_id) => {
   try {
-    const response = Nft.findOne({ _id: _id })
+    const response = await Nft.findOne({ _id: _id })
       .then((result) => {
         console.log(`result : `, result);
         if (result) {
-          return result;
+          return {
+            _id: _id,
+            price: result.price,
+          };
         }
-        return `_id not available`;
+        return `_id's not available`;
       })
       .catch((error) => {
         return res.json(error);
       });
+    // console.log(`getting price : `, response);
     return response;
   } catch (error) {
     return res.json(error);

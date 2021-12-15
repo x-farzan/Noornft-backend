@@ -290,10 +290,7 @@ router.route("/getNftIdAndPrice").get(async (req, res) => {
           count++;
           // await result.forEach(async (item) => {
 
-            for(let i=0;i<result.length;i++){
-
-
-
+          for (let i = 0; i < result.length; i++) {
             // item.pid = element;
             const tmp = await controller.getNftIdAndPrice(result[i].id);
             console.log(`tmp : `, tmp);
@@ -301,8 +298,8 @@ router.route("/getNftIdAndPrice").get(async (req, res) => {
             // console.log(`tmp : `, tmp);
             // item.price = price;
             // console.log("result ->->->: ", result);
-          // });
-            }
+            // });
+          }
           // console.log(tmp);
           console.log("All NFTS ", allNfts);
 
