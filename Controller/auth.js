@@ -177,19 +177,19 @@ signin = async (req, res) => {
       // comparing passwords and assigning token in user's db
       bCrypt.compare(req.body.password, user[0].password, (err, result) => {
         if (result) {
-          const token = jwt.sign(
-            {
-              id: user[0]._id,
-              email: user[0].email,
-              address: user[0].address,
-              role: user[0].role,
-              reqStatus: user[0].reqStatus,
-            },
-            process.env.JWT_KEY,
-            { expiresIn: "24h" }
-          );
-          user[0].token = token;
-          user[0].save();
+          // const token = jwt.sign(
+          //   {
+          //     id: user[0]._id,
+          //     email: user[0].email,
+          //     address: user[0].address,
+          //     role: user[0].role,
+          //     reqStatus: user[0].reqStatus,
+          //   },
+          //   process.env.JWT_KEY,
+          //   { expiresIn: "24h" }
+          // );
+          // user[0].token = token;
+          // user[0].save();
           //req.token = token;
           return res.status(200).json({
             message: "Auth successfull",
