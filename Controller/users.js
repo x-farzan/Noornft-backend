@@ -5,6 +5,7 @@ const { check, validationResult } = require("express-validator");
 const normalize = require("normalize-url");
 const upload = require("../middleware/fileUpload");
 const User = require("../models/User");
+const Nft = require("../models/nft");
 require("dotenv").config();
 const userFieldsValidator = require("../helpers/userFieldsValidator");
 const fs = require("fs");
@@ -416,6 +417,50 @@ getAllNftsOfProject = async (nftProjectId) => {
   return response;
 };
 
+postNftIdAndPrice = (_id, price) => {
+  try {
+    const response = Nft.findOne({ _id: _id })
+      .then((result) => {
+        console.log(`result : `, result);
+        if (result) {
+          return `Already available`;
+        }
+        const nft = new Nft({
+          _id: _id,
+          price: price,
+        });
+        console.log(`nft`, nft);
+        nft.save();
+        return `Posted`;
+      })
+      .catch((error) => {
+        return res.json(error);
+      });
+    return response;
+  } catch (error) {
+    return res.json(error);
+  }
+};
+
+getNftIdAndPrice = (_id) => {
+  try {
+    const response = Nft.findOne({ _id: _id })
+      .then((result) => {
+        console.log(`result : `, result);
+        if (result) {
+          return result;
+        }
+        return `_id not available`;
+      })
+      .catch((error) => {
+        return res.json(error);
+      });
+    return response;
+  } catch (error) {
+    return res.json(error);
+  }
+};
+
 module.exports = {
   postNewUser,
   userById,
@@ -431,4 +476,6 @@ module.exports = {
   getAllNftsProjectId,
   getAllNfts,
   getAllNftsOfProject,
+  postNftIdAndPrice,
+  getNftIdAndPrice,
 };
