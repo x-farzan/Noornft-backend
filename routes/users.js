@@ -247,4 +247,22 @@ router.route("/getnftsofproject/:nftId").get(async (req, res) => {
   }
 });
 
+router.route("/postnftidandprice/:id/:price").post(async (req, res) => {
+  _id = req.params.id;
+  price = req.params.price;
+  const response = await controller.postNftIdAndPrice(_id, price);
+  return res.json({
+    msg: response,
+  });
+});
+
+router.route("/getNftIdAndPrice/:id").get(async (req, res) => {
+  _id = req.params.id;
+  // price = req.params.price;
+  const response = await controller.getNftIdAndPrice(_id);
+  return res.json({
+    msg: response,
+  });
+});
+
 module.exports = router;
