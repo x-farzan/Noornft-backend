@@ -445,7 +445,6 @@ postNftIdAndPrice = (_id, price) => {
 
 getNftIdAndPrice = async (_id) => {
   try {
-    let arr1 = [];
     const response = await Nft.findOne({ _id: _id })
       .then((result) => {
         console.log(`result : `, result);
