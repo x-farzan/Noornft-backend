@@ -5,16 +5,13 @@ const mongoose = require("mongoose");
 const app = express();
 const users = require("./routes/users");
 const admin = require("./routes/admin");
-const bids = require("./routes/bids");
 const auth = require("./routes/auth");
-const searchBar = require("./routes/searchBar");
-const upload = require("./routes/upload.route.js");
 const background = require("./routes/BackgroundImages");
 const bodyparser = require("body-parser");
 require("dotenv").config();
 const os = require("os");
 const wallet = require("./routes/wallet");
-// const URI = process.env.MONDODB_URI;
+const collections = require("./routes/collections");
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
@@ -79,7 +76,6 @@ app.use(function (req, res, next) {
 });
 
 app.use(
-  
   cors({
     origin: "https://noor-nft-admin-side.herokuapp.com/",
   })
@@ -91,6 +87,7 @@ app.use("/", auth);
 app.use("/admin", admin);
 app.use("/users", users);
 app.use("/wallet", wallet);
+app.use("/collections", collections);
 
 /* Farzan */
 
