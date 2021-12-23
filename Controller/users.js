@@ -469,6 +469,61 @@ getNftIdAndPrice = async (_id) => {
   }
 };
 
+profilePictureUpload = async (req, res) => {
+  // const imageUpload = req.file.path;
+  const response = await User.findOne({ _id: req.userData.id });
+  if (!response) {
+    return res.json({
+      success: false,
+      message: `User doesn't exists.`,
+    });
+  }
+  console.log(response);
+  if (response.image) {
+    return res.json({
+      success: false,
+      message: `Image already uploaded.`,
+    });
+  }
+  response.image = req.file.path;
+  await response.save();
+  return res.json({
+    success: false,
+    message: `Profile picture uploaded successfully.`,
+  });
+};
+
+profilePictureEdit = async (req, res) => {
+  const response = await User.findOne({ _id: req.userData.id });
+  if (!response.image) {
+    return res.json({
+      success: false,
+      message: `Please upload the image first.`,
+    });
+  }
+  response.image = req.file.path;
+  await response.save();
+  return res.json({
+    success: true,
+    message: `Image edited successfully..`,
+  });
+};
+
+getProfilePicture = async (req, res) => {
+  console.log(`entered`);
+  const response = await User.findOne({ _id: req.userData.id });
+  if (response) {
+    return res.json({
+      success: true,
+      message: response.image,
+    });
+  }
+  return res.json({
+    success: false,
+    message: `Image not available.`,
+  });
+};
+
 module.exports = {
   postNewUser,
   userById,
@@ -486,4 +541,7 @@ module.exports = {
   getAllNftsOfProject,
   postNftIdAndPrice,
   getNftIdAndPrice,
+  profilePictureUpload,
+  profilePictureEdit,
+  getProfilePicture,
 };

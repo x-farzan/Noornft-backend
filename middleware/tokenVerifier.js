@@ -30,6 +30,7 @@ const bCrypt = require("bcryptjs");
 
 exports.tokenVerifier = (req, res, next) => {
   try {
+    console.log(`in tokenV`);
     const token = req.headers.authorization.split(" ")[1];
     jwt.verify(token, process.env.JWT_KEY, (err, auth) => {
       if (auth) {

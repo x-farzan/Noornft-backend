@@ -20,11 +20,15 @@ mongoose
 
 const permissions = [
   new Permissions({
-    name: "create-collection",
+    name: "create-collections",
     group: "artist",
   }),
   new Permissions({
-    name: "view-collection",
+    name: "view-collections",
+    group: "artist",
+  }),
+  new Permissions({
+    name: "delete-collections",
     group: "artist",
   }),
 ];

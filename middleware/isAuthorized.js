@@ -18,6 +18,9 @@ exports.isAuthorized = (req, res, next) => {
     case "POST":
       str = `create-${baseUrl}`;
       break;
+    case "DELETE":
+      str = `delete-${baseUrl}`;
+      break;
     default:
       return res.json({
         message: `Invalid request type`,
@@ -33,7 +36,7 @@ exports.isAuthorized = (req, res, next) => {
           message: "Email not found.",
         });
       }
-      console.log( user[0]);
+      console.log(user[0]);
       const role_id = user[0].role;
       //FINDING ROLES
       Roles.find({ name: role_id })

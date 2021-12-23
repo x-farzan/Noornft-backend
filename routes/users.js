@@ -1,10 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const config = require("config");
-const { check, validationResult } = require("express-validator");
-const normalize = require("normalize-url");
-// const upload = require("../middleware/fileUpload");
-const User = require("../models/User");
 const controller = require("../Controller/users");
 const { tokenVerifier } = require("../middleware/tokenVerifier");
 const { upload } = require("../middleware/avatarUpload");
@@ -319,5 +314,20 @@ router.route("/getNftIdAndPrice").get(async (req, res) => {
   // const response = await controller.getNftIdAndPrice();
   // return res.json(response);
 });
+
+router.get("/get/profile/picture", tokenVerifier, controller.getProfilePicture);
+
+router
+  .route("/profile/picture")
+  .post(
+    tokenVerifier,
+    upload.single("imageUpload"),
+    controller.profilePictureUpload
+  )
+  .put(
+    tokenVerifier,
+    upload.single("imageUpload"),
+    controller.profilePictureEdit
+  );
 
 module.exports = router;
