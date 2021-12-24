@@ -13,6 +13,14 @@ const os = require("os");
 const wallet = require("./routes/wallet");
 const collections = require("./routes/collections");
 
+// for CORS
+app.use(cors());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+
+  next();
+});
+
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 global.__basedir = __dirname;
@@ -20,7 +28,6 @@ global.__basedir = __dirname;
 app.use(express.static(path.join(__dirname, "uploads")));
 
 const evokeRoutes = require("./routes/upload.route");
-// app.use(cors());
 app.use(
   express.urlencoded({
     extended: true,
@@ -50,36 +57,35 @@ app.use(express.json());
 
 app.use("/uploads", express.static("uploads"));
 
-app.use(cors());
-app.options("*", cors());
-app.use(function (req, res, next) {
-  // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", "*");
+// app.use(function (req, res, next) {
+//   // Website you wish to allow to connect
+//   res.setHeader("Access-Control-Allow-Origin", "*");
 
-  // Request methods you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
+//   // Request methods you wish to allow
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+//   );
 
-  // Request headers you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type"
-  );
+//   // Request headers you wish to allow
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "X-Requested-With,content-type"
+//   );
 
-  // Set to true if you need the website to include cookies in the requests sent// to the API (e.g. in case you use sessions)
-  res.setHeader("Access-Control-Allow-Credentials", true);
+//   // Set to true if you need the website to include cookies in the requests sent// to the API (e.g. in case you use sessions)
+//   res.setHeader("Access-Control-Allow-Credentials", true);
 
-  // Pass to next layer of middlewarenext();
-  next();
-});
+//   // Pass to next layer of middlewarenext();
+//   next();
+// });
 
-app.use(
-  cors({
-    origin: "https://noor-nft-admin-side.herokuapp.com/",
-  })
-);
+// app.use(
+//   cors({
+//     origin: "https://noor-nft-admin-side.herokuapp.com/",
+//   })
+// );
+
 // Define Routes
 
 /* Farzan */

@@ -330,4 +330,8 @@ router
     controller.profilePictureEdit
   );
 
+router.get("/logout", tokenVerifier, controller.logout);
+
+router.put("/follow", tokenVerifier, controller.follow);
+
 module.exports = router;

@@ -470,7 +470,13 @@ getNftIdAndPrice = async (_id) => {
 };
 
 profilePictureUpload = async (req, res) => {
-  // const imageUpload = req.file.path;
+  if (!req.file) {
+    return res.json({
+      success: false,
+      message: `Please upload a file.`,
+    });
+  }
+
   const response = await User.findOne({ _id: req.userData.id });
   if (!response) {
     return res.json({
@@ -485,6 +491,7 @@ profilePictureUpload = async (req, res) => {
       message: `Image already uploaded.`,
     });
   }
+
   response.image = req.file.path;
   await response.save();
   return res.json({
@@ -494,6 +501,13 @@ profilePictureUpload = async (req, res) => {
 };
 
 profilePictureEdit = async (req, res) => {
+  if (!req.file) {
+    return res.json({
+      success: false,
+      message: `Please upload a file.`,
+    });
+  }
+
   const response = await User.findOne({ _id: req.userData.id });
   if (!response.image) {
     return res.json({
@@ -510,7 +524,6 @@ profilePictureEdit = async (req, res) => {
 };
 
 getProfilePicture = async (req, res) => {
-  console.log(`entered`);
   const response = await User.findOne({ _id: req.userData.id });
   if (response) {
     return res.json({
@@ -523,6 +536,28 @@ getProfilePicture = async (req, res) => {
     message: `Image not available.`,
   });
 };
+
+logout = async (req, res) => {
+  const response = await User.findOne({ _id: req.userData.id });
+  if (response) {
+    response.token = "";
+    console.log(`response : `, response);
+    await response.save();
+    return res.json({
+      success: true,
+      message: `Logged out successfully.`,
+    });
+  } else {
+    return res.json({
+      success: false,
+      message: `Not a user.`,
+    });
+  }
+};
+
+follow = async (req,res) => {
+  
+}
 
 module.exports = {
   postNewUser,
@@ -544,4 +579,6 @@ module.exports = {
   profilePictureUpload,
   profilePictureEdit,
   getProfilePicture,
+  logout,
+  follow,
 };
