@@ -332,6 +332,8 @@ router
 
 router.get("/logout", tokenVerifier, controller.logout);
 
-router.put("/follow", tokenVerifier, controller.follow);
+router.put("/follow/:id", tokenVerifier, controller.follow);
+
+router.put("/unfollow/:id", tokenVerifier, controller.unFollow);
 
 module.exports = router;
