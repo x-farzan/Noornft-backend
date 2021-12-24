@@ -12,6 +12,7 @@ const fs = require("fs");
 const path = require("path");
 var axios = require("axios");
 const pinataSDK = require("@pinata/sdk");
+const { response } = require("express");
 const pinata = pinataSDK(process.env.pinatakey1, process.env.pinatakey2);
 
 postNewUser = async (req, res) => {
@@ -555,9 +556,104 @@ logout = async (req, res) => {
   }
 };
 
-follow = async (req,res) => {
-  
-}
+follow = async (req, res) => {
+  console.log(`req.params.id : `, req.params.id);
+  const responseOne = await User.findOne({ _id: req.params.id });
+  if (!responseOne) {
+    return res.json({
+      success: false,
+      message: `Not a user.`,
+    });
+  }
+
+  if (responseOne.role !== "artist") {
+    return res.json({
+      success: false,
+      message: `You cannot follow user other than artist.`,
+    });
+  }
+
+  for (let i = 0; i < responseOne.followers.length; i++) {
+    if (responseOne.followers[i] == req.userData.id) {
+      return res.json({
+        success: false,
+        message: `You are already a follower of "${responseOne.flname}"`,
+      });
+    }
+  }
+  responseOne.followers.push(req.userData.id);
+  await responseOne.save();
+
+  const responseTwo = await User.findOne({ _id: req.userData.id });
+  if (!responseTwo) {
+    return res.json({
+      success: false,
+      message: `Not a user.`,
+    });
+  }
+
+  responseTwo.following.push(req.params.id);
+  await responseTwo.save();
+  return res.json({
+    success: true,
+    message: `You are now following "${responseOne.flname}"`,
+  });
+};
+
+unFollow = async (req, res) => {
+  console.log(`req.params.id : `, req.params.id);
+  const responseOne = await User.findOne({ _id: req.params.id });
+  if (!responseOne) {
+    return res.json({
+      success: false,
+      message: `Not a user.`,
+    });
+  }
+
+  if (responseOne.role !== "artist") {
+    return res.json({
+      success: false,
+      message: `You cannot unfollow user other than artist.`,
+    });
+  }
+
+  if (responseOne.followers.length == 0) {
+    return res.json({
+      success: false,
+      message: `You are not a follower of "${responseOne.flname}"`,
+    });
+  }
+
+  for (let i = 0; i < responseOne.followers.length; i++) {
+    console.log(`In the loop`);
+    console.log(typeof responseOne.followers[i]);
+    console.log(req.userData.id);
+    if (responseOne.followers[i] != req.userData.id) {
+      return res.json({
+        success: false,
+        message: `You are not a follower of "${responseOne.flname}"`,
+      });
+    }
+  }
+
+  responseOne.followers.pop(req.userData.id);
+  await responseOne.save();
+
+  const responseTwo = await User.findOne({ _id: req.userData.id });
+  if (!responseTwo) {
+    return res.json({
+      success: false,
+      message: `Not a user.`,
+    });
+  }
+
+  responseTwo.following.pop(req.params.id);
+  await responseTwo.save();
+  return res.json({
+    success: true,
+    message: `You are now unfollowing "${responseOne.flname}"`,
+  });
+};
 
 module.exports = {
   postNewUser,
@@ -581,4 +677,5 @@ module.exports = {
   getProfilePicture,
   logout,
   follow,
+  unFollow,
 };
