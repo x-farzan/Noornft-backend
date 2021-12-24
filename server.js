@@ -5,16 +5,21 @@ const mongoose = require("mongoose");
 const app = express();
 const users = require("./routes/users");
 const admin = require("./routes/admin");
-const bids = require("./routes/bids");
 const auth = require("./routes/auth");
-const searchBar = require("./routes/searchBar");
-const upload = require("./routes/upload.route.js");
 const background = require("./routes/BackgroundImages");
 const bodyparser = require("body-parser");
 require("dotenv").config();
 const os = require("os");
 const wallet = require("./routes/wallet");
-// const URI = process.env.MONDODB_URI;
+const collections = require("./routes/collections");
+
+// for CORS
+app.use(cors());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+
+  next();
+});
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
@@ -23,7 +28,6 @@ global.__basedir = __dirname;
 app.use(express.static(path.join(__dirname, "uploads")));
 
 const evokeRoutes = require("./routes/upload.route");
-// app.use(cors());
 app.use(
   express.urlencoded({
     extended: true,
@@ -53,8 +57,9 @@ app.use(express.json());
 
 app.use("/uploads", express.static("uploads"));
 
-app.use(cors());
-app.options("*", cors());
+// app.use(function (req, res, next) {
+//   // Website you wish to allow to connect
+//   res.setHeader("Access-Control-Allow-Origin", "*");
 
 app.use((req, res, next) => {
   //Enabling CORS
@@ -72,6 +77,31 @@ app.use(
     origin: "*",
   })
 );
+//   // Request methods you wish to allow
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+//   );
+
+//   // Request headers you wish to allow
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "X-Requested-With,content-type"
+//   );
+
+//   // Set to true if you need the website to include cookies in the requests sent// to the API (e.g. in case you use sessions)
+//   res.setHeader("Access-Control-Allow-Credentials", true);
+
+//   // Pass to next layer of middlewarenext();
+//   next();
+// });
+
+// app.use(
+//   cors({
+//     origin: "https://noor-nft-admin-side.herokuapp.com/",
+//   })
+// );
+
 // Define Routes
 
 /* Farzan */
@@ -79,6 +109,7 @@ app.use("/", auth);
 app.use("/admin", admin);
 app.use("/users", users);
 app.use("/wallet", wallet);
+app.use("/collections", collections);
 
 /* Farzan */
 

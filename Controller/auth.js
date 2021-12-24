@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bCrypt = require("bcryptjs");
-const auth = require("../middleware/auth");
+const auth = require("../middleware/tokenVerifier");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 const { check, validationResult } = require("express-validator");
@@ -53,7 +53,7 @@ checkUser = async (req, res) => {
 
 /* Farzan */
 signup = async (req, res) => {
-  const imageName = req.file;
+  // const imageName = req.file;
   let _errors = userFieldsValidator.userFieldsValidator(
     [
       "flname",
@@ -70,7 +70,7 @@ signup = async (req, res) => {
     res.send(_errors);
   }
 
-  console.log(`REQ BODY : `, req.body);
+  console.log(`REQ BODY : `, req);
 
   //checking for the email, if already exists!!
   if (validator.isEmail(req.body.email)) {
@@ -177,26 +177,27 @@ signin = async (req, res) => {
       // comparing passwords and assigning token in user's db
       bCrypt.compare(req.body.password, user[0].password, (err, result) => {
         if (result) {
-          // const token = jwt.sign(
-          //   {
-          //     id: user[0]._id,
-          //     email: user[0].email,
-          //     address: user[0].address,
-          //     role: user[0].role,
-          //     reqStatus: user[0].reqStatus,
-          //   },
-          //   process.env.JWT_KEY,
-          //   { expiresIn: "24h" }
-          // );
-          // user[0].token = token;
-          // user[0].save();
-          //req.token = token;
+          const token = jwt.sign(
+            {
+              id: user[0]._id,
+              email: user[0].email,
+              address: user[0].address,
+              role: user[0].role,
+              reqStatus: user[0].reqStatus,
+            },
+            process.env.JWT_KEY,
+            { expiresIn: "24h" }
+          );
+          user[0].token = token;
+          user[0].save();
+          // req.token = token;
           return res.status(200).json({
             message: "Auth successfull",
             _id: user[0]._id,
             role: user[0].role,
             walletaddress: user[0].address,
             projectId: user[0].projectId,
+            token: user[0].token,
           });
         } else {
           return res.status(401).json({

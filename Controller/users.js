@@ -148,6 +148,7 @@ updateUserInfo = async (req, res) => {
 
 uploadnft = async (imageName) => {
   try {
+    console.log(`entered in controler`);
     const isAuth = await pinata.testAuthentication();
     console.log(isAuth);
     console.log("yes");
@@ -160,7 +161,9 @@ uploadnft = async (imageName) => {
     const filehash = `${result.IpfsHash}`;
     console.log("done", filehash);
     return JSON.stringify(filehash);
-  } catch (error) {}
+  } catch (error) {
+    console.log(`Error : `, error);
+  }
 };
 
 uploadNftInfo = async (data) => {
@@ -466,6 +469,96 @@ getNftIdAndPrice = async (_id) => {
   }
 };
 
+profilePictureUpload = async (req, res) => {
+  if (!req.file) {
+    return res.json({
+      success: false,
+      message: `Please upload a file.`,
+    });
+  }
+
+  const response = await User.findOne({ _id: req.userData.id });
+  if (!response) {
+    return res.json({
+      success: false,
+      message: `User doesn't exists.`,
+    });
+  }
+  console.log(response);
+  if (response.image) {
+    return res.json({
+      success: false,
+      message: `Image already uploaded.`,
+    });
+  }
+
+  response.image = req.file.path;
+  await response.save();
+  return res.json({
+    success: false,
+    message: `Profile picture uploaded successfully.`,
+  });
+};
+
+profilePictureEdit = async (req, res) => {
+  if (!req.file) {
+    return res.json({
+      success: false,
+      message: `Please upload a file.`,
+    });
+  }
+
+  const response = await User.findOne({ _id: req.userData.id });
+  if (!response.image) {
+    return res.json({
+      success: false,
+      message: `Please upload the image first.`,
+    });
+  }
+  response.image = req.file.path;
+  await response.save();
+  return res.json({
+    success: true,
+    message: `Image edited successfully..`,
+  });
+};
+
+getProfilePicture = async (req, res) => {
+  const response = await User.findOne({ _id: req.userData.id });
+  if (response) {
+    return res.json({
+      success: true,
+      message: response.image,
+    });
+  }
+  return res.json({
+    success: false,
+    message: `Image not available.`,
+  });
+};
+
+logout = async (req, res) => {
+  const response = await User.findOne({ _id: req.userData.id });
+  if (response) {
+    response.token = "";
+    console.log(`response : `, response);
+    await response.save();
+    return res.json({
+      success: true,
+      message: `Logged out successfully.`,
+    });
+  } else {
+    return res.json({
+      success: false,
+      message: `Not a user.`,
+    });
+  }
+};
+
+follow = async (req,res) => {
+  
+}
+
 module.exports = {
   postNewUser,
   userById,
@@ -483,4 +576,9 @@ module.exports = {
   getAllNftsOfProject,
   postNftIdAndPrice,
   getNftIdAndPrice,
+  profilePictureUpload,
+  profilePictureEdit,
+  getProfilePicture,
+  logout,
+  follow,
 };
