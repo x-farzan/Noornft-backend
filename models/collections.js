@@ -3,12 +3,12 @@ const image = require("./Image");
 
 const collectionSchema = new mongoose.Schema(
   {
-    collectionName:{
-        type:String,
+    collectionName: {
+      type: String,
     },
-    artist:{
-        type:String,
-    }
+    artist: {
+      type: mongoose.Schema.Types.ObjectId,
+    },
   },
   {
     timestamps: true,

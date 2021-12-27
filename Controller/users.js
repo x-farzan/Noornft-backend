@@ -471,34 +471,39 @@ getNftIdAndPrice = async (_id) => {
 };
 
 profilePictureUpload = async (req, res) => {
-  if (!req.file) {
-    return res.json({
-      success: false,
-      message: `Please upload a file.`,
-    });
-  }
+  try {
+    // console.log(`path : `, req.file.path);
+    if (!req.file) {
+      return res.json({
+        success: false,
+        message: `Please upload a file.`,
+      });
+    }
 
-  const response = await User.findOne({ _id: req.userData.id });
-  if (!response) {
-    return res.json({
-      success: false,
-      message: `User doesn't exists.`,
-    });
-  }
-  console.log(response);
-  if (response.image) {
-    return res.json({
-      success: false,
-      message: `Image already uploaded.`,
-    });
-  }
+    const response = await User.findOne({ _id: req.userData.id });
+    if (!response) {
+      return res.json({
+        success: false,
+        message: `User doesn't exists.`,
+      });
+    }
+    console.log(response);
+    // if (response.image) {
+    //   return res.json({
+    //     success: false,
+    //     message: `Image already uploaded.`,
+    //   });
+    // }
 
-  response.image = req.file.path;
-  await response.save();
-  return res.json({
-    success: false,
-    message: `Profile picture uploaded successfully.`,
-  });
+    response.image = req.file.path;
+    await response.save();
+    return res.json({
+      success: true,
+      message: `Profile picture uploaded successfully.`,
+    });
+  } catch (error) {
+    return res.json({ error: error });
+  }
 };
 
 profilePictureEdit = async (req, res) => {
@@ -566,6 +571,13 @@ follow = async (req, res) => {
     });
   }
 
+  if (req.params.id == req.userData.id) {
+    return res.json({
+      success: false,
+      message: `User cannot follow himself.`,
+    });
+  }
+
   if (responseOne.role !== "artist") {
     return res.json({
       success: false,
@@ -601,12 +613,20 @@ follow = async (req, res) => {
 };
 
 unFollow = async (req, res) => {
+  let flag;
   console.log(`req.params.id : `, req.params.id);
   const responseOne = await User.findOne({ _id: req.params.id });
   if (!responseOne) {
     return res.json({
       success: false,
       message: `Not a user.`,
+    });
+  }
+
+  if (req.params.id == req.userData.id) {
+    return res.json({
+      success: false,
+      message: `User cannot follow himself.`,
     });
   }
 
@@ -626,34 +646,73 @@ unFollow = async (req, res) => {
 
   for (let i = 0; i < responseOne.followers.length; i++) {
     console.log(`In the loop`);
-    console.log(typeof responseOne.followers[i]);
+    console.log(responseOne.followers[i]);
     console.log(req.userData.id);
-    if (responseOne.followers[i] != req.userData.id) {
-      return res.json({
-        success: false,
-        message: `You are not a follower of "${responseOne.flname}"`,
-      });
+    if (responseOne.followers[i] == req.userData.id) {
+      flag = true;
+      break;
+    } else {
+      flag = false;
     }
   }
 
-  responseOne.followers.pop(req.userData.id);
-  await responseOne.save();
+  if (flag) {
+    console.log(`here`);
+    responseOne.followers.pull(req.userData.id);
+    await responseOne.save();
 
-  const responseTwo = await User.findOne({ _id: req.userData.id });
-  if (!responseTwo) {
+    const responseTwo = await User.findOne({ _id: req.userData.id });
+    if (!responseTwo) {
+      return res.json({
+        success: false,
+        message: `Not a user.`,
+      });
+    }
+
+    responseTwo.following.pull(req.params.id);
+    await responseTwo.save();
+    return res.json({
+      success: true,
+      message: `You are now unfollowing "${responseOne.flname}"`,
+    });
+  } else {
     return res.json({
       success: false,
-      message: `Not a user.`,
+      message: `You are not a follower of "${responseOne.flname}"`,
     });
   }
+};
 
-  responseTwo.following.pop(req.params.id);
-  await responseTwo.save();
+getFollowersList = async (req, res) => {
+  let results = [];
+  const response = await User.findOne({ _id: req.userData.id });
+  console.log(response.followers);
+  for (let i = 0; i < response.followers.length; i++) {
+    const result = await User.findOne({ _id: response.followers[i] });
+    if (!result) {
+      return res.json({
+        success: false,
+        message: `User not exists.`,
+      });
+    }
+    results.push({ _id: result._id, name: result.flname });
+  }
   return res.json({
     success: true,
-    message: `You are now unfollowing "${responseOne.flname}"`,
+    results,
   });
 };
+
+// topAuthors = async (req, res) => {
+//   const topArtists = [];
+//   const getArtists = await User.find();
+//   for (let i = 0; i < getArtists.length; i++) {
+//     topArtists.push(getArtists[i].followers);
+//   }
+//   return res.json({
+//     topArtists,
+//   });
+// };
 
 module.exports = {
   postNewUser,
@@ -678,4 +737,6 @@ module.exports = {
   logout,
   follow,
   unFollow,
+  getFollowersList,
+  // topAuthors,
 };

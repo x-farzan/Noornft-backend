@@ -318,22 +318,29 @@ router.route("/getNftIdAndPrice").get(async (req, res) => {
 router.get("/get/profile/picture", tokenVerifier, controller.getProfilePicture);
 
 router
-  .route("/profile/picture")
+  .route("/upload/profile/picture")
   .post(
     tokenVerifier,
     upload.single("imageUpload"),
     controller.profilePictureUpload
-  )
-  .put(
-    tokenVerifier,
-    upload.single("imageUpload"),
-    controller.profilePictureEdit
   );
+
+// router
+//   .route("/edit/profile/picture")
+//   .put(
+//     tokenVerifier,
+//     upload.single("imageUpload"),
+//     controller.profilePictureEdit
+//   );
 
 router.get("/logout", tokenVerifier, controller.logout);
 
 router.put("/follow/:id", tokenVerifier, controller.follow);
 
 router.put("/unfollow/:id", tokenVerifier, controller.unFollow);
+
+router.get("/followers", tokenVerifier, controller.getFollowersList);
+
+// router.get("/top/artists", tokenVerifier, controller.topAuthors);
 
 module.exports = router;
