@@ -4,9 +4,9 @@ const Permissions = require("../models/permissions");
 require("dotenv").config();
 
 exports.isAuthorized = (req, res, next) => {
-  console.log(`I'm in`);
   const reqType = req.method;
   let baseUrl = req.baseUrl;
+  console.log(`base-url: `, baseUrl);
   baseUrl = baseUrl.substr(1);
   var str = undefined;
   var perm = [];
@@ -48,6 +48,13 @@ exports.isAuthorized = (req, res, next) => {
             });
           }
           const permissions = role[0].permission;
+
+          if (permissions.length == 0) {
+            return res.status(401).json({
+              message: "permissions not found.",
+            });
+          }
+
           for (var i = 0; i < permissions.length; i++) {
             Permissions.find({ _id: permissions[i] })
               .exec()
@@ -66,6 +73,7 @@ exports.isAuthorized = (req, res, next) => {
                     perm: perm,
                   };
                   console.log(`here : `, req.perm);
+                  console.log(`on next`);
                   next();
                 }
               })

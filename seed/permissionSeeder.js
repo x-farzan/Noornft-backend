@@ -31,6 +31,14 @@ const permissions = [
     name: "delete-collections",
     group: "artist",
   }),
+  new Permissions({
+    name: "create-nft",
+    group: "artist",
+  }),
+  new Permissions({
+    name: "view-nft",
+    group: "artist",
+  }),
 ];
 
 var done = 0;

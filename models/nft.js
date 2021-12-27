@@ -3,8 +3,29 @@ const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema(
   {
-    _id: {
-      type: Number,
+    collectionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
+
+    title: {
+      type: String,
+      required: true,
+    },
+
+    description: {
+      type: String,
+      required: true,
+    },
+
+    externalLink: {
+      type: String,
+      required: true,
+    },
+
+    category: {
+      type: String,
+      required: true,
     },
 
     price: {

@@ -167,7 +167,7 @@ signin = async (req, res) => {
         });
       }
 
-      if (user[0].reqStatus !== "approved") {
+      if (user[0].reqStatus !== "approved" && user[0].role == "artist") {
         return res.json({
           message:
             "Your request is currently under review. You can login after the reviewing process is completed.",
