@@ -29,7 +29,17 @@ Permissions.find()
       }),
       new Roles({
         name: "artist",
-        permission: [result[0]._id, result[1]._id, result[2]._id, result[3]._id, result[4]._id],
+        permission: [
+          result[0]._id,
+          result[1]._id,
+          result[2]._id,
+          result[3]._id,
+          result[4]._id,
+          result[5]._id,
+          result[6]._id,
+          result[7]._id,
+          result[8]._id,
+        ],
       }),
     ];
     var done = 0;

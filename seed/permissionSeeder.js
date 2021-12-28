@@ -39,6 +39,22 @@ const permissions = [
     name: "view-nft",
     group: "artist",
   }),
+  new Permissions({
+    name: "create-listing",
+    group: "artist",
+  }),
+  new Permissions({
+    name: "view-listing",
+    group: "artist",
+  }),
+  new Permissions({
+    name: "create-featured",
+    group: "artist",
+  }),
+  new Permissions({
+    name: "view-featured",
+    group: "artist",
+  }),
 ];
 
 var done = 0;

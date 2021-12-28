@@ -13,9 +13,17 @@ exports.createNft = async (req, res) => {
       return res.send(_errors);
     }
 
+    if (!req.file) {
+      return res.json({
+        success: false,
+        message: `Please upload a file.`,
+      });
+    }
+
     // checking collection, if available.
     const checkCollection = await collection.findOne({
       _id: req.params.collectionId,
+      artist: req.userData.id,
     });
     if (checkCollection < 1) {
       return res.json({
@@ -42,6 +50,7 @@ exports.createNft = async (req, res) => {
         const newNft = new nft({
           title: req.body.title,
           description: req.body.description,
+          gatewayLink: `http://ac61-103-105-211-114.ngrok.io/${req.file.path}`,
           externalLink: req.body.externalLink,
           collectionId: req.params.collectionId,
           category: req.body.category,
@@ -72,7 +81,10 @@ exports.myOwnedNfts = async (req, res) => {
       });
     }
     for (let i = 0; i < getCollections.length; i++) {
-      const getNfts = await nft.find({ collectionId: getCollections[i]._id });
+      const getNfts = await nft.find({
+        collectionId: getCollections[i]._id,
+        listing: false,
+      });
       if (getNfts.length < 1) {
         return res.json({
           success: false,

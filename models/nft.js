@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 // const image = require("./Image");
 
-const UserSchema = new mongoose.Schema(
+const nftSchema = new mongoose.Schema(
   {
     collectionId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -12,6 +12,8 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    gatewayLink: { type: String, required: true },
 
     description: {
       type: String,
@@ -28,6 +30,11 @@ const UserSchema = new mongoose.Schema(
       required: true,
     },
 
+    listing: {
+      type: Boolean,
+      default: false,
+    },
+
     price: {
       type: Number,
     },
@@ -39,4 +46,4 @@ const UserSchema = new mongoose.Schema(
   // timestamps: true,
 );
 
-module.exports = mongoose.model("nft", UserSchema);
+module.exports = mongoose.model("nft", nftSchema);

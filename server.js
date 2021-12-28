@@ -12,7 +12,9 @@ require("dotenv").config();
 const os = require("os");
 const wallet = require("./routes/wallet");
 const collections = require("./routes/collections");
-const nft = require('./routes/nft')
+const nft = require("./routes/nft");
+const featuredNfts = require("./routes/featurednfts");
+const listing = require('./routes/listing')
 
 // for CORS
 app.use(cors());
@@ -96,6 +98,8 @@ app.use("/users", users);
 app.use("/wallet", wallet);
 app.use("/collections", collections);
 app.use("/nft", nft);
+app.use('/listing', listing)
+app.use("/featured", featuredNfts);
 
 /* Farzan */
 
