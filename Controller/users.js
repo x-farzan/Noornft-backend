@@ -695,6 +695,7 @@ getFollowersList = async (req, res) => {
         message: `User not exists.`,
       });
     }
+    console.log(`result : `, result);
     results.push({ _id: result._id, name: result.flname });
   }
   return res.json({
