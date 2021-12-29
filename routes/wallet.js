@@ -19,7 +19,8 @@ router.route("/getaddress").post((req, res) => {
   }
 });
 
-router.post('/add', tokenVerifier, controller.addWallet)
+router.post("/add", tokenVerifier, controller.addWallet);
 
+router.delete("/remove", tokenVerifier, controller.removeWallet)
 
 module.exports = router;

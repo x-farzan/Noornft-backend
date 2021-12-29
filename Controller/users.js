@@ -684,28 +684,63 @@ unFollow = async (req, res) => {
 };
 
 getFollowersList = async (req, res) => {
-  let results = [];
-  const response = await User.findOne({ _id: req.userData.id });
-  console.log(response.followers);
-  for (let i = 0; i < response.followers.length; i++) {
-    const result = await User.findOne({ _id: response.followers[i] });
-    if (!result) {
-      return res.json({
-        success: false,
-        message: `User not exists.`,
+  try {
+    let results = [];
+    const response = await User.findOne({ _id: req.userData.id });
+    // console.log(response.followers);
+    for (let i = 0; i < response.followers.length; i++) {
+      const result = await User.findOne({ _id: response.followers[i] });
+      if (!result) {
+        return res.json({
+          success: false,
+          message: `User not exists.`,
+        });
+      }
+      console.log(`result : `, result);
+      results.push({
+        _id: result._id,
+        name: result.flname,
+        image: `http://3926-72-255-5-119.ngrok.io/${result.image}`,
       });
     }
-    console.log(`result : `, result);
-    results.push({
-      _id: result._id,
-      name: result.flname,
-      image: `http://3926-72-255-5-119.ngrok.io/${result.image}`,
+    return res.json({
+      success: true,
+      results,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
     });
   }
-  return res.json({
-    success: true,
-    results,
-  });
+};
+
+getFollowingList = async (req, res) => {
+  try {
+    let results = [];
+    const response = await User.findOne({ _id: req.userData.id });
+    // console.log(response.followers);
+    for (let i = 0; i < response.following.length; i++) {
+      const result = await User.findOne({ _id: response.following[i] });
+      if (!result) {
+        return res.json({
+          success: false,
+          message: `User not exists.`,
+        });
+      }
+      console.log(`result : `, result);
+      results.push({
+        _id: result._id,
+        name: result.flname,
+        image: `http://3926-72-255-5-119.ngrok.io/${result.image}`,
+      });
+    }
+    return res.json({
+      success: true,
+      results,
+    });
+  } catch (error) {
+    error: error.message;
+  }
 };
 
 // topAuthors = async (req, res) => {
@@ -743,5 +778,6 @@ module.exports = {
   follow,
   unFollow,
   getFollowersList,
+  getFollowingList,
   // topAuthors,
 };

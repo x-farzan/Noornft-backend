@@ -341,6 +341,8 @@ router.put("/unfollow/:id", tokenVerifier, controller.unFollow);
 
 router.get("/followers", tokenVerifier, controller.getFollowersList);
 
+router.get("/following", tokenVerifier, controller.getFollowingList)
+
 // router.get("/top/artists", tokenVerifier, controller.topAuthors);
 
 module.exports = router;
