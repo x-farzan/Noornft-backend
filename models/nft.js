@@ -5,29 +5,28 @@ const nftSchema = new mongoose.Schema(
   {
     collectionId: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
+    },
+
+    artistId: {
+      type: mongoose.Schema.Types.ObjectId,
     },
 
     title: {
       type: String,
-      required: true,
     },
 
-    gatewayLink: { type: String, required: true },
+    gatewayLink: { type: String },
 
     description: {
       type: String,
-      required: true,
     },
 
     externalLink: {
       type: String,
-      required: true,
     },
 
     category: {
       type: String,
-      required: true,
     },
 
     listing: {
@@ -35,8 +34,20 @@ const nftSchema = new mongoose.Schema(
       default: false,
     },
 
+    featured: {
+      type: Boolean,
+      default: false,
+    },
+
+    reqStatus: {
+      type: String,
+      enum: ["approved", "pending", "rejected", null],
+      default: null,
+    },
+
     price: {
       type: Number,
+      default: 0,
     },
   },
   {

@@ -48,6 +48,10 @@ const permissions = [
     group: "artist",
   }),
   new Permissions({
+    name: "update-listing",
+    group: "artist",
+  }),
+  new Permissions({
     name: "create-featured",
     group: "artist",
   }),

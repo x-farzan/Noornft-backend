@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../Controller/wallet");
+const { tokenVerifier } = require("../middleware/tokenVerifier");
 
 router.route("/getaddress").post((req, res) => {
   try {
@@ -17,6 +18,8 @@ router.route("/getaddress").post((req, res) => {
     });
   }
 });
+
+router.post('/add', tokenVerifier, controller.addWallet)
 
 
 module.exports = router;

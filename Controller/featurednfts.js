@@ -1,7 +1,8 @@
 const nft = require("../models/nft");
 const featuredNfts = require("../models/featurednfts");
 const featurednfts = require("../models/featurednfts");
-const collections = require("../models/collections");
+const User = require("../models/User");
+const collection = require("../models/collections");
 
 exports.featuredNfts = async (req, res) => {
   try {
@@ -18,33 +19,24 @@ exports.featuredNfts = async (req, res) => {
             messgae: `No NFT found`,
           });
         }
-
-        // check if already available in featured.
-        const checkFeaturedNft = await featuredNfts.findOne({
-          nftId: checkNft._id,
-        });
-
-        if (checkFeaturedNft && checkFeaturedNft.reqStatus == "approved") {
+        if (checkNft.featured == true && checkNft.reqStatus == "pending") {
           return res.json({
             success: false,
-            message: `NFT is already in featured list.`,
+            message: `NFT is already requested for approval.`,
           });
         } else if (
-          checkFeaturedNft &&
-          checkFeaturedNft.reqStatus == "pending"
+          checkNft.featured == true &&
+          checkNft.reqStatus == "approved"
         ) {
           return res.json({
             success: false,
-            message: "NFT is currently under review.",
+            message: `NFT is already approved and featured.`,
           });
         }
 
-        // creating NFT as featured.
-        const newFeatured = await new featuredNfts({
-          nftId: checkNft._id,
-          reqStatus: "pending",
-        });
-        await newFeatured.save();
+        (checkNft.featured = true),
+          (checkNft.reqStatus = "pending"),
+          checkNft.save();
         return res.json({
           success: true,
           message: `Your request to make "${checkNft.title}" has been requested to approve.`,
@@ -60,47 +52,91 @@ exports.featuredNfts = async (req, res) => {
 
 exports.getFeaturedNfts = async (req, res) => {
   try {
+    let finalObj = [];
     for (let i = 0; i < req.perm.perm.length; i++) {
       if (req.perm.perm[i][0].name == req.perm.str) {
-        let obj = [];
-        let finalObj = [];
-        const getFeaturedNfts = await featuredNfts.find();
-        if (getFeaturedNfts.length < 1) {
+        const getFeatured = await nft.find({
+          artistId: req.userData.id,
+          featured: true,
+          reqStatus: "approved",
+        });
+        if (getFeatured.length < 1) {
           return res.json({
             success: false,
-            message: "No featured NFT's to show.",
+            message: `No featured NFT's to show or NFT has not been approved by the admin.`,
           });
         }
-        for (let i = 0; i < getFeaturedNfts.length; i++) {
-          if (getFeaturedNfts[i].reqStatus == "approved") {
-            finalObj.push(getFeaturedNfts[i]);
-          }
+        const getUserData = await User.findOne({ _id: req.userData.id });
+        if (!getUserData) {
+          return res.json({
+            success: false,
+            message: `No user found.`,
+          });
         }
-        // for (let i = 0; i < finalObj.length; i++) {
-        //   const getNft = await nft.findOne({
-        //     nftId: finalObj[i].nftId,
-        //     listing: true,
-        //   });
-        //   if (!getNft) {
-        //     return res.json({
-        //       success: false,
-        //       message: `NFT not found.`,
-        //     });
-        //   }
-        //   const getCollection = await collections.findOne({
-        //     _id: getNft.collectionId,
-        //   });
-        //   if (!getCollection) {
-        //     return res.json({
-        //       success: false,
-        //       message: `Collection not found.`,
-        //     });
-        //   }
-        //   obj.push({ getNft, collectionName: getCollection.collectionName });
-        // }
+        for (let j = 0; j < getFeatured.length; j++) {
+          const getCollectionData = await collection.findOne({
+            _id: getFeatured[j].collectionId,
+          });
+          if (!getCollectionData) {
+            return res.json({
+              success: false,
+              message: `No collections to show.`,
+            });
+          }
+          getFeatured[j] = {
+            ...getFeatured[j]._doc,
+            collectionName: getCollectionData.collectionName,
+            artistName: getUserData.username,
+          };
+          // getNfts[j].collectionName = getCollectionData.collectionName;
+          // getNfts[j].artistName = getUserData.flname;
+          // console.log(getNfts[j]);
+          finalObj.push(getFeatured[j]);
+        }
         return res.json({
           success: true,
-          result: finalObj,
+          nfts: finalObj,
+        });
+
+        // let obj = [];
+        // let finalObj = [];
+        // const getFeaturedNfts = await featuredNfts.find();
+        // if (getFeaturedNfts.length < 1) {
+        //   return res.json({
+        //     success: false,
+        //     message: "No featured NFT's to show.",
+        //   });
+        // }
+        // for (let i = 0; i < getFeaturedNfts.length; i++) {
+        //   if (getFeaturedNfts[i].reqStatus == "approved") {
+        //     finalObj.push(getFeaturedNfts[i]);
+        //   }
+        // }
+        // // for (let i = 0; i < finalObj.length; i++) {
+        // //   const getNft = await nft.findOne({
+        // //     nftId: finalObj[i].nftId,
+        // //     listing: true,
+        // //   });
+        // //   if (!getNft) {
+        // //     return res.json({
+        // //       success: false,
+        // //       message: `NFT not found.`,
+        // //     });
+        // //   }
+        // //   const getCollection = await collections.findOne({
+        // //     _id: getNft.collectionId,
+        // //   });
+        // //   if (!getCollection) {
+        // //     return res.json({
+        // //       success: false,
+        // //       message: `Collection not found.`,
+        // //     });
+        // //   }
+        // //   obj.push({ getNft, collectionName: getCollection.collectionName });
+        // // }
+        return res.json({
+          success: true,
+          result: getFeatured,
         });
       }
     }

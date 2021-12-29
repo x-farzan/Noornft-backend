@@ -8,4 +8,11 @@ router.post("/:nftId", tokenVerifier, isAuthorized, controller.makeListed);
 
 router.get("/getlisted", tokenVerifier, isAuthorized, controller.myListingNfts);
 
+router.put(
+  "/remove/:nftId",
+  tokenVerifier,
+  isAuthorized,
+  controller.removeNftFromListing
+);
+
 module.exports = router;

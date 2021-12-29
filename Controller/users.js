@@ -696,7 +696,11 @@ getFollowersList = async (req, res) => {
       });
     }
     console.log(`result : `, result);
-    results.push({ _id: result._id, name: result.flname });
+    results.push({
+      _id: result._id,
+      name: result.flname,
+      image: `http://3926-72-255-5-119.ngrok.io/${result.image}`,
+    });
   }
   return res.json({
     success: true,

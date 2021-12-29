@@ -18,6 +18,9 @@ exports.isAuthorized = (req, res, next) => {
     case "POST":
       str = `create-${baseUrl}`;
       break;
+    case "PUT":
+      str = `update-${baseUrl}`;
+      break;
     case "DELETE":
       str = `delete-${baseUrl}`;
       break;

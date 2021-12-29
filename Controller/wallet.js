@@ -1,6 +1,7 @@
 var cardanoSerializationLibNodejs = require("@emurgo/cardano-serialization-lib-nodejs");
+const wallet  = require('../models/wallet')
 
-convertHexToAddress = (hexAddress) => {
+exports.convertHexToAddress = (hexAddress) => {
   console.log("IN the function : ===>>> ");
   const addr = cardanoSerializationLibNodejs.Address.from_bytes(
     Buffer.from(hexAddress, "hex")
@@ -9,4 +10,12 @@ convertHexToAddress = (hexAddress) => {
   return addr.to_bech32();
 };
 
-module.exports = { convertHexToAddress };
+exports.addWallet = async (req, res) => {
+  try {
+    const wallets = await wallet.findOne()
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
