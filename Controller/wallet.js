@@ -40,6 +40,7 @@ exports.addWallet = async (req, res) => {
         return res.json({
           success: false,
           message: `This wallet is already linked.`,
+          result: serializedAddress,
         });
       }
     }
@@ -48,6 +49,7 @@ exports.addWallet = async (req, res) => {
     return res.json({
       success: true,
       message: `wallet address : ${serializedAddress} is successfully linked.`,
+      result: serializedAddress,
     });
   } catch (error) {
     return res.json({
@@ -64,6 +66,8 @@ exports.removeWallet = async (req, res) => {
         _errors,
       });
     }
+
+    console.log("body: ", req.body);
 
     const getUser = await User.findOne({ _id: req.userData.id });
     if (!getUser) {
@@ -82,6 +86,7 @@ exports.removeWallet = async (req, res) => {
         return res.json({
           success: true,
           message: `address : ${req.body.address} removed successfully.`,
+          result: req.body.address,
         });
       }
     }

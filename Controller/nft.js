@@ -2,6 +2,7 @@ const { userFieldsValidator } = require("../helpers/userFieldsValidator");
 const nft = require("../models/nft");
 const collection = require("../models/collections");
 const User = require("../models/User");
+require("dotenv").config();
 
 exports.createNft = async (req, res) => {
   try {
@@ -51,7 +52,7 @@ exports.createNft = async (req, res) => {
         const newNft = new nft({
           title: req.body.title,
           description: req.body.description,
-          gatewayLink: `http://3926-72-255-5-119.ngrok.io/${req.file.path}`,
+          gatewayLink: `${process.env.ngrok}/${req.file.path}`,
           externalLink: req.body.externalLink,
           collectionId: req.params.collectionId,
           category: req.body.category,
@@ -123,7 +124,7 @@ exports.myOwnedNfts = async (req, res) => {
         }
         return res.json({
           success: true,
-          nfts : finalObj,
+          nfts: finalObj,
         });
       }
     }

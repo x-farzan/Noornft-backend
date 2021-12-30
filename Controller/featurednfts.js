@@ -3,6 +3,7 @@ const featuredNfts = require("../models/featurednfts");
 const featurednfts = require("../models/featurednfts");
 const User = require("../models/User");
 const collection = require("../models/collections");
+const { userFieldsValidator } = require("../helpers/userFieldsValidator");
 
 exports.featuredNfts = async (req, res) => {
   try {
@@ -88,55 +89,98 @@ exports.getFeaturedNfts = async (req, res) => {
             collectionName: getCollectionData.collectionName,
             artistName: getUserData.username,
           };
-          // getNfts[j].collectionName = getCollectionData.collectionName;
-          // getNfts[j].artistName = getUserData.flname;
-          // console.log(getNfts[j]);
+
           finalObj.push(getFeatured[j]);
         }
         return res.json({
           success: true,
           nfts: finalObj,
         });
+      }
+    }
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
 
-        // let obj = [];
-        // let finalObj = [];
-        // const getFeaturedNfts = await featuredNfts.find();
-        // if (getFeaturedNfts.length < 1) {
-        //   return res.json({
-        //     success: false,
-        //     message: "No featured NFT's to show.",
-        //   });
-        // }
-        // for (let i = 0; i < getFeaturedNfts.length; i++) {
-        //   if (getFeaturedNfts[i].reqStatus == "approved") {
-        //     finalObj.push(getFeaturedNfts[i]);
-        //   }
-        // }
-        // // for (let i = 0; i < finalObj.length; i++) {
-        // //   const getNft = await nft.findOne({
-        // //     nftId: finalObj[i].nftId,
-        // //     listing: true,
-        // //   });
-        // //   if (!getNft) {
-        // //     return res.json({
-        // //       success: false,
-        // //       message: `NFT not found.`,
-        // //     });
-        // //   }
-        // //   const getCollection = await collections.findOne({
-        // //     _id: getNft.collectionId,
-        // //   });
-        // //   if (!getCollection) {
-        // //     return res.json({
-        // //       success: false,
-        // //       message: `Collection not found.`,
-        // //     });
-        // //   }
-        // //   obj.push({ getNft, collectionName: getCollection.collectionName });
-        // // }
+exports.getFeaturedRequests = async (req, res) => {
+  try {
+    for (let i = 0; i < req.perm.perm.length; i++) {
+      if (
+        req.perm.perm[i][0].name == req.perm.str &&
+        req.perm.perm[i][0].group == "admin"
+      ) {
+        console.log(`req.userdata : `, req.userData);
+        console.log(`req.perm.perm[${i}][0].name : `, req.perm.perm[i][0].name);
+        console.log(`req.perm.str : `, req.perm.str);
+        const featuredRequests = await nft.find({
+          listing: true,
+          featured: true,
+          reqStatus: "pending",
+        });
+        if (featuredRequests.length < 1) {
+          return res.json({
+            success: false,
+            message: `No NFT's are requested yet to be featured.`,
+          });
+        }
         return res.json({
           success: true,
-          result: getFeatured,
+          result: featuredRequests,
+        });
+      }
+    }
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
+exports.responseFeaturedRequests = async (req, res) => {
+  try {
+    let _errors = userFieldsValidator(["status"], req.body);
+    if (_errors.length > 0) {
+      return res.send(_errors);
+    }
+
+    console.log(`body : `, req.body.status);
+
+    // if (req.body.status != "approved" || req.body.status != "rejected") {
+    //   return res.json({
+    //     success: false,
+    //     message: `status has to be approved or rejected.`,
+    //     result: req.body.status
+    //   });
+    // }
+
+    for (let i = 0; i < req.perm.perm.length; i++) {
+      if (
+        req.perm.perm[i][0].name == req.perm.str &&
+        req.perm.perm[i][0].group == "admin"
+      ) {
+        // console.log(`req.perm.perm[${i}][0].name : `, req.perm.perm.name);
+        // console.log(`req.perm.str : `, req.perm.str);
+
+        const getNft = await nft.findOne({
+          _id: req.params.nftId,
+          listing: true,
+          featured: true,
+          reqStatus: "pending",
+        });
+        if (!getNft) {
+          return res.json({
+            success: false,
+            message: `This NFT is already responded with the status.`,
+          });
+        }
+        (getNft.reqStatus = req.body.status), await getNft.save();
+        return res.json({
+          success: true,
+          message: `NFT approved successfully.`,
+          getNft,
         });
       }
     }

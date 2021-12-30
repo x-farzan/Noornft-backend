@@ -75,7 +75,7 @@ exports.isAuthorized = (req, res, next) => {
                     str: str,
                     perm: perm,
                   };
-                  console.log(`here : `, req.perm);
+                  console.log(`here : `, req.perm.perm);
                   console.log(`on next`);
                   next();
                 }
