@@ -59,6 +59,14 @@ const permissions = [
     name: "view-featured",
     group: "artist",
   }),
+  new Permissions({
+    name: "view-featured",
+    group: "admin",
+  }),
+  new Permissions({
+    name: "create-featured",
+    group: "admin",
+  }),
 ];
 
 var done = 0;
