@@ -535,7 +535,7 @@ getProfilePicture = async (req, res) => {
   if (response) {
     return res.json({
       success: true,
-      message: response.image,
+      message: `${process.env.heroku}/${response.image}`,
     });
   }
   return res.json({
