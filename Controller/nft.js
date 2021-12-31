@@ -31,6 +31,7 @@ exports.createNft = async (req, res) => {
       return res.json({
         success: false,
         message: `Collection with this _id doesn't exists.`,
+        data: [],
       });
     }
 

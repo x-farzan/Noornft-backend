@@ -26,6 +26,7 @@ exports.makeListed = async (req, res) => {
           return res.json({
             success: false,
             message: `NFT with this id not exists.`,
+            data: [],
           });
         }
         getNfts.listing = true;
@@ -58,6 +59,7 @@ exports.myListingNfts = async (req, res) => {
           return res.json({
             success: false,
             message: `No NFT's to show.`,
+            data: [],
           });
         }
         const getUserData = await User.findOne({ _id: req.userData.id });
@@ -65,6 +67,7 @@ exports.myListingNfts = async (req, res) => {
           return res.json({
             success: false,
             message: `No user found.`,
+            data: [],
           });
         }
         for (let j = 0; j < getNfts.length; j++) {
@@ -75,6 +78,7 @@ exports.myListingNfts = async (req, res) => {
             return res.json({
               success: false,
               message: `No collections to show.`,
+              data: [],
             });
           }
           getNfts[j] = {
@@ -150,6 +154,7 @@ exports.removeNftFromListing = async (req, res) => {
           return res.json({
             success: false,
             message: `You haven't listed NFT's.`,
+            data: [],
           });
         }
         (getListedNft.listing = false),

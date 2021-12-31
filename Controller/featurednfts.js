@@ -18,12 +18,14 @@ exports.featuredNfts = async (req, res) => {
           return res.json({
             message: false,
             messgae: `No NFT found`,
+            data: [],
           });
         }
         if (checkNft.featured == true && checkNft.reqStatus == "pending") {
           return res.json({
             success: false,
             message: `NFT is already requested for approval.`,
+            data: [],
           });
         } else if (
           checkNft.featured == true &&
@@ -32,6 +34,7 @@ exports.featuredNfts = async (req, res) => {
           return res.json({
             success: false,
             message: `NFT is already approved and featured.`,
+            data: [],
           });
         }
 
@@ -65,6 +68,7 @@ exports.getFeaturedNfts = async (req, res) => {
           return res.json({
             success: false,
             message: `No featured NFT's to show or NFT has not been approved by the admin.`,
+            data: [],
           });
         }
         const getUserData = await User.findOne({ _id: req.userData.id });
@@ -72,6 +76,7 @@ exports.getFeaturedNfts = async (req, res) => {
           return res.json({
             success: false,
             message: `No user found.`,
+            data: [],
           });
         }
         for (let j = 0; j < getFeatured.length; j++) {
@@ -82,6 +87,7 @@ exports.getFeaturedNfts = async (req, res) => {
             return res.json({
               success: false,
               message: `No collections to show.`,
+              data: [],
             });
           }
           getFeatured[j] = {
@@ -124,6 +130,7 @@ exports.getFeaturedRequests = async (req, res) => {
           return res.json({
             success: false,
             message: `No NFT's are requested yet to be featured.`,
+            data: [],
           });
         }
         return res.json({
@@ -174,6 +181,7 @@ exports.responseFeaturedRequests = async (req, res) => {
           return res.json({
             success: false,
             message: `This NFT is already responded with the status.`,
+            data: [],
           });
         }
         (getNft.reqStatus = req.body.status), await getNft.save();
