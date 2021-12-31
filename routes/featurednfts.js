@@ -27,4 +27,6 @@ router.put(
   controller.responseFeaturedRequests
 );
 
+router.get("/getfeaturednft/homepage", controller.getFeaturedNftsOnHomePage);
+
 module.exports = router;

@@ -7,7 +7,7 @@ require("dotenv").config();
 exports.createNft = async (req, res) => {
   try {
     let _errors = userFieldsValidator(
-      ["title", "description", "externalLink", "category"],
+      ["title", "description", "externalLink", "collectionName", "category"],
       req.body
     );
 
@@ -24,13 +24,13 @@ exports.createNft = async (req, res) => {
 
     // checking collection, if available.
     const checkCollection = await collection.findOne({
-      _id: req.params.collectionId,
+      collectionName: req.body.collectionName,
       artist: req.userData.id,
     });
     if (checkCollection < 1) {
       return res.json({
         success: false,
-        message: `Collection with this _id doesn't exists.`,
+        message: `Collection with this name doesn't exists.`,
         data: [],
       });
     }
@@ -53,9 +53,9 @@ exports.createNft = async (req, res) => {
         const newNft = new nft({
           title: req.body.title,
           description: req.body.description,
-          gatewayLink: `${process.env.ngrok}/${req.file.path}`,
+          gatewayLink: `${process.env.heroku}/${req.file.path}`,
           externalLink: req.body.externalLink,
-          collectionId: req.params.collectionId,
+          collectionId: checkCollection._id,
           category: req.body.category,
           artistId: req.userData.id,
         });

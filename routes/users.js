@@ -345,7 +345,7 @@ router.get("/followers", tokenVerifier, controller.getFollowersList);
 
 router.get("/following", tokenVerifier, controller.getFollowingList);
 
-router.get("/top/artists", tokenVerifier, controller.topArtists);
+router.get("/top/artists", controller.topArtists);
 
 router.get("/listednfts/:id", tokenVerifier, controller.getListedNfts);
 

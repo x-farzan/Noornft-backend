@@ -174,3 +174,68 @@ exports.removeNftFromListing = async (req, res) => {
     });
   }
 };
+
+exports.marketplaceListing = async (req, res) => {
+  try {
+    let finalObj = [];
+    const getNfts = await nft.find({
+      listing: true,
+    });
+    console.log(getNfts);
+    if (getNfts.length < 1) {
+      return res.json({
+        success: false,
+        message: `No NFT's to show.`,
+        data: [],
+      });
+    }
+
+    console.log(`NFTS : `, getNfts);
+
+    // const getUserData = await User.findOne({ _id: req.userData.id });
+    // if (!getUserData) {
+    //   return res.json({
+    //     success: false,
+    //     message: `No user found.`,
+    //     data: [],
+    //   });
+    // }
+
+    for (let j = 0; j < getNfts.length; j++) {
+      const getUserData = await User.findOne({ _id: getNfts[j].artistId });
+      if (!getUserData) {
+        return res.json({
+          success: false,
+          message: `No user found.`,
+        });
+      }
+      const getCollectionData = await collection.findOne({
+        _id: getNfts[j].collectionId,
+      });
+      if (!getCollectionData) {
+        return res.json({
+          success: false,
+          message: `No collections to show.`,
+          data: [],
+        });
+      }
+      getNfts[j] = {
+        ...getNfts[j]._doc,
+        collectionName: getCollectionData.collectionName,
+        artistName: getUserData.username,
+      };
+      // getNfts[j].collectionName = getCollectionData.collectionName;
+      // getNfts[j].artistName = getUserData.flname;
+      console.log(getNfts[j]);
+      finalObj.push(getNfts[j]);
+    }
+    return res.json({
+      success: true,
+      nfts: finalObj,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};

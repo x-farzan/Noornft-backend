@@ -198,3 +198,56 @@ exports.responseFeaturedRequests = async (req, res) => {
     });
   }
 };
+
+exports.getFeaturedNftsOnHomePage = async (req, res) => {
+  try {
+    let finalObj = [];
+    const getNfts = await nft.find({
+      featured: true,
+      reqStatus: "approved",
+    });
+    if (getNfts.length < 1) {
+      return res.json({
+        success: false,
+        message: `No NFT's to show.`,
+      });
+    }
+
+    console.log(`getNfts : `, getNfts[0]);
+
+    for (let i = 0; i < getNfts.length; i++) {
+      console.log(getNfts[i].artistId);
+      const getUser = await User.findOne({ _id: getNfts[i].artistId });
+      if (!getUser) {
+        return res.json({
+          success: false,
+          message: `User not found`,
+        });
+      }
+      console.log(`getUser `, getUser);
+      const getCollection = await collection.findOne({
+        _id: getNfts[i].collectionId,
+      });
+      if (!getCollection) {
+        return res.json({
+          success: false,
+          message: `No collections to show.`,
+        });
+      }
+      finalObj.push({
+        ...getNfts[i]._doc,
+        collectionName: getCollection.name,
+        username: getUser.username,
+      });
+    }
+
+    return res.json({
+      success: true,
+      finalObj,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};

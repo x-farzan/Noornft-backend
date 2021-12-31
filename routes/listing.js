@@ -15,4 +15,6 @@ router.put(
   controller.removeNftFromListing
 );
 
+router.get('/marketplace', tokenVerifier, controller.marketplaceListing)
+
 module.exports = router;
