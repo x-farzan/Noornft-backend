@@ -3,12 +3,18 @@ const image = require("./Image");
 
 const walletSchema = new mongoose.Schema(
   {
-    addresses: [{ type: String }],
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+    },
+    addresses: [
+      {
+        type: String,
+      },
+    ],
   },
   {
     timestamps: true,
   }
-
   // timestamps: true,
 );
 

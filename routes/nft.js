@@ -6,7 +6,7 @@ const controller = require("../Controller/nft");
 const { upload } = require("../middleware/avatarUpload");
 
 router
-  .route("/create/:collectionId")
+  .route("/create")
   .post(
     upload.single("imageUpload"),
     tokenVerifier,

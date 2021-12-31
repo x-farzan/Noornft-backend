@@ -18,6 +18,9 @@ exports.isAuthorized = (req, res, next) => {
     case "POST":
       str = `create-${baseUrl}`;
       break;
+    case "PUT":
+      str = `update-${baseUrl}`;
+      break;
     case "DELETE":
       str = `delete-${baseUrl}`;
       break;
@@ -72,7 +75,7 @@ exports.isAuthorized = (req, res, next) => {
                     str: str,
                     perm: perm,
                   };
-                  console.log(`here : `, req.perm);
+                  console.log(`here : `, req.perm.perm);
                   console.log(`on next`);
                   next();
                 }

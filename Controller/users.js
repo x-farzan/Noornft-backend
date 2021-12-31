@@ -13,6 +13,7 @@ const path = require("path");
 var axios = require("axios");
 const pinataSDK = require("@pinata/sdk");
 const { response } = require("express");
+const nft = require("../models/nft");
 const pinata = pinataSDK(process.env.pinatakey1, process.env.pinatakey2);
 
 postNewUser = async (req, res) => {
@@ -684,36 +685,169 @@ unFollow = async (req, res) => {
 };
 
 getFollowersList = async (req, res) => {
-  let results = [];
-  const response = await User.findOne({ _id: req.userData.id });
-  console.log(response.followers);
-  for (let i = 0; i < response.followers.length; i++) {
-    const result = await User.findOne({ _id: response.followers[i] });
-    if (!result) {
-      return res.json({
-        success: false,
-        message: `User not exists.`,
+  try {
+    let results = [];
+    const response = await User.findOne({ _id: req.userData.id });
+    // console.log(response.followers);
+    for (let i = 0; i < response.followers.length; i++) {
+      const result = await User.findOne({ _id: response.followers[i] });
+      if (!result) {
+        return res.json({
+          success: false,
+          message: `User not exists.`,
+        });
+      }
+      console.log(`result : `, result);
+      results.push({
+        _id: result._id,
+        name: result.flname,
+        image: `http://8bcb-72-255-5-119.ngrok.io/${result.image}`,
       });
     }
-    console.log(`result : `, result);
-    results.push({ _id: result._id, name: result.flname });
+    return res.json({
+      success: true,
+      results,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
   }
-  return res.json({
-    success: true,
-    results,
-  });
 };
 
-// topAuthors = async (req, res) => {
-//   const topArtists = [];
-//   const getArtists = await User.find();
-//   for (let i = 0; i < getArtists.length; i++) {
-//     topArtists.push(getArtists[i].followers);
-//   }
-//   return res.json({
-//     topArtists,
-//   });
-// };
+getFollowingList = async (req, res) => {
+  try {
+    let results = [];
+    const response = await User.findOne({ _id: req.userData.id });
+    // console.log(response.followers);
+    for (let i = 0; i < response.following.length; i++) {
+      const result = await User.findOne({ _id: response.following[i] });
+      if (!result) {
+        return res.json({
+          success: false,
+          message: `User not exists.`,
+        });
+      }
+      console.log(`result : `, result);
+      results.push({
+        _id: result._id,
+        name: result.flname,
+        image: `http://8bcb-72-255-5-119.ngrok.io/${result.image}`,
+      });
+    }
+    return res.json({
+      success: true,
+      results,
+    });
+  } catch (error) {
+    error: error.message;
+  }
+};
+
+topArtists = async (req, res) => {
+  try {
+    let topArtists = [];
+    const getArtists = await User.find({
+      role: "artist",
+      reqStatus: "approved",
+    });
+    if (getArtists.length < 1) {
+      return res.json({
+        success: false,
+        message: `No artists registered yet.`,
+      });
+    }
+
+    for (let i = 0; i < getArtists.length; i++) {
+      topArtists.push({
+        artistId: getArtists[i]._id,
+        username: getArtists[i].username,
+        email: getArtists[i].email,
+        followers: getArtists[i].followers.length,
+        image: `${process.env.ngrok}/${getArtists[i].image}`,
+      });
+    }
+
+    //Sorting JSON objects in DESC order.
+    topArtists = topArtists.slice().sort((a, b) => b.followers - a.followers);
+
+    return res.json({
+      topArtists,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
+getListedNfts = async (req, res) => {
+  try {
+    // for (let i = 0; i < req.perm.perm.length; i++) {
+    // if (req.perm.perm[i][0].name == req.perm.str) {
+    let finalObj = [];
+
+    const getUser = await User.findOne({
+      _id: req.params.id,
+    });
+    if (!getUser) {
+      return res.json({
+        success: false,
+        message: `User with this _id not exists.`,
+      });
+    }
+
+    const getNfts = await nft.find({
+      artistId: req.params.id,
+      listing: true,
+    });
+    // console.log(getNfts);
+    if (getNfts.length < 1) {
+      return res.json({
+        success: false,
+        message: `No NFT's to show.`,
+      });
+    }
+    // const getUserData = await User.findOne({ _id: req.userData.id });
+    // if (!getUserData) {
+    //   return res.json({
+    //     success: false,
+    //     message: `No user found.`,
+    //   });
+    // }
+    // for (let j = 0; j < getNfts.length; j++) {
+    //   const getCollectionData = await collection.findOne({
+    //     _id: getNfts[j].collectionId,
+    //   });
+    //   if (!getCollectionData) {
+    //     return res.json({
+    //       success: false,
+    //       message: `No collections to show.`,
+    //     });
+    //   }
+    //   getNfts[j] = {
+    //     ...getNfts[j]._doc,
+    //     collectionName: getCollectionData.collectionName,
+    //     artistName: getUserData.username,
+    //   };
+    // getNfts[j].collectionName = getCollectionData.collectionName;
+    // getNfts[j].artistName = getUserData.flname;
+    // console.log(getNfts[j]);
+    // finalObj.push(getNfts[j]);
+    // }
+    // finalObj.push(getNfts[j]);
+    return res.json({
+      success: true,
+      nfts: getNfts,
+    });
+    // }
+    // }
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   postNewUser,
@@ -739,5 +873,7 @@ module.exports = {
   follow,
   unFollow,
   getFollowersList,
-  // topAuthors,
+  getFollowingList,
+  topArtists,
+  getListedNfts,
 };

@@ -13,4 +13,20 @@ router.post(
 
 router.get("/getnfts", tokenVerifier, isAuthorized, controller.getFeaturedNfts);
 
+router.get(
+  "/featuredrequests",
+  tokenVerifier,
+  isAuthorized,
+  controller.getFeaturedRequests
+);
+
+router.put(
+  "/response/featuredrequests/:nftId",
+  tokenVerifier,
+  isAuthorized,
+  controller.responseFeaturedRequests
+);
+
+router.get("/getfeaturednft/homepage", controller.getFeaturedNftsOnHomePage);
+
 module.exports = router;

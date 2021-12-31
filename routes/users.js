@@ -39,6 +39,8 @@ router.route("/profile/:id").get(async (req, res) => {
   console.log("id : ;============================== >>>> ", _id);
   const user = await controller.getProfile(_id);
   console.log("USER : ===============================>>>>", user);
+  // console.log(user.image);
+  user.image = `${process.env.ngrok}/${user.image}`;
   return res.json({
     seccess: true,
     user,
@@ -341,6 +343,10 @@ router.put("/unfollow/:id", tokenVerifier, controller.unFollow);
 
 router.get("/followers", tokenVerifier, controller.getFollowersList);
 
-// router.get("/top/artists", tokenVerifier, controller.topAuthors);
+router.get("/following", tokenVerifier, controller.getFollowingList);
+
+router.get("/top/artists", controller.topArtists);
+
+router.get("/listednfts/:id", tokenVerifier, controller.getListedNfts);
 
 module.exports = router;
