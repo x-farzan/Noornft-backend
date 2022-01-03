@@ -15,6 +15,14 @@ router.put(
   controller.removeNftFromListing
 );
 
-router.get('/marketplace', tokenVerifier, controller.marketplaceListing)
+router.get("/marketplace", tokenVerifier, controller.marketplaceListing);
+
+router.get("/search", tokenVerifier, controller.priceRangeSearch);
+
+router.put('/addcount/:nftId', tokenVerifier, controller.addCount)
+
+router.get("/viewcount/:nftId", tokenVerifier, controller.viewCount);
+
+router.get('/filter', tokenVerifier, controller.getFiltered)
 
 module.exports = router;
