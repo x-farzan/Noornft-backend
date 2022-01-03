@@ -44,7 +44,14 @@ Permissions.find()
       }),
       new Roles({
         name: "admin",
-        permission: [result[10]._id, result[11]._id],
+        permission: [
+          result[10]._id,
+          result[11]._id,
+          result[12]._id,
+          result[13]._id,
+          result[14]._id,
+          result[15]._id,
+        ],
       }),
     ];
     var done = 0;

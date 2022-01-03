@@ -67,6 +67,22 @@ const permissions = [
     name: "create-featured",
     group: "admin",
   }),
+  new Permissions({
+    name: "create-featuredprices",
+    group: "admin",
+  }),
+  new Permissions({
+    name: "view-featuredprices",
+    group: "admin",
+  }),
+  new Permissions({
+    name: "update-featuredprices",
+    group: "admin",
+  }),
+  new Permissions({
+    name: "delete-featuredprices",
+    group: "admin",
+  }),
 ];
 
 var done = 0;
