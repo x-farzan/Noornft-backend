@@ -117,6 +117,7 @@ app.use("/collections", collections);
 app.use("/nft", nft);
 app.use("/listing", listing);
 app.use("/featured", featuredNfts);
+// app.use('/featuredprices', featuredPrices)
 
 /* Farzan */
 

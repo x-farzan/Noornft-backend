@@ -239,3 +239,128 @@ exports.marketplaceListing = async (req, res) => {
     });
   }
 };
+
+exports.priceRangeSearch = async (req, res) => {
+  try {
+    let nfts = [];
+    let _errors = userFieldsValidator(["maxPrice", "minPrice"], req.body);
+    if (_errors.length > 1) {
+      return res.json({
+        _errors,
+      });
+    }
+
+    // if (
+    //   req.body.minPrice > req.body.maxPrice ||
+    //   req.body.maxPrice < req.body.minPrice
+    // ) {
+    //   console.log(req.body.minPrice);
+    //   console.log(req.body.maxPrice);
+
+    //   return res.json({
+    //     success: false,
+    //     message: `Entered price range is not correct.`,
+    //   });
+    // }
+
+    const getNfts = await nft.find({
+      listing: true,
+    });
+    if (getNfts.length < 1) {
+      return res.json({
+        success: false,
+        message: `No NFT's available yet.`,
+        data: [],
+      });
+    }
+
+    for (let i = 0; i < getNfts.length; i++) {
+      if (
+        getNfts[i].price >= req.body.minPrice &&
+        getNfts[i].price <= req.body.maxPrice
+      ) {
+        nfts.push(getNfts[i]);
+      }
+    }
+
+    if (nfts.length < 1) {
+      return res.json({
+        success: false,
+        message: `No NFT's in this price range.`,
+        data: [],
+      });
+    }
+
+    return res.json({
+      success: true,
+      nfts,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
+exports.addCount = async (req, res) => {
+  try {
+    const getNft = await nft.findOne({
+      _id: req.params.nftId,
+      listing: true,
+    });
+    if (!getNft) {
+      return res.json({
+        success: false,
+        message: `No NFT found.`,
+        data: [],
+      });
+    }
+
+    getNft.viewCount = getNft.viewCount + 1;
+    await getNft.save();
+
+    return res.json({
+      success: true,
+      result: getNft,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
+exports.viewCount = async (req, res) => {
+  try {
+    const getNft = await nft.findOne({
+      _id: req.params.nftId,
+      listing: true,
+    });
+    if (!getNft) {
+      return res.json({
+        success: false,
+        message: `No NFT found.`,
+        data: [],
+      });
+    }
+
+    return res.json({
+      success: true,
+      result: getNft,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
+exports.getFiltered = (req, res) => {
+  try {
+    console.log(req.query.filterWith);
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
