@@ -15,6 +15,7 @@ const collections = require("./routes/collections");
 const nft = require("./routes/nft");
 const featuredNfts = require("./routes/featurednfts");
 const listing = require("./routes/listing");
+const featuredPrices = require("./routes/featuredPrices");
 
 // for CORS
 app.use(cors());
@@ -117,7 +118,7 @@ app.use("/collections", collections);
 app.use("/nft", nft);
 app.use("/listing", listing);
 app.use("/featured", featuredNfts);
-// app.use('/featuredprices', featuredPrices)
+app.use("/featuredprices", featuredPrices);
 
 /* Farzan */
 

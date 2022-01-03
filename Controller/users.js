@@ -849,6 +849,87 @@ getListedNfts = async (req, res) => {
   }
 };
 
+getArtists = async (req, res) => {
+  try {
+    const getArtists = await User.find({
+      role: "artist",
+      reqStatus: "approved",
+    });
+    if (getArtists.length < 1) {
+      return res.json({
+        success: false,
+        message: `No artists to show.`,
+      });
+    }
+
+    return res.json({
+      success: true,
+      getArtists,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
+getNftsOfMultipleArtist = async (req, res) => {
+  try {
+    let Nfts = [];
+    let getNfts;
+    for (let i = 0; i < req.body.ids.length; i++) {
+      const getArtist = await User.findOne({ _id: req.body.ids[i] });
+      if (!getArtist) {
+        return res.json({
+          success: false,
+          message: `Artist not found.`,
+        });
+      }
+
+      getNfts = await nft.find({
+        artistId: getArtist._id,
+        listing: true,
+      });
+      // Nfts.push(getNfts);
+
+      for (let i = 0; i < getNfts.length; i++) {
+        Nfts.push(getNfts[i]);
+      }
+    }
+
+    if (Nfts.length < 1) {
+      return res.json({
+        success: false,
+        message: `No Nft's to show.`,
+      });
+    }
+
+    return res.json({
+      success: true,
+      Nfts,
+    });
+
+    // const getArtist = await User.findOne({ _id: req.params.artistId });
+    // if (!getArtist) {
+    //   return res.json({
+    //     success: fasle,
+    //     message: `No artist found.`,
+    //     data: [],
+    //   });
+    // }
+
+    // const getNfts = await nft.find({
+    //   artistId: req.params.artistId,
+    //   listing: true,
+    // });
+    // // if()
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   postNewUser,
   userById,
@@ -876,4 +957,6 @@ module.exports = {
   getFollowingList,
   topArtists,
   getListedNfts,
+  getArtists,
+  getNftsOfMultipleArtist,
 };

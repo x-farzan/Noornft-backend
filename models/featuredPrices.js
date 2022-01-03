@@ -3,10 +3,18 @@ const mongoose = require("mongoose");
 const featuredPriceSchema = new mongoose.Schema(
   {
     primaryBanner: {
-      type: Number,
+      type: Boolean,
     },
 
     secondaryBanner: {
+      type: Boolean,
+    },
+
+    primaryBannerValue: {
+      type: Number,
+    },
+
+    secondaryBannerValue: {
       type: Number,
     },
   },

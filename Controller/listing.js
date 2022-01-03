@@ -355,9 +355,39 @@ exports.viewCount = async (req, res) => {
   }
 };
 
-exports.getFiltered = (req, res) => {
+exports.getFiltered = async (req, res) => {
   try {
-    console.log(req.query.filterWith);
+    const filter = req.query.filterWith;
+    if (filter == "newest") {
+      const getNft = await nft.find({ listing: true }).sort({ createdAt: -1 });
+      return res.json({
+        success: true,
+        getNft,
+      });
+    } else if (filter == "oldest") {
+      const getNft = await nft.find({ listing: true }).sort({ createdAt: 1 });
+      return res.json({
+        success: true,
+        getNft,
+      });
+    } else if (filter == "highestprice") {
+      const getNft = await nft.find({ listing: true }).sort({ price: -1 });
+      return res.json({
+        success: true,
+        getNft,
+      });
+    } else if (filter == "lowestprice") {
+      const getNft = await nft.find({ listing: true }).sort({ price: 1 });
+      return res.json({
+        success: true,
+        getNft,
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: `Not a valid filter for search.`,
+      });
+    }
   } catch (error) {
     return res.json({
       error: error.message,
