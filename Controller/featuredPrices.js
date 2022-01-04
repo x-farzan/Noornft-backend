@@ -14,7 +14,7 @@ exports.addFeaturedprices = async (req, res) => {
       if (req.perm.perm[i][0].name == req.perm.str) {
         if (req.body.select == "mainBanner") {
           const getMainBanner = await featuredPrices.findOne({
-            mainBanner: true,
+            title: req.body.select,
           });
           if (getMainBanner) {
             return res.json({
@@ -24,8 +24,8 @@ exports.addFeaturedprices = async (req, res) => {
             });
           }
           const newfeaturedPrices = new featuredPrices({
-            mainBanner: true,
-            mainBannerPrice: req.body.price,
+            title: req.body.select,
+            price: req.body.price,
           });
           await newfeaturedPrices.save();
           return res.json({
@@ -35,7 +35,7 @@ exports.addFeaturedprices = async (req, res) => {
           });
         } else if (req.body.select == "secondarySlider") {
           const getSecondarySlider = await featuredPrices.findOne({
-            secondarySlider: true,
+            title: req.body.select,
           });
           // console.log(`secondary banner : `, getSecondaryBanner);
           if (getSecondarySlider) {
@@ -46,8 +46,8 @@ exports.addFeaturedprices = async (req, res) => {
             });
           }
           const newfeaturedPrices = new featuredPrices({
-            secondarySlider: true,
-            secondarySliderPrice: req.body.price,
+            title: req.body.select,
+            price: req.body.price,
           });
           await newfeaturedPrices.save();
           return res.json({
@@ -94,28 +94,29 @@ exports.getFeaturedPrices = async (req, res) => {
 
 exports.updateFeaturedPrices = async (req, res) => {
   try {
-    let _errors = userFieldsValidator(["price", req.body]);
+    let _errors = userFieldsValidator(["price"], req.body);
     if (_errors.length > 0) {
       return res.json({
         _errors,
       });
     }
     for (let i = 0; i < req.perm.perm.length; i++) {
-      console.log(req.perm.perm[i][0].name);
-      console.log(req.perm.str);
+      // console.log(req.perm.perm[i][0].name);
+      // console.log(req.perm.str);
       if (req.perm.perm[i][0].name == req.perm.str) {
         const getItem = await featuredPrices.findOne({ _id: req.params.id });
+        console.log(`_obj : `, getItem);
         if (!getItem) {
           return res.json({
             success: false,
             message: `You cannot edit unless you create featured price.`,
           });
         }
-        if (getItem.mainBanner == true) {
-          getItem.mainBannerPrice = req.body.price;
+        if (getItem.title == "mainBanner") {
+          getItem.price = req.body.price;
           await getItem.save();
-        } else if (getItem.secondarySlider == true) {
-          getItem.secondarySliderPrice = req.body.price;
+        } else if (getItem.title == "secondarySlider") {
+          getItem.price = req.body.price;
           await getItem.save();
         }
         return res.json({

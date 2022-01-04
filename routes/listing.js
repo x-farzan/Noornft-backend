@@ -15,7 +15,7 @@ router.put(
   controller.removeNftFromListing
 );
 
-router.get("/marketplace", tokenVerifier, controller.marketplaceListing);
+router.get("/marketplace", controller.marketplaceListing);
 
 router.get("/search", tokenVerifier, controller.priceRangeSearch);
 
