@@ -6,7 +6,7 @@ const { isAuthorized } = require("../middleware/isAuthorized");
 
 router.post("/add", tokenVerifier, isAuthorized, controller.addFeaturedprices);
 
-router.get("/view", tokenVerifier, isAuthorized, controller.getFeaturedPrices);
+router.get("/view", tokenVerifier, controller.getFeaturedPrices);
 
 router.put(
   "/update/:id",

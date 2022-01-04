@@ -72,19 +72,17 @@ exports.addFeaturedprices = async (req, res) => {
 
 exports.getFeaturedPrices = async (req, res) => {
   try {
-    for (let i = 0; i < req.perm.perm.length; i++) {
-      const getItem = await featuredPrices.find();
-      if (getItem.length < 1) {
-        return res.json({
-          success: false,
-          message: `No featured prices found.`,
-        });
-      }
+    const getItem = await featuredPrices.find();
+    if (getItem.length < 1) {
       return res.json({
-        success: true,
-        getItem,
+        success: false,
+        message: `No featured prices found.`,
       });
     }
+    return res.json({
+      success: true,
+      getItem,
+    });
   } catch (error) {
     return res.json({
       error: error.message,

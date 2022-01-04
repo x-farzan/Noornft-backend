@@ -16,6 +16,7 @@ const nft = require("./routes/nft");
 const featuredNfts = require("./routes/featurednfts");
 const listing = require("./routes/listing");
 const featuredPrices = require("./routes/featuredPrices");
+const generalSearching = require('./routes/generalSearching')
 
 // for CORS
 app.use(cors());
@@ -32,6 +33,7 @@ global.__basedir = __dirname;
 app.use(express.static(path.join(__dirname, "uploads")));
 
 const evokeRoutes = require("./routes/upload.route");
+const { search } = require("./routes/users");
 app.use(
   express.urlencoded({
     extended: true,
@@ -119,6 +121,7 @@ app.use("/nft", nft);
 app.use("/listing", listing);
 app.use("/featured", featuredNfts);
 app.use("/featuredprices", featuredPrices);
+app.use('/search', generalSearching)
 
 /* Farzan */
 
