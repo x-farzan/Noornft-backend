@@ -341,6 +341,12 @@ router.put("/follow/:id", tokenVerifier, controller.follow);
 
 router.put("/unfollow/:id", tokenVerifier, controller.unFollow);
 
+router.get(
+  "/followstatus/:artistId",
+  tokenVerifier,
+  controller.followUnfollowStatus
+);
+
 router.get("/followers", tokenVerifier, controller.getFollowersList);
 
 router.get("/following", tokenVerifier, controller.getFollowingList);
@@ -351,6 +357,10 @@ router.get("/listednfts/:id", tokenVerifier, controller.getListedNfts);
 
 router.get("/getartists", tokenVerifier, controller.getArtists);
 
-router.get('/getnfts/multiple', tokenVerifier, controller.getNftsOfMultipleArtist)
+router.get(
+  "/getnfts/multiple",
+  tokenVerifier,
+  controller.getNftsOfMultipleArtist
+);
 
 module.exports = router;

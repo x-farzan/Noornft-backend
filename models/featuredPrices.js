@@ -2,19 +2,19 @@ const mongoose = require("mongoose");
 
 const featuredPriceSchema = new mongoose.Schema(
   {
-    primaryBanner: {
+    mainBanner: {
       type: Boolean,
     },
 
-    secondaryBanner: {
+    secondarySlider: {
       type: Boolean,
     },
 
-    primaryBannerValue: {
+    mainBannerPrice: {
       type: Number,
     },
 
-    secondaryBannerValue: {
+    secondarySliderPrice: {
       type: Number,
     },
   },

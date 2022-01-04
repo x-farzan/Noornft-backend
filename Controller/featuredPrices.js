@@ -1,56 +1,64 @@
+const { userFieldsValidator } = require("../helpers/userFieldsValidator");
 const featuredPrices = require("../models/featuredPrices");
 
 exports.addFeaturedprices = async (req, res) => {
   try {
+    let _errors = userFieldsValidator(["select", "price"], req.body);
+    if (_errors.length > 0) {
+      return res.json({
+        _errors,
+      });
+    }
+
     for (let i = 0; i < req.perm.perm.length; i++) {
       if (req.perm.perm[i][0].name == req.perm.str) {
-        if (req.body.primaryBanner && !req.body.secondaryBanner) {
-          const getPrimaryBanner = await featuredPrices.findOne({
-            primaryBanner: true,
+        if (req.body.select == "mainBanner") {
+          const getMainBanner = await featuredPrices.findOne({
+            mainBanner: true,
           });
-          if (getPrimaryBanner) {
+          if (getMainBanner) {
             return res.json({
               success: false,
               message:
-                "Primary banner price is already available. Delete to add a new one.",
+                "Main banner price is already available. Delete to add a new one.",
             });
           }
           const newfeaturedPrices = new featuredPrices({
-            primaryBanner: true,
-            primaryBannerValue: req.body.primaryBanner,
+            mainBanner: true,
+            mainBannerPrice: req.body.price,
           });
           await newfeaturedPrices.save();
           return res.json({
             success: true,
-            message: `Primary banner price successfully updated.`,
+            message: `Main banner price successfully updated.`,
             newfeaturedPrices,
           });
-        } else if (req.body.secondaryBanner && !req.body.primaryBanner) {
-          const getSecondaryBanner = await featuredPrices.findOne({
-            secondaryBanner: true,
+        } else if (req.body.select == "secondarySlider") {
+          const getSecondarySlider = await featuredPrices.findOne({
+            secondarySlider: true,
           });
-          console.log(`secondary banner : `, getSecondaryBanner);
-          if (getSecondaryBanner) {
+          // console.log(`secondary banner : `, getSecondaryBanner);
+          if (getSecondarySlider) {
             return res.json({
               success: false,
               message:
-                "Secondary banner price is already available. Delete to add a new one.",
+                "Secondary Slider price is already available. Delete to add a new one.",
             });
           }
           const newfeaturedPrices = new featuredPrices({
-            secondaryBanner: true,
-            secondaryBannerValue: req.body.secondaryBanner,
+            secondarySlider: true,
+            secondarySliderPrice: req.body.price,
           });
           await newfeaturedPrices.save();
           return res.json({
             success: true,
-            message: `Secondary banner price successfully updated.`,
+            message: `Secondary slider price successfully updated.`,
             newfeaturedPrices,
           });
         } else {
           return res.json({
             success: false,
-            message: `Please enter one price for featuring.`,
+            message: `Either select or price is missing.`,
           });
         }
       }
@@ -86,7 +94,12 @@ exports.getFeaturedPrices = async (req, res) => {
 
 exports.updateFeaturedPrices = async (req, res) => {
   try {
-    console.log(`im in`);
+    let _errors = userFieldsValidator(["price", req.body]);
+    if (_errors.length > 0) {
+      return res.json({
+        _errors,
+      });
+    }
     for (let i = 0; i < req.perm.perm.length; i++) {
       console.log(req.perm.perm[i][0].name);
       console.log(req.perm.str);
@@ -98,13 +111,11 @@ exports.updateFeaturedPrices = async (req, res) => {
             message: `You cannot edit unless you create featured price.`,
           });
         }
-        if (getItem.primaryBanner == true) {
-          console.log(`here 1`);
-          getItem.primaryBannerValue = req.body.value;
+        if (getItem.mainBanner == true) {
+          getItem.mainBannerPrice = req.body.price;
           await getItem.save();
-        } else if (getItem.secondaryBanner == true) {
-          console.log(`here 2`);
-          getItem.secondaryBannerValue = req.body.value;
+        } else if (getItem.secondarySlider == true) {
+          getItem.secondarySliderPrice = req.body.price;
           await getItem.save();
         }
         return res.json({
@@ -124,8 +135,8 @@ exports.updateFeaturedPrices = async (req, res) => {
 exports.deleteFeaturedPrices = async (req, res) => {
   try {
     for (let i = 0; i < req.perm.perm.length; i++) {
-       console.log(req.perm.perm[i][0].name);
-       console.log(req.perm.str);
+      console.log(req.perm.perm[i][0].name);
+      console.log(req.perm.str);
       if (req.perm.perm[i][0].name == req.perm.str) {
         const getItem = await featuredPrices.findOne({ _id: req.params.id });
         if (!getItem) {

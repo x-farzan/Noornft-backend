@@ -684,6 +684,35 @@ unFollow = async (req, res) => {
   }
 };
 
+followUnfollowStatus = async (req, res) => {
+  try {
+    console.log('im in');
+    const getUser = await User.findOne({
+      _id: req.params.artistId,
+    });
+    if (!getUser) {
+      return res.json({
+        success: false,
+        message: `No user found.`,
+      });
+    }
+    for (let i = 0; i < getUser.followers.length; i++) {
+      if (getUser.followers[i] == req.userData.id) {
+        return res.json({
+          success: true,
+        });
+      }
+    }
+    return res.json({
+      success: false,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
 getFollowersList = async (req, res) => {
   try {
     let results = [];
@@ -951,6 +980,7 @@ module.exports = {
   profilePictureEdit,
   getProfilePicture,
   logout,
+  followUnfollowStatus,
   follow,
   unFollow,
   getFollowersList,
