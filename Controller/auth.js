@@ -59,7 +59,7 @@ signup = async (req, res) => {
       "flname",
       "email",
       "password",
-      "walletaddress",
+      // "walletaddress",
       "city",
       "username",
       "description",
@@ -84,56 +84,40 @@ signup = async (req, res) => {
           });
         } else {
           //
-          User.find({ address: req.body.walletaddress })
-            .exec()
-            .then((user) => {
-              if (user.length >= 1) {
-                return res.status(409).json({
-                  message: "Address already exists!",
-                });
-              } else {
-                // Creating a user
-                bCrypt.hash(req.body.password, 10, (err, hash) => {
-                  if (err) {
-                    res.status(500).json({
-                      message: "Password is required.",
-                    });
-                  } else {
-                    console.log(`in else block`);
-                    const user = new User({
-                      //_id = new mongoose.Types.ObjectId(),
-                      flname: req.body.flname,
-                      email: req.body.email,
-                      password: hash,
-                      address: req.body.walletaddress,
-                      role: req.body.role,
-                      description: req.body.description,
-                      city: req.body.city,
-                      username: req.body.username,
-                      // image: req.file,
-                    });
-                    console.log(`displaying user : `, user);
-                    user
-                      .save()
-                      .then((result) => {
-                        res.status(201).json({
-                          message: "User created successfully",
-                        });
-                      })
-                      .catch((err) => {
-                        res.status(500).json({
-                          error: err,
-                        });
-                      });
-                  }
-                });
-              }
-            })
-            .catch((err) => {
-              res.json({
-                error: err,
+          bCrypt.hash(req.body.password, 10, async (err, hash) => {
+            if (err) {
+              res.status(500).json({
+                message: "Password is required.",
               });
-            });
+            } else {
+              console.log(`in else block`);
+              const user = new User({
+                //_id = new mongoose.Types.ObjectId(),
+                flname: req.body.flname,
+                email: req.body.email,
+                password: hash,
+                // address: req.body.walletaddress,
+                role: req.body.role,
+                description: req.body.description,
+                city: req.body.city,
+                username: req.body.username,
+                // image: req.file,
+              });
+              console.log(`displaying user : `, user);
+              await user
+                .save()
+                .then((result) => {
+                  res.status(201).json({
+                    message: "User created successfully",
+                  });
+                })
+                .catch((err) => {
+                  res.status(500).json({
+                    error: err.message,
+                  });
+                });
+            }
+          });
           //
         }
       })

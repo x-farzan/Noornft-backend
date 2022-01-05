@@ -7,7 +7,7 @@ require("dotenv").config();
 exports.createNft = async (req, res) => {
   try {
     let _errors = userFieldsValidator(
-      ["title", "description", "externalLink", "collectionName", "category"],
+      ["title", "description", "collectionName", "category"],
       req.body
     );
 
@@ -156,6 +156,29 @@ exports.myOwnedNfts = async (req, res) => {
   } catch (error) {
     return res.json({
       error: error,
+    });
+  }
+};
+
+exports.nftDetail = async (req, res) => {
+  try {
+    const is_available = await nft.findOne({
+      _id: req.params.nftId,
+      listing: true,
+    });
+    if (!is_available) {
+      return res.json({
+        success: false,
+        message: `Details related to this nft not found.`,
+      });
+    }
+    return res.json({
+      success: true,
+      is_available,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
     });
   }
 };

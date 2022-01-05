@@ -40,7 +40,7 @@ router.route("/profile/:id").get(async (req, res) => {
   const user = await controller.getProfile(_id);
   console.log("USER : ===============================>>>>", user);
   // console.log(user.image);
-  user.image = `${process.env.ngrok}/${user.image}`;
+  user.image = `${process.env.server}/${user.image}`;
   return res.json({
     seccess: true,
     user,
