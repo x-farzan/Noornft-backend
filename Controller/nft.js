@@ -53,7 +53,7 @@ exports.createNft = async (req, res) => {
         const newNft = new nft({
           title: req.body.title,
           description: req.body.description,
-          gatewayLink: `${process.env.heroku}/${req.file.path}`,
+          gatewayLink: `${process.env.server}/${req.file.path}`,
           externalLink: req.body.externalLink,
           collectionId: checkCollection._id,
           category: req.body.category,

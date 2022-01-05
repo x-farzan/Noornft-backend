@@ -357,10 +357,14 @@ router.get("/listednfts/:id", tokenVerifier, controller.getListedNfts);
 
 router.get("/getartists", tokenVerifier, controller.getArtists);
 
+router.get("/search/artists", tokenVerifier, controller.searchArtists)
+
 router.get(
   "/getnfts/multiple",
   tokenVerifier,
   controller.getNftsOfMultipleArtist
 );
+
+
 
 module.exports = router;

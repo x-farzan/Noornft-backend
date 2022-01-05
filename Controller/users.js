@@ -535,7 +535,7 @@ getProfilePicture = async (req, res) => {
   if (response) {
     return res.json({
       success: true,
-      message: `${process.env.heroku}/${response.image}`,
+      message: `${process.env.server}/${response.image}`,
     });
   }
   return res.json({
@@ -686,7 +686,7 @@ unFollow = async (req, res) => {
 
 followUnfollowStatus = async (req, res) => {
   try {
-    console.log('im in');
+    console.log("im in");
     const getUser = await User.findOne({
       _id: req.params.artistId,
     });
@@ -902,6 +902,37 @@ getArtists = async (req, res) => {
   }
 };
 
+searchArtists = async (req, res) => {
+  try {
+    if (!req.query.value) {
+      return res.json({
+        success: false,
+        message: `You haven't searched anything yet.`,
+      });
+    }
+    const query = req.query.value;
+    const searchArtist = await User.find({
+      username: { $regex: query },
+      reqStatus: "approved",
+      role: "artist",
+    });
+    if (searchArtist.length < 1) {
+      return res.json({
+        success: false,
+        message: `No artists to show.`,
+      });
+    }
+    return res.json({
+      success: true,
+      searchArtist,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
 getNftsOfMultipleArtist = async (req, res) => {
   try {
     let Nfts = [];
@@ -988,5 +1019,6 @@ module.exports = {
   topArtists,
   getListedNfts,
   getArtists,
+  searchArtists,
   getNftsOfMultipleArtist,
 };
