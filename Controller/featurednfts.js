@@ -38,9 +38,23 @@ exports.featuredNfts = async (req, res) => {
           });
         }
 
-        (checkNft.featured = true),
-          (checkNft.reqStatus = "pending"),
-          checkNft.save();
+        checkNft.featured = true;
+        checkNft.reqStatus = "pending";
+        if (req.body.mainPrice && !req.body.secondaryPrice) {
+          checkNft.mainBannerPrice = req.body.mainPrice;
+        } else if (req.body.secondaryPrice && !req.body.mainPrice) {
+          checkNft.secondarySliderPrice = req.body.secondaryPrice;
+        } else if (req.body.mainPrice && req.body.secondaryPrice) {
+          checkNft.mainBannerPrice = req.body.mainPrice;
+          checkNft.secondarySliderPrice = req.body.secondaryPrice;
+        } else {
+          return res.json({
+            success: false,
+            message: `Please select price to get this featured.`,
+          });
+        }
+
+        await checkNft.save();
         return res.json({
           success: true,
           message: `Your request to make "${checkNft.title}" has been requested to approve.`,
@@ -49,7 +63,7 @@ exports.featuredNfts = async (req, res) => {
     }
   } catch (error) {
     return res.json({
-      error,
+      error: error.message,
     });
   }
 };
@@ -124,7 +138,7 @@ exports.getFeaturedRequests = async (req, res) => {
         const featuredRequests = await nft.find({
           listing: true,
           featured: true,
-          reqStatus: "pending",
+          // reqStatus: "pending",
         });
         if (featuredRequests.length < 1) {
           return res.json({
@@ -164,9 +178,13 @@ exports.responseFeaturedRequests = async (req, res) => {
     // }
 
     for (let i = 0; i < req.perm.perm.length; i++) {
+      // console.log(`im in`);
+      console.log(req.perm.perm[i][0].name);
+      console.log(req.perm.str);
       if (
-        req.perm.perm[i][0].name == req.perm.str &&
-        req.perm.perm[i][0].group == "admin"
+        req.perm.perm[i][0].name == req.perm.str
+        // &&
+        // req.perm.perm[i][0].group == "admin"
       ) {
         // console.log(`req.perm.perm[${i}][0].name : `, req.perm.perm.name);
         // console.log(`req.perm.str : `, req.perm.str);
@@ -177,6 +195,7 @@ exports.responseFeaturedRequests = async (req, res) => {
           featured: true,
           reqStatus: "pending",
         });
+        console.log(`getNft`, getNft);
         if (!getNft) {
           return res.json({
             success: false,
@@ -184,10 +203,18 @@ exports.responseFeaturedRequests = async (req, res) => {
             data: [],
           });
         }
-        (getNft.reqStatus = req.body.status), await getNft.save();
+        if (req.body.status == "approved") {
+          getNft.reqStatus = req.body.status;
+        } else if (req.body.status == "rejected") {
+          getNft.reqStatus = req.body.status;
+          getNft.featured = false;
+          getNft.mainBannerPrice = 0;
+          getNft.secondarySliderPrice = 0;
+        }
+        await getNft.save();
         return res.json({
           success: true,
-          message: `NFT approved successfully.`,
+          message: `NFT ${req.body.status} successfully.`,
           getNft,
         });
       }

@@ -51,6 +51,7 @@ Permissions.find()
           result[13]._id,
           result[14]._id,
           result[15]._id,
+          result[16]._id,
         ],
       }),
     ];

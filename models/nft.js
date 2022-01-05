@@ -54,6 +54,14 @@ const nftSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    mainBannerPrice: {
+      type: Number,
+    },
+
+    secondarySliderPrice: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

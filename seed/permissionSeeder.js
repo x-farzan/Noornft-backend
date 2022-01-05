@@ -68,6 +68,10 @@ const permissions = [
     group: "admin",
   }),
   new Permissions({
+    name: "update-featured",
+    group: "admin",
+  }),
+  new Permissions({
     name: "create-featuredprices",
     group: "admin",
   }),
