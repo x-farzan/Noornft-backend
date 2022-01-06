@@ -52,6 +52,7 @@ checkUser = async (req, res) => {
 };
 
 /* Farzan */
+
 signup = async (req, res) => {
   // const imageName = req.file;
   let _errors = userFieldsValidator.userFieldsValidator(
@@ -70,12 +71,12 @@ signup = async (req, res) => {
     res.send(_errors);
   }
 
-  console.log(`REQ BODY : `, req);
+  let to_lowercase = req.body.email;
+  to_lowercase = to_lowercase.toLowerCase();
 
   //checking for the email, if already exists!!
-  if (validator.isEmail(req.body.email)) {
-    console.log(`entered`);
-    await User.find({ email: req.body.email })
+  if (validator.isEmail(to_lowercase)) {
+    await User.find({ email: to_lowercase })
       .exec()
       .then((user) => {
         if (user.length >= 1) {
@@ -94,7 +95,7 @@ signup = async (req, res) => {
               const user = new User({
                 //_id = new mongoose.Types.ObjectId(),
                 flname: req.body.flname,
-                email: req.body.email,
+                email: to_lowercase,
                 password: hash,
                 // address: req.body.walletaddress,
                 role: req.body.role,
@@ -141,8 +142,11 @@ signin = async (req, res) => {
   if (_errors.length > 0) {
     res.send(_errors);
   }
+
+  let to_lowercase = req.body.email;
+  to_lowercase = to_lowercase.toLowerCase();
   // checking for email, if exists
-  await User.find({ email: req.body.email })
+  await User.find({ email: to_lowercase })
     .exec()
     .then((user) => {
       if (user.length < 1) {
@@ -180,7 +184,7 @@ signin = async (req, res) => {
             _id: user[0]._id,
             role: user[0].role,
             walletaddress: user[0].address,
-            projectId: user[0].projectId,
+            username: user[0].username,
             token: user[0].token,
           });
         } else {
@@ -197,6 +201,65 @@ signin = async (req, res) => {
       });
     });
 };
+
+changePassword = async (req, res) => {
+  try {
+    const _errors = userFieldsValidator.userFieldsValidator(
+      ["oldPassword", "newPassword", "confirmPassword"],
+      req.body
+    );
+    if (_errors.length > 0) {
+      return res.json({
+        _errors,
+      });
+    }
+
+    const get_user = await User.findOne({
+      _id: req.userData.id,
+    });
+    if (!get_user) {
+      return res.json({
+        success: false,
+        message: `Not a valid user.`,
+      });
+    }
+
+    bCrypt.compare(req.body.oldPassword, get_user.password, (err, result) => {
+      if (result) {
+        if (req.body.newPassword != req.body.confirmPassword) {
+          return res.json({
+            success: false,
+            message: `Make sure new and confirm passwords match.`,
+          });
+        }
+        bCrypt.hash(req.body.newPassword, 10, async (err, hash) => {
+          if (err) {
+            return res.json({
+              success: false,
+              message: `Password update failed.`,
+            });
+          }
+          get_user.password = hash;
+          await get_user.save();
+          return res.json({
+            success: true,
+            message: `Password updated successfully.`,
+          });
+        });
+      } else {
+        return res.json({
+          success: false,
+          message: `Your old password is not valid.`,
+        });
+      }
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
 /* Farzan */
 
-module.exports = { getAllUsers, checkUser, signup, signin };
+module.exports = { getAllUsers, checkUser, signup, signin, changePassword };
