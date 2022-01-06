@@ -912,7 +912,7 @@ searchArtists = async (req, res) => {
     }
     const query = req.query.value;
     const searchArtist = await User.find({
-      username: { $regex: query },
+      username: { $regex: query, $options: "i" },
       reqStatus: "approved",
       role: "artist",
     });
@@ -935,6 +935,7 @@ searchArtists = async (req, res) => {
 
 getNftsOfMultipleArtist = async (req, res) => {
   try {
+    console.log(`HASSAN BODY : `, req.body);
     let Nfts = [];
     let getNfts;
     for (let i = 0; i < req.body.ids.length; i++) {
@@ -990,6 +991,44 @@ getNftsOfMultipleArtist = async (req, res) => {
   }
 };
 
+editProfile = async (req, res) => {
+  try {
+    const is_available = await User.findOne({
+      _id: req.userData.id,
+    });
+    if (!is_available) {
+      return res.json({
+        success: false,
+        message: `Not a valid user.`,
+      });
+    }
+
+    if (req.body.bio && !req.body.website) {
+      is_available.bio = req.body.bio;
+    } else if (req.body.website && !req.body.bio) {
+      is_available.website = req.body.website;
+    } else if (req.body.bio && req.body.website) {
+      is_available.bio = req.body.bio;
+      is_available.website = req.body.website;
+    } else {
+      return res.json({
+        success: false,
+        message: `Please provide with the info to update.`,
+      });
+    }
+
+    await is_available.save();
+    return res.json({
+      success: true,
+      message: `Information updated successfully.`,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   postNewUser,
   userById,
@@ -1021,4 +1060,5 @@ module.exports = {
   getArtists,
   searchArtists,
   getNftsOfMultipleArtist,
+  editProfile,
 };

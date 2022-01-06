@@ -11,11 +11,14 @@ router.post(
   controller.createCollection
 );
 router.get("/view", tokenVerifier, isAuthorized, controller.getCollections);
+
 router.delete(
   "/delete/:id",
   tokenVerifier,
   isAuthorized,
   controller.deleteCollection
 );
+
+router.get("/searchcollection", tokenVerifier, controller.searchCollection)
 
 module.exports = router;

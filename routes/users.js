@@ -359,12 +359,13 @@ router.get("/getartists", tokenVerifier, controller.getArtists);
 
 router.get("/search/artists", tokenVerifier, controller.searchArtists)
 
-router.get(
+router.post(
   "/getnfts/multiple",
   tokenVerifier,
   controller.getNftsOfMultipleArtist
 );
 
+router.put("/edit/profile", tokenVerifier, controller.editProfile)
 
 
 module.exports = router;

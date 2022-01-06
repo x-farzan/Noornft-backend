@@ -207,9 +207,9 @@ exports.responseFeaturedRequests = async (req, res) => {
           getNft.reqStatus = req.body.status;
         } else if (req.body.status == "rejected") {
           getNft.reqStatus = req.body.status;
-          getNft.featured = false;
-          getNft.mainBannerPrice = 0;
-          getNft.secondarySliderPrice = 0;
+          // getNft.featured = false;
+          // getNft.mainBannerPrice = 0;
+          // getNft.secondarySliderPrice = 0;
         }
         await getNft.save();
         return res.json({

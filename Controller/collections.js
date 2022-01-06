@@ -81,3 +81,34 @@ exports.deleteCollection = async (req, res) => {
     }
   }
 };
+
+exports.searchCollection = async (req, res) => {
+  try {
+    if (!req.query.value) {
+      return res.json({
+        success: false,
+        message: `Type in to search something.`,
+      });
+    }
+
+    const query = req.query.value;
+    const is_available = await collection.find({
+      collectionName: { $regex: query, $options:"i" },
+    });
+    if (is_available.length < 1) {
+      return res.json({
+        success: false,
+        message: `No collections found with this name.`,
+      });
+    }
+
+    return res.json({
+      success: true,
+      is_available,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};

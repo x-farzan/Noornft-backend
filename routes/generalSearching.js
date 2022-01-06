@@ -3,6 +3,6 @@ const { tokenVerifier } = require("../middleware/tokenVerifier");
 const router = express.Router();
 const controller = require("../Controller/generalSearching");
 
-router.get("/", tokenVerifier, controller.generalSearching);
+router.get("/", controller.generalSearching);
 
 module.exports = router;

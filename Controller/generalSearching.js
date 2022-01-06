@@ -16,7 +16,7 @@ exports.generalSearching = async (req, res) => {
     }
 
     const getArtists = await User.find({
-      username: { $regex: query },
+      username: { $regex: query, $options: "i" },
       role: "artist",
     });
     for (let i = 0; i < getArtists.length; i++) {
