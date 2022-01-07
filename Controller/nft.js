@@ -2,6 +2,7 @@ const { userFieldsValidator } = require("../helpers/userFieldsValidator");
 const nft = require("../models/nft");
 const collection = require("../models/collections");
 const User = require("../models/User");
+const { paginator } = require("../helpers/arrayPaginator");
 require("dotenv").config();
 
 exports.createNft = async (req, res) => {
@@ -76,12 +77,9 @@ exports.createNft = async (req, res) => {
 
 exports.myOwnedNfts = async (req, res) => {
   try {
-    // console.log(`here : `, req.perm.perm);
+    let paginated;
     for (let i = 0; i < req.perm.perm.length; i++) {
-      // console.log(`req.perm.perm[i][0].name `, req.perm.perm[i][0].name);
-      // console.log(`req.perm.str `, req.perm.str);
       if (req.perm.perm[i][0].name == req.perm.str) {
-        console.log(`IM in`);
         let finalObj = [];
         const getNfts = await nft.find({
           artistId: req.userData.id,
@@ -123,9 +121,16 @@ exports.myOwnedNfts = async (req, res) => {
           console.log(getNfts[j]);
           finalObj.push(getNfts[j]);
         }
+        if (finalObj.length < 1) {
+          return res.json({
+            success: false,
+            data: [],
+          });
+        }
+        paginated = paginator(finalObj, 12, req.query.page);
         return res.json({
           success: true,
-          nfts: finalObj,
+          paginated,
         });
       }
     }
