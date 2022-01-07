@@ -19,10 +19,10 @@ router.get("/marketplace", controller.marketplaceListing);
 
 router.get("/search", tokenVerifier, controller.priceRangeSearch);
 
-router.put('/addcount/:nftId', tokenVerifier, controller.addCount)
+router.put("/addcount/:nftId", tokenVerifier, controller.addCount);
 
-router.get("/viewcount/:nftId", tokenVerifier, controller.viewCount);
+router.get("/viewcount/:nftId", controller.viewCount);
 
-router.get('/filter', tokenVerifier, controller.getFiltered)
+router.get("/filter", tokenVerifier, controller.getFiltered);
 
 module.exports = router;
