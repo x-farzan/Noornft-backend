@@ -36,11 +36,8 @@ router.route("/upload/nft/info").post(async (req, res) => {
 
 router.route("/profile/:id").get(async (req, res) => {
   const _id = req.params.id;
-  console.log("id : ;============================== >>>> ", _id);
   const user = await controller.getProfile(_id);
-  console.log("USER : ===============================>>>>", user);
-  // console.log(user.image);
-  user.image = `${process.env.server}/${user.image}`;
+  user.image = `${process.env.po}/${user.image}`;
   return res.json({
     seccess: true,
     user,
@@ -357,7 +354,7 @@ router.get("/listednfts/:id", tokenVerifier, controller.getListedNfts);
 
 router.get("/getartists", tokenVerifier, controller.getArtists);
 
-router.get("/search/artists", tokenVerifier, controller.searchArtists)
+router.get("/search/artists", tokenVerifier, controller.searchArtists);
 
 router.post(
   "/getnfts/multiple",
@@ -365,7 +362,6 @@ router.post(
   controller.getNftsOfMultipleArtist
 );
 
-router.put("/edit/profile", tokenVerifier, controller.editProfile)
-
+router.put("/edit/profile", tokenVerifier, controller.editProfile);
 
 module.exports = router;

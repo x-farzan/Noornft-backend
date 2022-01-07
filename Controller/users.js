@@ -15,6 +15,7 @@ const pinataSDK = require("@pinata/sdk");
 const { response } = require("express");
 const nft = require("../models/nft");
 const pinata = pinataSDK(process.env.pinatakey1, process.env.pinatakey2);
+const { paginator } = require("../helpers/arrayPaginator");
 
 postNewUser = async (req, res) => {
   const errors = validationResult(req);
@@ -715,6 +716,7 @@ followUnfollowStatus = async (req, res) => {
 
 getFollowersList = async (req, res) => {
   try {
+    let paginated;
     let results = [];
     const response = await User.findOne({ _id: req.userData.id });
     // console.log(response.followers);
@@ -726,16 +728,26 @@ getFollowersList = async (req, res) => {
           message: `User not exists.`,
         });
       }
-      console.log(`result : `, result);
+      // console.log(`result is here : `, result);
       results.push({
         _id: result._id,
         name: result.flname,
-        image: `http://8bcb-72-255-5-119.ngrok.io/${result.image}`,
+        image: `${process.env.server}/${result.image}`,
       });
     }
+
+    if (results.length < 1) {
+      return res.json({
+        success: false,
+        data: [],
+      });
+    }
+
+    paginated = paginator(results, 12, req.query.page);
+
     return res.json({
       success: true,
-      results,
+      paginated,
     });
   } catch (error) {
     return res.json({
@@ -746,6 +758,7 @@ getFollowersList = async (req, res) => {
 
 getFollowingList = async (req, res) => {
   try {
+    let paginated;
     let results = [];
     const response = await User.findOne({ _id: req.userData.id });
     // console.log(response.followers);
@@ -761,12 +774,21 @@ getFollowingList = async (req, res) => {
       results.push({
         _id: result._id,
         name: result.flname,
-        image: `http://8bcb-72-255-5-119.ngrok.io/${result.image}`,
+        image: `${process.env.server}/${result.image}`,
       });
     }
+    if (results.length < 1) {
+      return res.json({
+        success: false,
+        data: [],
+      });
+    }
+
+    paginated = paginator(results, 12, req.query.page);
+
     return res.json({
       success: true,
-      results,
+      paginated,
     });
   } catch (error) {
     error: error.message;
