@@ -4,6 +4,7 @@ const featurednfts = require("../models/featurednfts");
 const User = require("../models/User");
 const collection = require("../models/collections");
 const { userFieldsValidator } = require("../helpers/userFieldsValidator");
+const { paginator } = require("../helpers/arrayPaginator");
 
 exports.featuredNfts = async (req, res) => {
   try {
@@ -70,6 +71,13 @@ exports.featuredNfts = async (req, res) => {
 
 exports.getFeaturedNfts = async (req, res) => {
   try {
+    if (!req.query.page) {
+      return res.json({
+        success: false,
+        message: `Filteration parameters not passed.`,
+      });
+    }
+    let paginated;
     let finalObj = [];
     for (let i = 0; i < req.perm.perm.length; i++) {
       if (req.perm.perm[i][0].name == req.perm.str) {
@@ -112,9 +120,18 @@ exports.getFeaturedNfts = async (req, res) => {
 
           finalObj.push(getFeatured[j]);
         }
+        if (finalObj.length < 1) {
+          return res.json({
+            success: false,
+            data: [],
+          });
+        }
+
+        paginated = paginator(finalObj, 12, req.query.page);
+
         return res.json({
           success: true,
-          nfts: finalObj,
+          paginated,
         });
       }
     }

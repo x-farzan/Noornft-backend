@@ -2,6 +2,7 @@ const { userFieldsValidator } = require("../helpers/userFieldsValidator");
 const nft = require("../models/nft");
 const collection = require("../models/collections");
 const User = require("../models/User");
+const { paginator } = require("../helpers/arrayPaginator");
 
 exports.makeListed = async (req, res) => {
   try {
@@ -47,8 +48,16 @@ exports.makeListed = async (req, res) => {
 
 exports.myListingNfts = async (req, res) => {
   try {
+    if (!req.query.page) {
+      return res.json({
+        success: false,
+        messgae: `FIltered parameters are not passed`,
+      });
+    }
+
     for (let i = 0; i < req.perm.perm.length; i++) {
       if (req.perm.perm[i][0].name == req.perm.str) {
+        let paginated;
         let finalObj = [];
         const getNfts = await nft.find({
           artistId: req.userData.id,
@@ -91,9 +100,19 @@ exports.myListingNfts = async (req, res) => {
           console.log(getNfts[j]);
           finalObj.push(getNfts[j]);
         }
+
+        if (finalObj.length < 1) {
+          return res.json({
+            success: false,
+            data: [],
+          });
+        }
+
+        paginated = paginator(finalObj, 12, req.query.page);
+
         return res.json({
           success: true,
-          nfts: finalObj,
+          paginated,
         });
       }
     }
@@ -177,6 +196,14 @@ exports.removeNftFromListing = async (req, res) => {
 
 exports.marketplaceListing = async (req, res) => {
   try {
+    if (!req.query.page) {
+      return res.json({
+        success: false,
+        message: `Filtering parameters are not passed.`,
+      });
+    }
+
+    let paginated;
     let finalObj = [];
     const getNfts = await nft.find({
       listing: true,
@@ -229,9 +256,18 @@ exports.marketplaceListing = async (req, res) => {
       console.log(getNfts[j]);
       finalObj.push(getNfts[j]);
     }
+    if (finalObj.length < 1) {
+      return res.json({
+        success: false,
+        data: [],
+      });
+    }
+
+    paginated = paginator(finalObj, 12, req.query.page);
+
     return res.json({
       success: true,
-      nfts: finalObj,
+      paginated,
     });
   } catch (error) {
     return res.json({
