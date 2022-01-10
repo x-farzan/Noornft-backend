@@ -200,7 +200,6 @@ getProfile = async (_id) => {
       if (user.length < 1) {
         return JSON.stringify(`User with this id doen't exists.`);
       }
-      console.log("USER C : ===============================>>>>", user[0]);
       return user[0];
     })
     .catch((err) => {
@@ -716,6 +715,12 @@ followUnfollowStatus = async (req, res) => {
 
 getFollowersList = async (req, res) => {
   try {
+    if (!req.query.page) {
+      return res.json({
+        success: false,
+        message: `Filteration parameters not passed`,
+      });
+    }
     let paginated;
     let results = [];
     const response = await User.findOne({ _id: req.userData.id });
@@ -758,6 +763,12 @@ getFollowersList = async (req, res) => {
 
 getFollowingList = async (req, res) => {
   try {
+    if (!req.query.page) {
+      return res.json({
+        success: false,
+        message: `Filteration parameters not passed.`,
+      });
+    }
     let paginated;
     let results = [];
     const response = await User.findOne({ _id: req.userData.id });

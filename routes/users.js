@@ -3,6 +3,7 @@ const router = express.Router();
 const controller = require("../Controller/users");
 const { tokenVerifier } = require("../middleware/tokenVerifier");
 const { upload } = require("../middleware/avatarUpload");
+const { paginator } = require("../helpers/arrayPaginator");
 
 // @route    POST api/users
 // @desc     Register user
@@ -35,12 +36,21 @@ router.route("/upload/nft/info").post(async (req, res) => {
 });
 
 router.route("/profile/:id").get(async (req, res) => {
+  let paginated;
   const _id = req.params.id;
   const user = await controller.getProfile(_id);
-  user.image = `${process.env.po}/${user.image}`;
+  user.image = `${process.env.server}/${user.image}`;
+  if (user.address.length < 1) {
+    return res.json({
+      success: false,
+      message: `No wallets attached yet.`,
+    });
+  }
+  paginated = paginator(user.address, 4, req.query.page);
   return res.json({
     seccess: true,
     user,
+    paginated,
   });
 });
 
