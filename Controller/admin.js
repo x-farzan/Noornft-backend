@@ -45,11 +45,11 @@ respondRequest = async (req, res) => {
   await User.findOne({ _id: id })
     .exec()
     .then((user) => {
-      if (user.reqStatus == "approved" || user.reqStatus == "rejected") {
-        return res.json({
-          msg: "You have already responded to the request.",
-        });
-      }
+      // if (user.reqStatus == "approved" || user.reqStatus == "rejected") {
+      //   return res.json({
+      //     msg: "You have already responded to the request.",
+      //   });
+      // }
       if (reqStatus == "approved") {
         user.reqStatus = "approved";
         user.save();
