@@ -968,7 +968,13 @@ searchArtists = async (req, res) => {
 
 getNftsOfMultipleArtist = async (req, res) => {
   try {
-    console.log(`HASSAN BODY : `, req.body);
+    if (!req.query.page) {
+      return res.json({
+        success: false,
+        message: `Please pass filteration parameters.`,
+      });
+    }
+    let paginated;
     let Nfts = [];
     let getNfts;
     for (let i = 0; i < req.body.ids.length; i++) {
@@ -998,9 +1004,11 @@ getNftsOfMultipleArtist = async (req, res) => {
       });
     }
 
+    paginated = paginator(Nfts, 12, req.query.page);
+
     return res.json({
       success: true,
-      Nfts,
+      paginated,
     });
 
     // const getArtist = await User.findOne({ _id: req.params.artistId });
