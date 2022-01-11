@@ -184,57 +184,49 @@ exports.responseFeaturedRequests = async (req, res) => {
       return res.send(_errors);
     }
 
-    console.log(`body : `, req.body.status);
+    const status = req.body.status;
+    if (status == "approved" || status == "rejected") {
+      for (let i = 0; i < req.perm.perm.length; i++) {
+        console.log(req.perm.perm[i][0].name);
+        console.log(req.perm.str);
+        if (req.perm.perm[i][0].name == req.perm.str) {
+          const getNft = await nft.findOne({
+            _id: req.params.nftId,
+            listing: true,
+            featured: true,
+            reqStatus: "pending",
+          });
 
-    // if (req.body.status != "approved" || req.body.status != "rejected") {
-    //   return res.json({
-    //     success: false,
-    //     message: `status has to be approved or rejected.`,
-    //     result: req.body.status
-    //   });
-    // }
+          if (!getNft) {
+            const is_available = await nft.findOne({ _id: req.params.nftId });
+            if (!is_available) {
+              return res.json({
+                success: false,
+                message: `NFT with this _id not exists.`,
+              });
+            }
+            is_available.reqStatus = req.body.status;
+            await is_available.save();
+            return res.json({
+              success: true,
+              message: `NFT ${req.body.status} successfully.`,
+            });
+          }
 
-    for (let i = 0; i < req.perm.perm.length; i++) {
-      // console.log(`im in`);
-      console.log(req.perm.perm[i][0].name);
-      console.log(req.perm.str);
-      if (
-        req.perm.perm[i][0].name == req.perm.str
-        // &&
-        // req.perm.perm[i][0].group == "admin"
-      ) {
-        // console.log(`req.perm.perm[${i}][0].name : `, req.perm.perm.name);
-        // console.log(`req.perm.str : `, req.perm.str);
-
-        const getNft = await nft.findOne({
-          _id: req.params.nftId,
-          listing: true,
-          featured: true,
-          reqStatus: "pending",
-        });
-        console.log(`getNft`, getNft);
-        if (!getNft) {
+          getNft.reqStatus = req.body.status;
+          await getNft.save();
           return res.json({
-            success: false,
-            message: `This NFT is already responded with the status.`,
-            data: [],
+            success: true,
+            message: `NFT ${req.body.status} successfully.`,
+            getNft,
           });
         }
-        if (req.body.status == "approved") {
-          getNft.reqStatus = req.body.status;
-        } else if (req.body.status == "rejected") {
-          getNft.reqStatus = req.body.status;
-          // getNft.featured = false;
-          // getNft.mainBannerPrice = 0;
-          // getNft.secondarySliderPrice = 0;
-        }
-        await getNft.save();
-        return res.json({
-          success: true,
-          message: `NFT ${req.body.status} successfully.`,
-          getNft,
-        });
       }
+    } else {
+      return res.json({
+        success: false,
+        message: `Status passed is not correct.`,
+      });
     }
   } catch (error) {
     return res.json({

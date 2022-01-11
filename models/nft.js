@@ -41,8 +41,8 @@ const nftSchema = new mongoose.Schema(
 
     reqStatus: {
       type: String,
-      enum: ["approved", "pending", "rejected", null],
-      default: null,
+      enum: ["approved", "pending", "rejected", "null"],
+      default: "null",
     },
 
     price: {
