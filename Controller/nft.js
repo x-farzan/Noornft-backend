@@ -8,7 +8,7 @@ require("dotenv").config();
 exports.createNft = async (req, res) => {
   try {
     let _errors = userFieldsValidator(
-      ["title", "description", "collectionName", "category"],
+      ["Title", "Description", "CollectionName", "Category"],
       req.body
     );
 
@@ -25,7 +25,7 @@ exports.createNft = async (req, res) => {
 
     // checking collection, if available.
     const checkCollection = await collection.findOne({
-      collectionName: req.body.collectionName,
+      collectionName: req.body.CollectionName,
       artist: req.userData.id,
     });
     if (checkCollection < 1) {
@@ -38,7 +38,7 @@ exports.createNft = async (req, res) => {
 
     // checking nft, if exists before.
     const checkNft = await nft.findOne({
-      title: req.body.title,
+      title: req.body.Title,
       collectionId: checkCollection._id,
     });
     if (checkNft) {
@@ -52,12 +52,12 @@ exports.createNft = async (req, res) => {
     for (let i = 0; i < req.perm.perm.length; i++) {
       if (req.perm.perm[i][0].name == req.perm.str) {
         const newNft = new nft({
-          title: req.body.title,
-          description: req.body.description,
+          title: req.body.Title,
+          description: req.body.Description,
           gatewayLink: `${process.env.server}/${req.file.path}`,
-          externalLink: req.body.externalLink,
+          externalLink: req.body.ExternalLink,
           collectionId: checkCollection._id,
-          category: req.body.category,
+          category: req.body.Category,
           artistId: req.userData.id,
         });
         await newNft.save();
