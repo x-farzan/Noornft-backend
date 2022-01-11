@@ -5,10 +5,11 @@ const User = require("../models/User");
 exports.generalSearching = async (req, res) => {
   try {
     let _obj = [];
+    console.log(`query : `, req.query.value);
     const query = req.query.value;
 
     const getNft = await nft.find({
-      title: { $regex: query },
+      title: { $regex: query, $options: "i" },
       listing: true,
     });
     for (let i = 0; i < getNft.length; i++) {
