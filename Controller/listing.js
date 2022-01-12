@@ -178,7 +178,7 @@ exports.removeNftFromListing = async (req, res) => {
         }
         (getListedNft.listing = false),
           (getListedNft.featured = false),
-          (getListedNft.reqStatus = null);
+          (getListedNft.reqStatus = "null");
         await getListedNft.save();
         return res.json({
           success: true,

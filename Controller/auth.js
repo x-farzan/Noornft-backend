@@ -61,9 +61,9 @@ signup = async (req, res) => {
       "email",
       "password",
       // "walletaddress",
-      "city",
+      // "city",
       "username",
-      "description",
+      // "description",
     ],
     req.body
   );

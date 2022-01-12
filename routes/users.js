@@ -362,7 +362,7 @@ router.get("/top/artists", controller.topArtists);
 
 router.get("/listednfts/:id", tokenVerifier, controller.getListedNfts);
 
-router.get("/getartists", tokenVerifier, controller.getArtists);
+router.get("/getartists", controller.getArtists);
 
 router.get("/search/artists", tokenVerifier, controller.searchArtists);
 
