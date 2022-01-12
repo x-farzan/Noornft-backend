@@ -217,17 +217,6 @@ exports.marketplaceListing = async (req, res) => {
       });
     }
 
-    console.log(`NFTS : `, getNfts);
-
-    // const getUserData = await User.findOne({ _id: req.userData.id });
-    // if (!getUserData) {
-    //   return res.json({
-    //     success: false,
-    //     message: `No user found.`,
-    //     data: [],
-    //   });
-    // }
-
     for (let j = 0; j < getNfts.length; j++) {
       const getUserData = await User.findOne({ _id: getNfts[j].artistId });
       if (!getUserData) {
@@ -251,9 +240,7 @@ exports.marketplaceListing = async (req, res) => {
         collectionName: getCollectionData.collectionName,
         artistName: getUserData.username,
       };
-      // getNfts[j].collectionName = getCollectionData.collectionName;
-      // getNfts[j].artistName = getUserData.flname;
-      console.log(getNfts[j]);
+
       finalObj.push(getNfts[j]);
     }
     if (finalObj.length < 1) {
