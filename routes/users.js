@@ -40,12 +40,12 @@ router.route("/profile/:id").get(async (req, res) => {
   const _id = req.params.id;
   const user = await controller.getProfile(_id);
   user.image = `${process.env.server}/${user.image}`;
-  if (user.address.length < 1) {
-    return res.json({
-      success: false,
-      message: `No wallets attached yet.`,
-    });
-  }
+  // if (user.address.length < 1) {
+  //   return res.json({
+  //     success: false,
+  //     message: `No wallets attached yet.`,
+  //   });
+  // }
   paginated = paginator(user.address, 4, req.query.page);
   return res.json({
     seccess: true,
