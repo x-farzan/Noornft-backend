@@ -349,6 +349,19 @@ exports.priceRangeSearch = async (req, res) => {
       });
     }
 
+    if (req.body.minPrice < 0 || req.body.maxPrice < 0) {
+      return res.json({
+        success: false,
+        message: `Entered value cannot be less than 0.`,
+      });
+    }
+    if (req.body.maxPrice < req.body.minPrice) {
+      return res.json({
+        success: false,
+        message: `Max price cannot be less than min price.`,
+      });
+    }
+
     // if (
     //   req.body.minPrice > req.body.maxPrice ||
     //   req.body.maxPrice < req.body.minPrice
