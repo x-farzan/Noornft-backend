@@ -17,6 +17,8 @@ router.put(
 
 router.get("/marketplace", controller.marketplaceListing);
 
+router.post("/filter/marketplace", controller.filterMarketplaceListing)
+
 router.get("/search", tokenVerifier, controller.priceRangeSearch);
 
 router.put("/addcount/:nftId", tokenVerifier, controller.addCount);

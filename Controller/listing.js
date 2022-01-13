@@ -263,6 +263,82 @@ exports.marketplaceListing = async (req, res) => {
   }
 };
 
+// Helper function for function "filterMarketplaceListing"
+exports.sortFunction = async (_obj, req) => {
+  if (req == "newest") {
+    is_nft_available = await nft.find(_obj).sort({ createdAt: -1 });
+  } else if (req == "oldest") {
+    is_nft_available = await nft.find(_obj).sort({ createdAt: 1 });
+  } else if (req == "highestprice") {
+    is_nft_available = await nft.find(_obj).sort({ price: -1 });
+  } else if (req == "lowestprice") {
+    is_nft_available = await nft.find(_obj).sort({ price: 1 });
+  } else {
+    return "Passed sort parameter is not valid.";
+  }
+  if (is_nft_available.length < 1) {
+    return "No NFT's available to show.";
+  }
+  return is_nft_available;
+};
+
+exports.filterMarketplaceListing = async (req, res) => {
+  try {
+    if (Object.keys(req.body).length == 0) {
+      return res.json({
+        success: false,
+        message: `Please provide some filter parameters.`,
+      });
+    }
+
+    let paginated;
+    let _obj = req.body;
+    _obj = { ..._obj, listing: true };
+    let is_nft_available;
+
+    if (req.body.minPrice && req.body.maxPrice && !req.body.sort) {
+      delete _obj.minPrice;
+      delete _obj.maxPrice;
+      _obj = {
+        ..._obj,
+        price: { $gte: req.body.minPrice, $lte: req.body.maxPrice },
+      };
+      is_nft_available = await nft.find(_obj);
+    } else if (!(req.body.minPrice && req.body.maxPrice) && req.body.sort) {
+      delete _obj.sort;
+      is_nft_available = await this.sortFunction(_obj, req.body.sort);
+    } else if (req.body.minPrice && req.body.maxPrice && req.body.sort) {
+      delete _obj.minPrice;
+      delete _obj.maxPrice;
+      delete _obj.sort;
+      _obj = {
+        ..._obj,
+        price: { $gte: req.body.minPrice, $lte: req.body.maxPrice },
+      };
+      is_nft_available = await this.sortFunction(_obj, req.body.sort);
+    } else if (!(req.body.minPrice && req.body.maxPrice) && !req.body.sort) {
+      is_nft_available = await nft.find(_obj);
+    }
+    if (is_nft_available.length < 1) {
+      return res.json({
+        success: false,
+        message: `No NFT's to show.`,
+        data: [],
+      });
+    }
+
+    paginated = paginator(is_nft_available, 12, req.query.page);
+    return res.json({
+      success: true,
+      paginated,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
 exports.priceRangeSearch = async (req, res) => {
   try {
     let nfts = [];

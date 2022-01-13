@@ -19,6 +19,8 @@ router.delete(
   controller.deleteCollection
 );
 
-router.get("/searchcollection", tokenVerifier, controller.searchCollection)
+router.get("/searchcollection", tokenVerifier, controller.searchCollection);
+
+router.get("/allcollections", controller.allCollections);
 
 module.exports = router;

@@ -93,7 +93,7 @@ exports.searchCollection = async (req, res) => {
 
     const query = req.query.value;
     const is_available = await collection.find({
-      collectionName: { $regex: query, $options:"i" },
+      collectionName: { $regex: query, $options: "i" },
     });
     if (is_available.length < 1) {
       return res.json({
@@ -105,6 +105,27 @@ exports.searchCollection = async (req, res) => {
     return res.json({
       success: true,
       is_available,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
+exports.allCollections = async (req, res) => {
+  try {
+    const _collections = await collection.find();
+    if (_collections.length < 1) {
+      return res.json({
+        success: false,
+        message: `No collections available to show.`,
+        collections: [],
+      });
+    }
+    return res.json({
+      success: true,
+      collections: _collections,
     });
   } catch (error) {
     return res.json({

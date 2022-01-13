@@ -187,3 +187,62 @@ exports.nftDetail = async (req, res) => {
     });
   }
 };
+
+exports.searchNft = async (req, res) => {
+  try {
+    let paginated;
+    let finalObj = [];
+    if (!req.query.value) {
+      return res.json({
+        success: false,
+        message: `Type in to search something.`,
+      });
+    }
+
+    const query = req.query.value;
+    const is_available = await nft.find({
+      title: { $regex: query, $options: "i" },
+    });
+    if (is_available.length < 1) {
+      return res.json({
+        success: false,
+        message: `No nft's found with this name.`,
+      });
+    }
+
+    for (let i = 0; i < is_available.length; i++) {
+      const _artist = await User.findOne({ _id: is_available[i].artistId });
+      if (!_artist) {
+        return res.json({
+          success: false,
+          message: `Artist for this NFT not found`,
+        });
+      }
+      const _collection = await collection.findOne({
+        _id: is_available[i].collectionId,
+      });
+      if (!_collection) {
+        return res.json({
+          success: false,
+          message: `Collection for this NFT not found.`,
+        });
+      }
+      finalObj.push({
+        ...is_available[i]._doc,
+        artistName: _artist.username,
+        collectionName: _collection.collectionName,
+      });
+    }
+
+    paginated = paginator(finalObj, 12, req.query.page);
+
+    return res.json({
+      success: true,
+      paginated,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};

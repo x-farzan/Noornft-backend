@@ -18,6 +18,8 @@ router
   .route("/myowned")
   .get(tokenVerifier, isAuthorized, controller.myOwnedNfts);
 
-router.get("/detail/:nftId", controller.nftDetail)
+router.get("/detail/:nftId", controller.nftDetail);
+
+router.get("/searchnft", controller.searchNft);
 
 module.exports = router;

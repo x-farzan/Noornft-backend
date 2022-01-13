@@ -186,6 +186,9 @@ signin = async (req, res) => {
             walletaddress: user[0].address,
             username: user[0].username,
             token: user[0].token,
+            flname: user[0].flname,
+            email: user[0].email,
+            image: `${process.env.server}/${user[0].image}`,
           });
         } else {
           return res.status(401).json({

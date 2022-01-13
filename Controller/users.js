@@ -826,7 +826,7 @@ topArtists = async (req, res) => {
         username: getArtists[i].username,
         email: getArtists[i].email,
         followers: getArtists[i].followers.length,
-        image: `${process.env.ngrok}/${getArtists[i].image}`,
+        image: `${process.env.server}/${getArtists[i].image}`,
       });
     }
 

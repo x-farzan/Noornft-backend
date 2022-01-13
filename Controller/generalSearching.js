@@ -1,9 +1,11 @@
+const { paginator } = require("../helpers/arrayPaginator");
 const collections = require("../models/collections");
 const nft = require("../models/nft");
 const User = require("../models/User");
 
 exports.generalSearching = async (req, res) => {
   try {
+    let paginated;
     let _obj = [];
     console.log(`query : `, req.query.value);
     const query = req.query.value;
@@ -31,8 +33,17 @@ exports.generalSearching = async (req, res) => {
       _obj.push(getCollections[i]);
     }
 
+    if (_obj.length < 1) {
+      return res.json({
+        success: false,
+        message: `Nothing to show.`,
+      });
+    }
+
+    paginated = paginator(_obj, 12, req.query.page);
+
     return res.json({
-      _obj,
+      paginated,
     });
   } catch (error) {
     return res.json({
