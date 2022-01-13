@@ -1,3 +1,0 @@
-// exports.deleteRecord = async (id) => {
-  
-// };
