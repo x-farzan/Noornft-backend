@@ -272,7 +272,7 @@ exports.getFeaturedNftsOnHomePage = async (req, res) => {
       }
       finalObj.push({
         ...getNfts[i]._doc,
-        collectionName: getCollection.name,
+        collectionName: getCollection.collectionName,
         username: getUser.username,
       });
     }
