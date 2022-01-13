@@ -362,19 +362,6 @@ exports.priceRangeSearch = async (req, res) => {
       });
     }
 
-    // if (
-    //   req.body.minPrice > req.body.maxPrice ||
-    //   req.body.maxPrice < req.body.minPrice
-    // ) {
-    //   console.log(req.body.minPrice);
-    //   console.log(req.body.maxPrice);
-
-    //   return res.json({
-    //     success: false,
-    //     message: `Entered price range is not correct.`,
-    //   });
-    // }
-
     const getNfts = await nft.find({
       listing: true,
     });
