@@ -292,11 +292,27 @@ exports.filterMarketplaceListing = async (req, res) => {
     }
 
     let paginated;
-    let _obj = req.body;
-    _obj = { ..._obj, listing: true };
     let is_nft_available;
+    let finalObj = [];
+    let _obj = req.body;
 
-    if (req.body.minPrice && req.body.maxPrice && !req.body.sort) {
+    _obj = { ..._obj, listing: true };
+
+    if (_obj.artistId == "") {
+      delete _obj.artistId;
+    }
+    if (_obj.collectionId == "") {
+      delete _obj.collectionId;
+    }
+    if (req.body.minPrice == "" && req.body.maxPrice == "") {
+      delete _obj.minPrice;
+      delete _obj.maxPrice;
+    }
+    if (req.body.sort == "") {
+      delete _obj.sort;
+    }
+
+    if (_obj.minPrice && _obj.maxPrice && !_obj.sort) {
       delete _obj.minPrice;
       delete _obj.maxPrice;
       _obj = {
@@ -304,10 +320,10 @@ exports.filterMarketplaceListing = async (req, res) => {
         price: { $gte: req.body.minPrice, $lte: req.body.maxPrice },
       };
       is_nft_available = await nft.find(_obj);
-    } else if (!(req.body.minPrice && req.body.maxPrice) && req.body.sort) {
+    } else if (_obj.sort && !(_obj.minPrice && _obj.maxPrice)) {
       delete _obj.sort;
       is_nft_available = await this.sortFunction(_obj, req.body.sort);
-    } else if (req.body.minPrice && req.body.maxPrice && req.body.sort) {
+    } else if (_obj.minPrice && _obj.maxPrice && _obj.sort) {
       delete _obj.minPrice;
       delete _obj.maxPrice;
       delete _obj.sort;
@@ -316,10 +332,23 @@ exports.filterMarketplaceListing = async (req, res) => {
         price: { $gte: req.body.minPrice, $lte: req.body.maxPrice },
       };
       is_nft_available = await this.sortFunction(_obj, req.body.sort);
-    } else if (!(req.body.minPrice && req.body.maxPrice) && !req.body.sort) {
+    } else {
       is_nft_available = await nft.find(_obj);
     }
-    if (is_nft_available.length < 1) {
+
+    for (let i = 0; i < is_nft_available.length; i++) {
+      const _user = await User.findOne({ _id: is_nft_available[i].artistId });
+      const _collection = await collection.findOne({
+        _id: is_nft_available[i].collectionId,
+      });
+      finalObj.push({
+        ...is_nft_available[i]._doc,
+        artistName: _user.username,
+        collectionName: _collection.collectionName,
+      });
+    }
+
+    if (finalObj.length < 1) {
       return res.json({
         success: false,
         message: `No NFT's to show.`,
@@ -327,7 +356,7 @@ exports.filterMarketplaceListing = async (req, res) => {
       });
     }
 
-    paginated = paginator(is_nft_available, 12, req.query.page);
+    paginated = paginator(finalObj, 12, req.query.page);
     return res.json({
       success: true,
       paginated,
@@ -349,16 +378,14 @@ exports.priceRangeSearch = async (req, res) => {
       });
     }
 
-    if (req.body.minPrice < 0 || req.body.maxPrice < 0) {
+    if (
+      req.body.minPrice < 0 ||
+      req.body.maxPrice < 0 ||
+      (req.body.minPrice < 0 && req.body.maxPrice < 0)
+    ) {
       return res.json({
         success: false,
         message: `Entered value cannot be less than 0.`,
-      });
-    }
-    if (req.body.maxPrice < req.body.minPrice) {
-      return res.json({
-        success: false,
-        message: `Max price cannot be less than min price.`,
       });
     }
 
