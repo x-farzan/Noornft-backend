@@ -16,32 +16,9 @@ const nft = require("./routes/nft");
 const featuredNfts = require("./routes/featurednfts");
 const listing = require("./routes/listing");
 const featuredPrices = require("./routes/featuredPrices");
-const generalSearching = require('./routes/generalSearching')
+const generalSearching = require("./routes/generalSearching");
 
-// for CORS
-app.use(cors());
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-
-  next();
-});
-
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json());
-global.__basedir = __dirname;
-
-app.use(express.static(path.join(__dirname, "uploads")));
-
-const evokeRoutes = require("./routes/upload.route");
-const { search } = require("./routes/users");
-app.use(
-  express.urlencoded({
-    extended: true,
-  })
-);
-
-evokeRoutes(app);
-background(app);
+// Database connection
 mongoose
   .connect(
     "mongodb+srv://Farzan:Mongodb@123@cluster0.gkqpe.mongodb.net/NoorNFT?retryWrites=true&w=majority",
@@ -56,59 +33,23 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-// Connect Database
 
-// Init Middleware
-app.use(express.json());
-
-app.use("/uploads", express.static("uploads"));
-
-// app.use(function (req, res, next) {
-//   // Website you wish to allow to connect
-//   res.setHeader("Access-Control-Allow-Origin", "*");
-
+// for CORS
+app.use(cors());
 app.use((req, res, next) => {
-  //Enabling CORS
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type,Accept, x-client-key, x-client-token, x-client-secret, Authorization"
-  );
   next();
 });
 
 app.use(
-  cors({
-    origin: "*",
+  express.urlencoded({
+    extended: true,
   })
 );
-//   // Request methods you wish to allow
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-//   );
 
-//   // Request headers you wish to allow
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "X-Requested-With,content-type"
-//   );
-
-//   // Set to true if you need the website to include cookies in the requests sent// to the API (e.g. in case you use sessions)
-//   res.setHeader("Access-Control-Allow-Credentials", true);
-
-//   // Pass to next layer of middlewarenext();
-//   next();
-// });
-
-// app.use(
-//   cors({
-//     origin: "https://noor-nft-admin-side.herokuapp.com/",
-//   })
-// );
-
-// Define Routes
+// Init Middleware
+app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 
 /* Farzan */
 
@@ -121,14 +62,9 @@ app.use("/nft", nft);
 app.use("/listing", listing);
 app.use("/featured", featuredNfts);
 app.use("/featuredprices", featuredPrices);
-app.use('/search', generalSearching)
+app.use("/search", generalSearching);
 
 /* Farzan */
-
-// app.use("/api/auth", auth);
-// app.use("/api/auth", auth);
-// app.use("/api/bids", bids);
-// app.use("/api/search", searchBar);
 
 const PORT = process.env.PORT || 5000;
 

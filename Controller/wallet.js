@@ -14,7 +14,6 @@ exports.convertHexToAddress = (hexAddress) => {
 
 exports.addWallet = async (req, res) => {
   try {
-    // Suggestion : add address in wallet model also on signup!!!
 
     let _errors = userFieldsValidator(["address"], req.body);
     if (_errors.length > 1) {

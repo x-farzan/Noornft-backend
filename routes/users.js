@@ -5,18 +5,6 @@ const { tokenVerifier } = require("../middleware/tokenVerifier");
 const { upload } = require("../middleware/avatarUpload");
 const { paginator } = require("../helpers/arrayPaginator");
 
-// @route    POST api/users
-// @desc     Register user
-// @access   Public
-
-// post a new user
-// router.post("/", controller.postNewUser);
-// user find by DBs ID
-// router.get("/:id", controller.userById);
-
-// update user data
-
-// router.put("/address/:address", controller.updateUserInfo);
 
 router
   .route("/upload/nft")
@@ -40,12 +28,6 @@ router.route("/profile/:id").get(async (req, res) => {
   const _id = req.params.id;
   const user = await controller.getProfile(_id);
   user.image = `${process.env.server}/${user.image}`;
-  // if (user.address.length < 1) {
-  //   return res.json({
-  //     success: false,
-  //     message: `No wallets attached yet.`,
-  //   });
-  // }
   paginated = paginator(user.address, 4, req.query.page);
   return res.json({
     seccess: true,

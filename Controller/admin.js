@@ -7,7 +7,6 @@ var MongoClient = require("mongodb").MongoClient;
 const { deleteRecord } = require("../helpers/deleteRecord");
 
 getRequests = async (req, res) => {
-  // if (req.userData.role == "admin") {
   await User.find()
     .exec()
     .then((user) => {
@@ -30,18 +29,12 @@ getRequests = async (req, res) => {
         msg: "Something went wrong.",
       });
     });
-  // } else {
-  //   return res.json({
-  //     msg: "You are not allowed to access this route.",
-  //   });
-  // }
+  
 };
 
 respondRequest = async (req, res) => {
   id = req.params.id;
   reqStatus = req.body.status;
-  //   console.log(reqStatus);
-  // if (req.userData.role == "admin") {
   await User.findOne({ _id: id })
     .exec()
     .then((user) => {
@@ -86,11 +79,6 @@ respondRequest = async (req, res) => {
         msg: "User with this id doesn't exist.",
       });
     });
-  // } else {
-  //   return res.json({
-  //     msg: "You are not allowed to access the route.",
-  //   });
-  // }
 };
 
 module.exports = {

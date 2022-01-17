@@ -9,62 +9,11 @@ const userFieldsValidator = require("../helpers/userFieldsValidator");
 const validator = require("validator");
 const User = require("../models/User");
 
-getAllUsers = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  try {
-    const user = await User.find().sort("name");
-    // console.log(user)
-    res.send(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-};
-
-// @route    POST api/auth
-// @desc     Authenticate user & get token
-// @access   Public
-
-// check('email', 'Please include a valid email').isEmail(),
-checkUser = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { address } = req.body;
-
-  try {
-    let user = await User.findOne({ address });
-
-    if (!user) {
-      return res.status(400).json({ errors: [{ msg: "Invalid Credentials" }] });
-    }
-
-    res.send(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
-  }
-};
-
 /* Farzan */
 
 signup = async (req, res) => {
-  // const imageName = req.file;
   let _errors = userFieldsValidator.userFieldsValidator(
-    [
-      "flname",
-      "email",
-      "password",
-      // "walletaddress",
-      // "city",
-      "username",
-      // "description",
-    ],
+    ["flname", "email", "password", "username"],
     req.body
   );
   if (_errors.length > 0) {
@@ -93,16 +42,13 @@ signup = async (req, res) => {
             } else {
               console.log(`in else block`);
               const user = new User({
-                //_id = new mongoose.Types.ObjectId(),
                 flname: req.body.flname,
                 email: to_lowercase,
                 password: hash,
-                // address: req.body.walletaddress,
                 role: req.body.role,
                 description: req.body.description,
                 city: req.body.city,
                 username: req.body.username,
-                // image: req.file,
               });
               console.log(`displaying user : `, user);
               await user
@@ -178,7 +124,6 @@ signin = async (req, res) => {
           );
           user[0].token = token;
           user[0].save();
-          // req.token = token;
           return res.status(200).json({
             message: "Auth successfull",
             _id: user[0]._id,

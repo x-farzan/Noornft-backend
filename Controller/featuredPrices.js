@@ -37,7 +37,6 @@ exports.addFeaturedprices = async (req, res) => {
           const getSecondarySlider = await featuredPrices.findOne({
             title: req.body.select,
           });
-          // console.log(`secondary banner : `, getSecondaryBanner);
           if (getSecondarySlider) {
             return res.json({
               success: false,
@@ -99,8 +98,6 @@ exports.updateFeaturedPrices = async (req, res) => {
       });
     }
     for (let i = 0; i < req.perm.perm.length; i++) {
-      // console.log(req.perm.perm[i][0].name);
-      // console.log(req.perm.str);
       if (req.perm.perm[i][0].name == req.perm.str) {
         const getItem = await featuredPrices.findOne({ _id: req.params.id });
         console.log(`_obj : `, getItem);

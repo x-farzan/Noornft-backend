@@ -116,8 +116,7 @@ exports.myOwnedNfts = async (req, res) => {
             collectionName: getCollectionData.collectionName,
             artistName: getUserData.username,
           };
-          // getNfts[j].collectionName = getCollectionData.collectionName;
-          // getNfts[j].artistName = getUserData.flname;
+
           console.log(getNfts[j]);
           finalObj.push(getNfts[j]);
         }
@@ -134,30 +133,6 @@ exports.myOwnedNfts = async (req, res) => {
         });
       }
     }
-    // console.log(req.perm);
-    // const getCollections = await collection.find({ artist: req.userData.id });
-    // if (getCollections.length < 1) {
-    //   return res.json({
-    //     success: false,
-    //     message: `You haven't created any collection yet!`,
-    //   });
-    // }
-    // for (let i = 0; i < getCollections.length; i++) {
-    //   const getNfts = await nft.find({
-    //     collectionId: getCollections[i]._id,
-    //     listing: false,
-    //   });
-    //   if (getNfts.length < 1) {
-    //     return res.json({
-    //       success: false,
-    //       message: `No nfts available to show.`,
-    //     });
-    //   }
-    //   return res.json({
-    //     success: true,
-    //     getNfts,
-    //   });
-    // }
   } catch (error) {
     return res.json({
       error: error,

@@ -68,7 +68,6 @@ exports.isAuthorized = (req, res, next) => {
                   });
                 }
                 // GETTING PERMISSION NAMES
-                //console.log(result);
                 perm.push(result);
                 if (perm.length === permissions.length) {
                   req.perm = {

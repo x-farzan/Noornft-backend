@@ -155,7 +155,6 @@ exports.getFeaturedRequests = async (req, res) => {
         const featuredRequests = await nft.find({
           listing: true,
           featured: true,
-          // reqStatus: "pending",
         });
         if (featuredRequests.length < 1) {
           return res.json({

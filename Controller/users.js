@@ -724,7 +724,6 @@ getFollowersList = async (req, res) => {
     let paginated;
     let results = [];
     const response = await User.findOne({ _id: req.userData.id });
-    // console.log(response.followers);
     for (let i = 0; i < response.followers.length; i++) {
       const result = await User.findOne({ _id: response.followers[i] });
       if (!result) {
@@ -733,7 +732,6 @@ getFollowersList = async (req, res) => {
           message: `User not exists.`,
         });
       }
-      // console.log(`result is here : `, result);
       results.push({
         _id: result._id,
         name: result.flname,
@@ -772,7 +770,6 @@ getFollowingList = async (req, res) => {
     let paginated;
     let results = [];
     const response = await User.findOne({ _id: req.userData.id });
-    // console.log(response.followers);
     for (let i = 0; i < response.following.length; i++) {
       const result = await User.findOne({ _id: response.following[i] });
       if (!result) {
@@ -845,8 +842,6 @@ topArtists = async (req, res) => {
 
 getListedNfts = async (req, res) => {
   try {
-    // for (let i = 0; i < req.perm.perm.length; i++) {
-    // if (req.perm.perm[i][0].name == req.perm.str) {
     let finalObj = [];
 
     const getUser = await User.findOne({
@@ -863,47 +858,16 @@ getListedNfts = async (req, res) => {
       artistId: req.params.id,
       listing: true,
     });
-    // console.log(getNfts);
     if (getNfts.length < 1) {
       return res.json({
         success: false,
         message: `No NFT's to show.`,
       });
     }
-    // const getUserData = await User.findOne({ _id: req.userData.id });
-    // if (!getUserData) {
-    //   return res.json({
-    //     success: false,
-    //     message: `No user found.`,
-    //   });
-    // }
-    // for (let j = 0; j < getNfts.length; j++) {
-    //   const getCollectionData = await collection.findOne({
-    //     _id: getNfts[j].collectionId,
-    //   });
-    //   if (!getCollectionData) {
-    //     return res.json({
-    //       success: false,
-    //       message: `No collections to show.`,
-    //     });
-    //   }
-    //   getNfts[j] = {
-    //     ...getNfts[j]._doc,
-    //     collectionName: getCollectionData.collectionName,
-    //     artistName: getUserData.username,
-    //   };
-    // getNfts[j].collectionName = getCollectionData.collectionName;
-    // getNfts[j].artistName = getUserData.flname;
-    // console.log(getNfts[j]);
-    // finalObj.push(getNfts[j]);
-    // }
-    // finalObj.push(getNfts[j]);
     return res.json({
       success: true,
       nfts: getNfts,
     });
-    // }
-    // }
   } catch (error) {
     return res.json({
       error: error.message,
@@ -990,7 +954,6 @@ getNftsOfMultipleArtist = async (req, res) => {
         artistId: getArtist._id,
         listing: true,
       });
-      // Nfts.push(getNfts);
 
       for (let i = 0; i < getNfts.length; i++) {
         Nfts.push(getNfts[i]);
@@ -1010,21 +973,6 @@ getNftsOfMultipleArtist = async (req, res) => {
       success: true,
       paginated,
     });
-
-    // const getArtist = await User.findOne({ _id: req.params.artistId });
-    // if (!getArtist) {
-    //   return res.json({
-    //     success: fasle,
-    //     message: `No artist found.`,
-    //     data: [],
-    //   });
-    // }
-
-    // const getNfts = await nft.find({
-    //   artistId: req.params.artistId,
-    //   listing: true,
-    // });
-    // // if()
   } catch (error) {
     return res.json({
       error: error.message,

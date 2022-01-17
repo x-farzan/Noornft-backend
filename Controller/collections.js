@@ -48,12 +48,9 @@ exports.getCollections = async (req, res) => {
       });
     }
   }
-
-  // const id = req.params.id;
 };
 
 exports.deleteCollection = async (req, res) => {
-  // const id = req.params.id;
   for (let i = 0; i < req.perm.perm.length; i++) {
     if (req.perm.perm[i][0].name == req.perm.str) {
       console.log(req.perm.perm[i][0].name);
