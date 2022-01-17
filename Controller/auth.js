@@ -124,6 +124,7 @@ signin = async (req, res) => {
           );
           user[0].token = token;
           user[0].save();
+          // req.token = token;
           return res.status(200).json({
             message: "Auth successfull",
             _id: user[0]._id,
@@ -210,4 +211,4 @@ changePassword = async (req, res) => {
 
 /* Farzan */
 
-module.exports = { getAllUsers, checkUser, signup, signin, changePassword };
+module.exports = { signup, signin, changePassword };
