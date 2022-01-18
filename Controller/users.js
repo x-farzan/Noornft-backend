@@ -16,6 +16,8 @@ const { response } = require("express");
 const nft = require("../models/nft");
 const pinata = pinataSDK(process.env.pinatakey1, process.env.pinatakey2);
 const { paginator } = require("../helpers/arrayPaginator");
+const { collection } = require("../models/User");
+const collections = require("../models/collections")
 
 postNewUser = async (req, res) => {
   const errors = validationResult(req);
@@ -842,6 +844,7 @@ topArtists = async (req, res) => {
 
 getListedNfts = async (req, res) => {
   try {
+    let paginated;
     let finalObj = [];
 
     const getUser = await User.findOne({
@@ -858,15 +861,38 @@ getListedNfts = async (req, res) => {
       artistId: req.params.id,
       listing: true,
     });
+
+    console.log(`getnfts : `, getNfts);
     if (getNfts.length < 1) {
       return res.json({
         success: false,
         message: `No NFT's to show.`,
       });
     }
+
+    for (let i = 0; i < getNfts.length; i++) {
+      const _collection = await collections.findOne({
+        _id: getNfts[i].collectionId,
+      });
+      console.log(`CollectionName : `, _collection);
+      if (!_collection) {
+        return res.json({
+          success: false,
+          message: `No collection for this nft.`,
+        });
+      }
+      finalObj.push({
+        ...getNfts[i]._doc,
+        username: getUser.username,
+        collectionName: _collection.collectionName,
+      });
+    }
+
+    paginated = paginator(finalObj, 12, req.query.page);
+
     return res.json({
       success: true,
-      nfts: getNfts,
+      paginated,
     });
   } catch (error) {
     return res.json({
