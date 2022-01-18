@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "image:build": "docker build -t farzan98/noor-islamic-nft-backend:latest .",
+    "push:image": "docker push farzan98/noor-islamic-nft-backend:latest"
   },
   "author": "",
   "license": "ISC",
