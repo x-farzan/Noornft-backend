@@ -94,7 +94,7 @@ exports.myListingNfts = async (req, res) => {
             collectionName: getCollectionData.collectionName,
             artistName: getUserData.username,
           };
-          
+
           console.log(getNfts[j]);
           finalObj.push(getNfts[j]);
         }
@@ -119,7 +119,6 @@ exports.myListingNfts = async (req, res) => {
       error: error.message,
     });
   }
-  
 };
 
 exports.removeNftFromListing = async (req, res) => {
@@ -151,6 +150,43 @@ exports.removeNftFromListing = async (req, res) => {
         });
       }
     }
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
+  }
+};
+
+exports.editPrice = async (req, res) => {
+  try {
+    let _errors = userFieldsValidator(["editprice"], req.body);
+    if (_errors.length > 0) {
+      return res.json(_errors);
+    }
+    if (!req.params.nftId) {
+      return res.json({
+        success: false,
+        message: `Please provide the NFT id to edit price.`,
+      });
+    }
+
+    const _nft = await nft.findOne({
+      _id: req.params.nftId,
+      listing: true,
+    });
+    if (!_nft) {
+      return res.json({
+        success: false,
+        message: "NFT is not available.",
+      });
+    }
+    _nft.price = req.body.editprice;
+    await _nft.save();
+    return res.json({
+      success: true,
+      message: `Price updated successfully.`,
+      result: _nft,
+    });
   } catch (error) {
     return res.json({
       error: error.message,

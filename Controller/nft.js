@@ -8,7 +8,7 @@ require("dotenv").config();
 exports.createNft = async (req, res) => {
   try {
     let _errors = userFieldsValidator(
-      ["Title", "Description", "CollectionName", "Category"],
+      ["Title", "Description", "CollectionName", "Category", "Royalty"],
       req.body
     );
 
@@ -59,6 +59,7 @@ exports.createNft = async (req, res) => {
           collectionId: checkCollection._id,
           category: req.body.Category,
           artistId: req.userData.id,
+          royalty: req.body.Royalty,
         });
         await newNft.save();
 

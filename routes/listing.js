@@ -15,6 +15,8 @@ router.put(
   controller.removeNftFromListing
 );
 
+router.put("/editprice/:nftId", controller.editPrice)
+
 router.get("/marketplace", controller.marketplaceListing);
 
 router.post("/filter/marketplace", controller.filterMarketplaceListing)

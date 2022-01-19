@@ -62,6 +62,13 @@ const nftSchema = new mongoose.Schema(
     secondarySliderPrice: {
       type: Number,
     },
+
+    royalty: {
+      // In percentage
+      type: Number,
+      required: true,
+      default: 0,
+    },
   },
   {
     timestamps: true,
