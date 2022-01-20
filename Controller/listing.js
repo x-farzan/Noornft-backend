@@ -219,22 +219,22 @@ exports.marketplaceListing = async (req, res) => {
 
     for (let j = 0; j < getNfts.length; j++) {
       const getUserData = await User.findOne({ _id: getNfts[j].artistId });
-      // if (!getUserData) {
-      //   return res.json({
-      //     success: false,
-      //     message: `No user found.`,
-      //   });
-      // }
+      if (!getUserData) {
+        return res.json({
+          success: false,
+          message: `No user found.`,
+        });
+      }
       const { collectionName } = await collection.findOne({
         _id: getNfts[j].collectionId,
       });
-      // if (!getCollectionData) {
-      //   return res.json({
-      //     success: false,
-      //     message: `No collections to show.`,
-      //     data: [],
-      //   });
-      // }
+      if (!getCollectionData) {
+        return res.json({
+          success: false,
+          message: `No collections to show.`,
+          data: [],
+        });
+      }
       getNfts[j] = {
         ...getNfts[j]._doc,
         collectionName: collectionName,
