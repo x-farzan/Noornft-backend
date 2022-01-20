@@ -208,7 +208,7 @@ exports.marketplaceListing = async (req, res) => {
     const getNfts = await nft.find({
       listing: true,
     });
-    // console.log(getNfts);
+    console.log(getNfts);
     if (getNfts.length < 1) {
       return res.json({
         success: false,
@@ -225,7 +225,7 @@ exports.marketplaceListing = async (req, res) => {
           message: `No user found.`,
         });
       }
-      const { collectionName } = await collection.findOne({
+      const getCollectionData = await collection.findOne({
         _id: getNfts[j].collectionId,
       });
       if (!getCollectionData) {
@@ -237,7 +237,7 @@ exports.marketplaceListing = async (req, res) => {
       }
       getNfts[j] = {
         ...getNfts[j]._doc,
-        collectionName: collectionName,
+        collectionName: getCollectionData.collectionName,
         artistName: getUserData.username,
       };
 
@@ -352,7 +352,7 @@ exports.filterMarketplaceListing = async (req, res) => {
       return res.json({
         success: false,
         message: `No NFT's to show.`,
-        paginated: [],
+        data: [],
       });
     }
 
