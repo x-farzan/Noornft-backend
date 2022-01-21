@@ -17,7 +17,7 @@ const nft = require("../models/nft");
 const pinata = pinataSDK(process.env.pinatakey1, process.env.pinatakey2);
 const { paginator } = require("../helpers/arrayPaginator");
 const { collection } = require("../models/User");
-const collections = require("../models/collections")
+const collections = require("../models/collections");
 
 postNewUser = async (req, res) => {
   const errors = validationResult(req);
@@ -475,7 +475,6 @@ getNftIdAndPrice = async (_id) => {
 
 profilePictureUpload = async (req, res) => {
   try {
-    // console.log(`path : `, req.file.path);
     if (!req.file) {
       return res.json({
         success: false,
@@ -717,6 +716,7 @@ followUnfollowStatus = async (req, res) => {
 
 getFollowersList = async (req, res) => {
   try {
+    console.time("followers list");
     if (!req.query.page) {
       return res.json({
         success: false,
@@ -749,6 +749,8 @@ getFollowersList = async (req, res) => {
     }
 
     paginated = paginator(results, 12, req.query.page);
+
+    console.timeEnd("followers list");
 
     return res.json({
       success: true,
@@ -844,7 +846,6 @@ topArtists = async (req, res) => {
 
 getListedNfts = async (req, res) => {
   try {
-    let paginated;
     let finalObj = [];
 
     const getUser = await User.findOne({
@@ -860,7 +861,7 @@ getListedNfts = async (req, res) => {
     const getNfts = await nft.find({
       artistId: req.params.id,
       listing: true,
-    });
+    }).limit(12*req.query.page);
 
     console.log(`getnfts : `, getNfts);
     if (getNfts.length < 1) {
@@ -888,11 +889,9 @@ getListedNfts = async (req, res) => {
       });
     }
 
-    paginated = paginator(finalObj, 12, req.query.page);
-
     return res.json({
       success: true,
-      paginated,
+      paginated: finalObj,
     });
   } catch (error) {
     return res.json({

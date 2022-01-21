@@ -5,6 +5,7 @@ const User = require("../models/User");
 
 exports.generalSearching = async (req, res) => {
   try {
+    console.time("General Searching");
     let paginated;
     let _obj = [];
     console.log(`query : `, req.query.value);
@@ -41,6 +42,7 @@ exports.generalSearching = async (req, res) => {
     }
 
     paginated = paginator(_obj, 12, req.query.page);
+    console.timeEnd("General Searching");
 
     return res.json({
       paginated,

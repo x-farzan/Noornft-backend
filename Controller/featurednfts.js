@@ -77,15 +77,16 @@ exports.getFeaturedNfts = async (req, res) => {
         message: `Filteration parameters not passed.`,
       });
     }
-    let paginated;
     let finalObj = [];
     for (let i = 0; i < req.perm.perm.length; i++) {
       if (req.perm.perm[i][0].name == req.perm.str) {
-        const getFeatured = await nft.find({
-          artistId: req.userData.id,
-          featured: true,
-          reqStatus: "approved",
-        });
+        const getFeatured = await nft
+          .find({
+            artistId: req.userData.id,
+            featured: true,
+            reqStatus: "approved",
+          })
+          .limit(12 * req.query.page);
         if (getFeatured.length < 1) {
           return res.json({
             success: false,
@@ -126,9 +127,6 @@ exports.getFeaturedNfts = async (req, res) => {
             data: [],
           });
         }
-
-        paginated = paginator(finalObj, 12, req.query.page);
-
         return res.json({
           success: true,
           paginated,

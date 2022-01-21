@@ -78,15 +78,16 @@ exports.createNft = async (req, res) => {
 
 exports.myOwnedNfts = async (req, res) => {
   try {
-    let paginated;
     for (let i = 0; i < req.perm.perm.length; i++) {
       if (req.perm.perm[i][0].name == req.perm.str) {
         let finalObj = [];
-        const getNfts = await nft.find({
-          artistId: req.userData.id,
-          listing: false,
-          featured: false,
-        });
+        const getNfts = await nft
+          .find({
+            artistId: req.userData.id,
+            listing: false,
+            featured: false,
+          })
+          .limit(12 * req.query.page);
         console.log(getNfts);
         if (getNfts.length < 1) {
           return res.json({
@@ -127,10 +128,10 @@ exports.myOwnedNfts = async (req, res) => {
             data: [],
           });
         }
-        paginated = paginator(finalObj, 12, req.query.page);
+
         return res.json({
           success: true,
-          paginated,
+          paginated: finalObj,
         });
       }
     }
@@ -166,7 +167,8 @@ exports.nftDetail = async (req, res) => {
 
 exports.searchNft = async (req, res) => {
   try {
-    let paginated;
+    console.time("searchNFT");
+    // let paginated;
     let finalObj = [];
     if (!req.query.value) {
       return res.json({
@@ -176,9 +178,11 @@ exports.searchNft = async (req, res) => {
     }
 
     const query = req.query.value;
-    const is_available = await nft.find({
-      title: { $regex: query, $options: "i" },
-    });
+    const is_available = await nft
+      .find({
+        title: { $regex: query, $options: "i" },
+      })
+      .limit(12 * req.query.page);
     if (is_available.length < 1) {
       return res.json({
         success: false,
@@ -209,12 +213,13 @@ exports.searchNft = async (req, res) => {
         collectionName: _collection.collectionName,
       });
     }
+    console.timeEnd("searchNFT");
 
-    paginated = paginator(finalObj, 12, req.query.page);
+    // paginated = paginator(finalObj, 12, req.query.page);
 
     return res.json({
       success: true,
-      paginated,
+      paginated:finalObj,
     });
   } catch (error) {
     return res.json({
