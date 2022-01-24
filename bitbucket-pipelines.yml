@@ -9,7 +9,6 @@ pipelines:
             - docker
             script:
               - npm install
-              - CI=false npm run build
               - npm run image:build
               - docker login --username farzan98 --password 123456789
               - npm run push:image  
