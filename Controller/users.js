@@ -17,7 +17,7 @@ const nft = require("../models/nft");
 const pinata = pinataSDK(process.env.pinatakey1, process.env.pinatakey2);
 const { paginator } = require("../helpers/arrayPaginator");
 const { collection } = require("../models/User");
-const collections = require("../models/collections");
+const collections = require("../models/collections")
 
 postNewUser = async (req, res) => {
   const errors = validationResult(req);
@@ -475,6 +475,7 @@ getNftIdAndPrice = async (_id) => {
 
 profilePictureUpload = async (req, res) => {
   try {
+    // console.log(`path : `, req.file.path);
     if (!req.file) {
       return res.json({
         success: false,
@@ -716,23 +717,42 @@ followUnfollowStatus = async (req, res) => {
 
 getFollowersList = async (req, res) => {
   try {
-    console.time("followers list");
     if (!req.query.page) {
       return res.json({
         success: false,
         message: `Filteration parameters not passed`,
       });
     }
-    const response = await User.findOne({ _id: req.userData.id }).populate({
-      path: "followers",
-      model: "user",
-    });
-    const { followers } = response;
-    console.timeEnd("followers list");
+    let paginated;
+    let results = [];
+    const response = await User.findOne({ _id: req.userData.id });
+    for (let i = 0; i < response.followers.length; i++) {
+      const result = await User.findOne({ _id: response.followers[i] });
+      if (!result) {
+        return res.json({
+          success: false,
+          message: `User not exists.`,
+        });
+      }
+      results.push({
+        _id: result._id,
+        name: result.flname,
+        image: `${process.env.server}/${result.image}`,
+      });
+    }
+
+    if (results.length < 1) {
+      return res.json({
+        success: false,
+        data: [],
+      });
+    }
+
+    paginated = paginator(results, 12, req.query.page);
 
     return res.json({
       success: true,
-      paginated: followers,
+      paginated,
     });
   } catch (error) {
     return res.json({
@@ -749,14 +769,36 @@ getFollowingList = async (req, res) => {
         message: `Filteration parameters not passed.`,
       });
     }
-    const response = await User.findOne({ _id: req.userData.id }).populate({
-      path: "following",
-      model: "user",
-    });
-    const { following } = response;
+    let paginated;
+    let results = [];
+    const response = await User.findOne({ _id: req.userData.id });
+    for (let i = 0; i < response.following.length; i++) {
+      const result = await User.findOne({ _id: response.following[i] });
+      if (!result) {
+        return res.json({
+          success: false,
+          message: `User not exists.`,
+        });
+      }
+      console.log(`result : `, result);
+      results.push({
+        _id: result._id,
+        name: result.flname,
+        image: `${process.env.server}/${result.image}`,
+      });
+    }
+    if (results.length < 1) {
+      return res.json({
+        success: false,
+        data: [],
+      });
+    }
+
+    paginated = paginator(results, 12, req.query.page);
+
     return res.json({
       success: true,
-      paginated: following,
+      paginated,
     });
   } catch (error) {
     error: error.message;
@@ -765,7 +807,6 @@ getFollowingList = async (req, res) => {
 
 topArtists = async (req, res) => {
   try {
-    console.time("top artists");
     let topArtists = [];
     const getArtists = await User.find({
       role: "artist",
@@ -777,22 +818,21 @@ topArtists = async (req, res) => {
         message: `No artists registered yet.`,
       });
     }
-    // for (let i = 0; i < getArtists.length; i++) {
-    //   topArtists.push({
-    //     artistId: getArtists[i]._id,
-    //     username: getArtists[i].username,
-    //     email: getArtists[i].email,
-    //     followers: getArtists[i].followers.length,
-    //     image: `${process.env.server}/${getArtists[i].image}`,
-    //   });
-    // }
+
+    for (let i = 0; i < getArtists.length; i++) {
+      topArtists.push({
+        artistId: getArtists[i]._id,
+        username: getArtists[i].username,
+        email: getArtists[i].email,
+        followers: getArtists[i].followers.length,
+        image: `${process.env.server}/${getArtists[i].image}`,
+      });
+    }
 
     //Sorting JSON objects in DESC order.
-    topArtists = getArtists.slice().sort((a, b) => b.followers - a.followers);
-    console.timeEnd("top artists");
+    topArtists = topArtists.slice().sort((a, b) => b.followers - a.followers);
 
     return res.json({
-      success: true,
       topArtists,
     });
   } catch (error) {
@@ -804,6 +844,7 @@ topArtists = async (req, res) => {
 
 getListedNfts = async (req, res) => {
   try {
+    let paginated;
     let finalObj = [];
 
     const getUser = await User.findOne({
@@ -816,34 +857,42 @@ getListedNfts = async (req, res) => {
       });
     }
 
-    const getNfts = await nft
-      .find({
-        artistId: req.params.id,
-        listing: true,
-      })
-      .limit(12 * req.query.page)
-      .populate([
-        {
-          path: "artistId",
-          model: "user",
-          select: "username",
-        },
-        {
-          path: "collectionId",
-          model: "collection",
-          select: "collectionName",
-        },
-      ]);
+    const getNfts = await nft.find({
+      artistId: req.params.id,
+      listing: true,
+    });
 
+    console.log(`getnfts : `, getNfts);
     if (getNfts.length < 1) {
       return res.json({
         success: false,
         message: `No NFT's to show.`,
       });
     }
+
+    for (let i = 0; i < getNfts.length; i++) {
+      const _collection = await collections.findOne({
+        _id: getNfts[i].collectionId,
+      });
+      console.log(`CollectionName : `, _collection);
+      if (!_collection) {
+        return res.json({
+          success: false,
+          message: `No collection for this nft.`,
+        });
+      }
+      finalObj.push({
+        ...getNfts[i]._doc,
+        username: getUser.username,
+        collectionName: _collection.collectionName,
+      });
+    }
+
+    paginated = paginator(finalObj, 12, req.query.page);
+
     return res.json({
       success: true,
-      paginated: getNfts,
+      paginated,
     });
   } catch (error) {
     return res.json({

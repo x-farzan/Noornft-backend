@@ -78,29 +78,15 @@ exports.createNft = async (req, res) => {
 
 exports.myOwnedNfts = async (req, res) => {
   try {
-    console.time("my owned");
+    let paginated;
     for (let i = 0; i < req.perm.perm.length; i++) {
       if (req.perm.perm[i][0].name == req.perm.str) {
         let finalObj = [];
-        const getNfts = await nft
-          .find({
-            artistId: req.userData.id,
-            listing: false,
-            featured: false,
-          })
-          .limit(12 * req.query.page)
-          .populate([
-            {
-              path: "artistId",
-              model: "user",
-              select: "username",
-            },
-            {
-              path: "collectionId",
-              model: "collection",
-              select: "collectionName",
-            },
-          ]);
+        const getNfts = await nft.find({
+          artistId: req.userData.id,
+          listing: false,
+          featured: false,
+        });
         console.log(getNfts);
         if (getNfts.length < 1) {
           return res.json({
@@ -108,11 +94,43 @@ exports.myOwnedNfts = async (req, res) => {
             message: `No NFT's to show.`,
           });
         }
-        console.timeEnd("my owned");
+        const getUserData = await User.findOne({ _id: req.userData.id });
+        if (!getUserData) {
+          return res.json({
+            success: false,
+            message: `No user found.`,
+          });
+        }
+        console.log(`getUserData`, getUserData);
+        for (let j = 0; j < getNfts.length; j++) {
+          const getCollectionData = await collection.findOne({
+            _id: getNfts[j].collectionId,
+          });
+          if (!getCollectionData) {
+            return res.json({
+              success: false,
+              message: `No collections to show.`,
+            });
+          }
+          getNfts[j] = {
+            ...getNfts[j]._doc,
+            collectionName: getCollectionData.collectionName,
+            artistName: getUserData.username,
+          };
 
+          console.log(getNfts[j]);
+          finalObj.push(getNfts[j]);
+        }
+        if (finalObj.length < 1) {
+          return res.json({
+            success: false,
+            data: [],
+          });
+        }
+        paginated = paginator(finalObj, 12, req.query.page);
         return res.json({
           success: true,
-          paginated: getNfts,
+          paginated,
         });
       }
     }
@@ -148,7 +166,7 @@ exports.nftDetail = async (req, res) => {
 
 exports.searchNft = async (req, res) => {
   try {
-    console.time("searchNFT");
+    let paginated;
     let finalObj = [];
     if (!req.query.value) {
       return res.json({
@@ -158,34 +176,45 @@ exports.searchNft = async (req, res) => {
     }
 
     const query = req.query.value;
-    const is_available = await nft
-      .find({
-        title: { $regex: query, $options: "i" },
-      })
-      .limit(12 * req.query.page)
-      .populate([
-        {
-          path: "artistId",
-          model: "user",
-          select: "username",
-        },
-        {
-          path: "collectionId",
-          model: "collection",
-          select: "collectionName",
-        },
-      ]);
+    const is_available = await nft.find({
+      title: { $regex: query, $options: "i" },
+    });
     if (is_available.length < 1) {
       return res.json({
         success: false,
         message: `No nft's found with this name.`,
-        paginated: [],
       });
     }
-    console.timeEnd("searchNFT");
+
+    for (let i = 0; i < is_available.length; i++) {
+      const _artist = await User.findOne({ _id: is_available[i].artistId });
+      if (!_artist) {
+        return res.json({
+          success: false,
+          message: `Artist for this NFT not found`,
+        });
+      }
+      const _collection = await collection.findOne({
+        _id: is_available[i].collectionId,
+      });
+      if (!_collection) {
+        return res.json({
+          success: false,
+          message: `Collection for this NFT not found.`,
+        });
+      }
+      finalObj.push({
+        ...is_available[i]._doc,
+        artistName: _artist.username,
+        collectionName: _collection.collectionName,
+      });
+    }
+
+    paginated = paginator(finalObj, 12, req.query.page);
+
     return res.json({
       success: true,
-      paginated: is_available,
+      paginated,
     });
   } catch (error) {
     return res.json({
