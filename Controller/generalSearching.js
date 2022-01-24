@@ -11,10 +11,23 @@ exports.generalSearching = async (req, res) => {
     console.log(`query : `, req.query.value);
     const query = req.query.value;
 
-    const getNft = await nft.find({
-      title: { $regex: query, $options: "i" },
-      listing: true,
-    });
+    const getNft = await nft
+      .find({
+        title: { $regex: query, $options: "i" },
+        listing: true,
+      })
+      .populate([
+        {
+          path: "artistId",
+          model: "user",
+          select: "username",
+        },
+        {
+          path: "collectionId",
+          model: "collection",
+          select: "collectionName",
+        },
+      ]);
     for (let i = 0; i < getNft.length; i++) {
       _obj.push(getNft[i]);
     }
@@ -45,6 +58,7 @@ exports.generalSearching = async (req, res) => {
     console.timeEnd("General Searching");
 
     return res.json({
+      success: true,
       paginated,
     });
   } catch (error) {

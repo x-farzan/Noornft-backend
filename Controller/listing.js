@@ -47,6 +47,7 @@ exports.makeListed = async (req, res) => {
 
 exports.myListingNfts = async (req, res) => {
   try {
+    console.time("My listing");
     if (!req.query.page) {
       return res.json({
         success: false,
@@ -56,63 +57,36 @@ exports.myListingNfts = async (req, res) => {
 
     for (let i = 0; i < req.perm.perm.length; i++) {
       if (req.perm.perm[i][0].name == req.perm.str) {
-        let finalObj = [];
         const getNfts = await nft
           .find({
             artistId: req.userData.id,
             listing: true,
           })
-          .limit(12)
-          .skip((req.query.page - 1) * 12);
-        console.log(getNfts);
+          .limit(12 * req.query.page)
+          .populate([
+            {
+              path: "artistId",
+              model: "user",
+              select: "username",
+            },
+            {
+              path: "collectionId",
+              model: "collection",
+              select: "collectionName",
+            },
+          ]);
         if (getNfts.length < 1) {
           return res.json({
             success: false,
             message: `No NFT's to show.`,
-            data: [],
+            paginated: [],
           });
         }
-        const getUserData = await User.findOne({ _id: req.userData.id });
-        if (!getUserData) {
-          return res.json({
-            success: false,
-            message: `No user found.`,
-            data: [],
-          });
-        }
-        for (let j = 0; j < getNfts.length; j++) {
-          const getCollectionData = await collection.findOne({
-            _id: getNfts[j].collectionId,
-          });
-          if (!getCollectionData) {
-            return res.json({
-              success: false,
-              message: `No collections to show.`,
-              data: [],
-            });
-          }
-          getNfts[j] = {
-            ...getNfts[j]._doc,
-            collectionName: getCollectionData.collectionName,
-            artistName: getUserData.username,
-          };
-
-          console.log(getNfts[j]);
-          finalObj.push(getNfts[j]);
-        }
-
-        if (finalObj.length < 1) {
-          return res.json({
-            success: false,
-            data: [],
-          });
-        }
-
-        // paginated = paginator(finalObj, 12, req.query.page);
+        console.timeEnd("My listing");
 
         return res.json({
           success: true,
-          paginated: finalObj,
+          paginated: getNfts,
         });
       }
     }
@@ -206,62 +180,35 @@ exports.marketplaceListing = async (req, res) => {
       });
     }
 
-    let finalObj = [];
     const getNfts = await nft
       .find({
         listing: true,
       })
-      .limit(12 * req.query.page);
-    // .skip((req.query.page - 1) * 12);
-    console.log(getNfts);
+      .limit(12 * req.query.page)
+      .populate([
+        {
+          path: "artistId",
+          model: "user",
+          select: "username",
+        },
+        {
+          path: "collectionId",
+          model: "collection",
+          select: "collectionName",
+        },
+      ]);
     if (getNfts.length < 1) {
       return res.json({
         success: false,
         message: `No NFT's to show.`,
-        data: [],
-      });
-    }
-
-    console.time("loop time");
-    for (let j = 0; j < getNfts.length; j++) {
-      const getUserData = await User.findOne({ _id: getNfts[j].artistId });
-      if (!getUserData) {
-        return res.json({
-          success: false,
-          message: `No user found.`,
-        });
-      }
-      const getCollectionData = await collection.findOne({
-        _id: getNfts[j].collectionId,
-      });
-      if (!getCollectionData) {
-        return res.json({
-          success: false,
-          message: `No collections to show.`,
-          data: [],
-        });
-      }
-      getNfts[j] = {
-        ...getNfts[j]._doc,
-        collectionName: getCollectionData.collectionName,
-        artistName: getUserData.username,
-      };
-
-      finalObj.push(getNfts[j]);
-    }
-    console.timeEnd("loop time");
-
-    if (finalObj.length < 1) {
-      return res.json({
-        success: false,
-        data: [],
+        paginated: [],
       });
     }
     console.timeEnd("marketplace listing");
 
     return res.json({
       success: true,
-      paginated: finalObj,
+      paginated: getNfts,
     });
   } catch (error) {
     return res.json({
@@ -276,26 +223,70 @@ exports.sortFunction = async (_obj, req, pageNo) => {
     is_nft_available = await nft
       .find(_obj)
       .sort({ createdAt: -1 })
-      .limit(12 * pageNo);
-    // .skip((pageNo - 1) * 12);
+      .limit(12 * pageNo)
+      .populate([
+        {
+          path: "artistId",
+          model: "user",
+          select: "username",
+        },
+        {
+          path: "collectionId",
+          model: "collection",
+          select: "collectionName",
+        },
+      ]);
   } else if (req == "oldest") {
     is_nft_available = await nft
       .find(_obj)
       .sort({ createdAt: 1 })
-      .limit(12 * pageNo);
-    // .skip((pageNo - 1) * 12);
+      .limit(12 * pageNo)
+      .populate([
+        {
+          path: "artistId",
+          model: "user",
+          select: "username",
+        },
+        {
+          path: "collectionId",
+          model: "collection",
+          select: "collectionName",
+        },
+      ]);
   } else if (req == "highestprice") {
     is_nft_available = await nft
       .find(_obj)
       .sort({ price: -1 })
-      .limit(12 * pageNo);
-    // .skip((pageNo - 1) * 12);
+      .limit(12 * pageNo)
+      .populate([
+        {
+          path: "artistId",
+          model: "user",
+          select: "username",
+        },
+        {
+          path: "collectionId",
+          model: "collection",
+          select: "collectionName",
+        },
+      ]);
   } else if (req == "lowestprice") {
     is_nft_available = await nft
       .find(_obj)
       .sort({ price: 1 })
-      .limit(12 * pageNo);
-    // .skip((pageNo - 1) * 12);
+      .limit(12 * pageNo)
+      .populate([
+        {
+          path: "artistId",
+          model: "user",
+          select: "username",
+        },
+        {
+          path: "collectionId",
+          model: "collection",
+          select: "collectionName",
+        },
+      ]);
   } else {
     return "Passed sort parameter is not valid.";
   }
@@ -307,6 +298,7 @@ exports.sortFunction = async (_obj, req, pageNo) => {
 
 exports.filterMarketplaceListing = async (req, res) => {
   try {
+    console.time("Filter marketplace");
     if (Object.keys(req.body).length == 0) {
       return res.json({
         success: false,
@@ -320,6 +312,7 @@ exports.filterMarketplaceListing = async (req, res) => {
 
     _obj = { ..._obj, listing: true };
 
+    //Modifying object
     if (_obj.artistId == "") {
       delete _obj.artistId;
     }
@@ -341,8 +334,21 @@ exports.filterMarketplaceListing = async (req, res) => {
         ..._obj,
         price: { $gte: req.body.minPrice, $lte: req.body.maxPrice },
       };
-      is_nft_available = await nft.find(_obj).limit(12 * req.query.page);
-      // .skip((req.query.page - 1) * 12);
+      is_nft_available = await nft
+        .find(_obj)
+        .limit(12 * req.query.page)
+        .populate([
+          {
+            path: "artistId",
+            model: "user",
+            select: "username",
+          },
+          {
+            path: "collectionId",
+            model: "collection",
+            select: "collectionName",
+          },
+        ]);
     } else if (_obj.sort && !(_obj.minPrice && _obj.maxPrice)) {
       delete _obj.sort;
       is_nft_available = await this.sortFunction(
@@ -364,32 +370,27 @@ exports.filterMarketplaceListing = async (req, res) => {
         req.query.page
       );
     } else {
-      is_nft_available = await nft.find(_obj).limit(12 * req.query.page);
-      // .skip((req.query.page - 1) * 12);
+      is_nft_available = await nft
+        .find(_obj)
+        .limit(12 * req.query.page)
+        .populate([
+          {
+            path: "artistId",
+            model: "user",
+            select: "username",
+          },
+          {
+            path: "collectionId",
+            model: "collection",
+            select: "collectionName",
+          },
+        ]);
     }
+    console.timeEnd("Filter marketplace");
 
-    for (let i = 0; i < is_nft_available.length; i++) {
-      const _user = await User.findOne({ _id: is_nft_available[i].artistId });
-      const _collection = await collection.findOne({
-        _id: is_nft_available[i].collectionId,
-      });
-      finalObj.push({
-        ...is_nft_available[i]._doc,
-        artistName: _user.username,
-        collectionName: _collection.collectionName,
-      });
-    }
-
-    if (finalObj.length < 1) {
-      return res.json({
-        success: false,
-        message: `No NFT's to show.`,
-        data: [],
-      });
-    }
     return res.json({
       success: true,
-      paginated: finalObj,
+      paginated: is_nft_available,
     });
   } catch (error) {
     return res.json({
@@ -400,11 +401,18 @@ exports.filterMarketplaceListing = async (req, res) => {
 
 exports.priceRangeSearch = async (req, res) => {
   try {
-    let nfts = [];
+    console.time("price range search");
     let _errors = userFieldsValidator(["maxPrice", "minPrice"], req.body);
     if (_errors.length > 1) {
       return res.json({
         _errors,
+      });
+    }
+
+    if (!req.query.page) {
+      return res.json({
+        success: false,
+        message: "Page is not passed.",
       });
     }
 
@@ -419,9 +427,24 @@ exports.priceRangeSearch = async (req, res) => {
       });
     }
 
-    const getNfts = await nft.find({
-      listing: true,
-    });
+    const getNfts = await nft
+      .find({
+        listing: true,
+        price: { $gte: req.body.minPrice, $lte: req.body.maxPrice },
+      })
+      .limit(12 * req.query.page)
+      .populate([
+        {
+          path: "artistId",
+          model: "user",
+          select: "username",
+        },
+        {
+          path: "collectionId",
+          model: "collection",
+          select: "collectionName",
+        },
+      ]);
     if (getNfts.length < 1) {
       return res.json({
         success: false,
@@ -429,27 +452,11 @@ exports.priceRangeSearch = async (req, res) => {
         data: [],
       });
     }
-
-    for (let i = 0; i < getNfts.length; i++) {
-      if (
-        getNfts[i].price >= req.body.minPrice &&
-        getNfts[i].price <= req.body.maxPrice
-      ) {
-        nfts.push(getNfts[i]);
-      }
-    }
-
-    if (nfts.length < 1) {
-      return res.json({
-        success: false,
-        message: `No NFT's in this price range.`,
-        data: [],
-      });
-    }
+    console.timeEnd("price range search");
 
     return res.json({
       success: true,
-      nfts,
+      nfts: getNfts,
     });
   } catch (error) {
     return res.json({

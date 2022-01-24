@@ -723,38 +723,16 @@ getFollowersList = async (req, res) => {
         message: `Filteration parameters not passed`,
       });
     }
-    let paginated;
-    let results = [];
-    const response = await User.findOne({ _id: req.userData.id });
-    for (let i = 0; i < response.followers.length; i++) {
-      const result = await User.findOne({ _id: response.followers[i] });
-      if (!result) {
-        return res.json({
-          success: false,
-          message: `User not exists.`,
-        });
-      }
-      results.push({
-        _id: result._id,
-        name: result.flname,
-        image: `${process.env.server}/${result.image}`,
-      });
-    }
-
-    if (results.length < 1) {
-      return res.json({
-        success: false,
-        data: [],
-      });
-    }
-
-    paginated = paginator(results, 12, req.query.page);
-
+    const response = await User.findOne({ _id: req.userData.id }).populate({
+      path: "followers",
+      model: "user",
+    });
+    const { followers } = response;
     console.timeEnd("followers list");
 
     return res.json({
       success: true,
-      paginated,
+      paginated: followers,
     });
   } catch (error) {
     return res.json({
@@ -771,36 +749,14 @@ getFollowingList = async (req, res) => {
         message: `Filteration parameters not passed.`,
       });
     }
-    let paginated;
-    let results = [];
-    const response = await User.findOne({ _id: req.userData.id });
-    for (let i = 0; i < response.following.length; i++) {
-      const result = await User.findOne({ _id: response.following[i] });
-      if (!result) {
-        return res.json({
-          success: false,
-          message: `User not exists.`,
-        });
-      }
-      console.log(`result : `, result);
-      results.push({
-        _id: result._id,
-        name: result.flname,
-        image: `${process.env.server}/${result.image}`,
-      });
-    }
-    if (results.length < 1) {
-      return res.json({
-        success: false,
-        data: [],
-      });
-    }
-
-    paginated = paginator(results, 12, req.query.page);
-
+    const response = await User.findOne({ _id: req.userData.id }).populate({
+      path: "following",
+      model: "user",
+    });
+    const { following } = response;
     return res.json({
       success: true,
-      paginated,
+      paginated: following,
     });
   } catch (error) {
     error: error.message;
@@ -809,6 +765,7 @@ getFollowingList = async (req, res) => {
 
 topArtists = async (req, res) => {
   try {
+    console.time("top artists");
     let topArtists = [];
     const getArtists = await User.find({
       role: "artist",
@@ -820,21 +777,22 @@ topArtists = async (req, res) => {
         message: `No artists registered yet.`,
       });
     }
-
-    for (let i = 0; i < getArtists.length; i++) {
-      topArtists.push({
-        artistId: getArtists[i]._id,
-        username: getArtists[i].username,
-        email: getArtists[i].email,
-        followers: getArtists[i].followers.length,
-        image: `${process.env.server}/${getArtists[i].image}`,
-      });
-    }
+    // for (let i = 0; i < getArtists.length; i++) {
+    //   topArtists.push({
+    //     artistId: getArtists[i]._id,
+    //     username: getArtists[i].username,
+    //     email: getArtists[i].email,
+    //     followers: getArtists[i].followers.length,
+    //     image: `${process.env.server}/${getArtists[i].image}`,
+    //   });
+    // }
 
     //Sorting JSON objects in DESC order.
-    topArtists = topArtists.slice().sort((a, b) => b.followers - a.followers);
+    topArtists = getArtists.slice().sort((a, b) => b.followers - a.followers);
+    console.timeEnd("top artists");
 
     return res.json({
+      success: true,
       topArtists,
     });
   } catch (error) {
@@ -858,40 +816,34 @@ getListedNfts = async (req, res) => {
       });
     }
 
-    const getNfts = await nft.find({
-      artistId: req.params.id,
-      listing: true,
-    }).limit(12*req.query.page);
+    const getNfts = await nft
+      .find({
+        artistId: req.params.id,
+        listing: true,
+      })
+      .limit(12 * req.query.page)
+      .populate([
+        {
+          path: "artistId",
+          model: "user",
+          select: "username",
+        },
+        {
+          path: "collectionId",
+          model: "collection",
+          select: "collectionName",
+        },
+      ]);
 
-    console.log(`getnfts : `, getNfts);
     if (getNfts.length < 1) {
       return res.json({
         success: false,
         message: `No NFT's to show.`,
       });
     }
-
-    for (let i = 0; i < getNfts.length; i++) {
-      const _collection = await collections.findOne({
-        _id: getNfts[i].collectionId,
-      });
-      console.log(`CollectionName : `, _collection);
-      if (!_collection) {
-        return res.json({
-          success: false,
-          message: `No collection for this nft.`,
-        });
-      }
-      finalObj.push({
-        ...getNfts[i]._doc,
-        username: getUser.username,
-        collectionName: _collection.collectionName,
-      });
-    }
-
     return res.json({
       success: true,
-      paginated: finalObj,
+      paginated: getNfts,
     });
   } catch (error) {
     return res.json({
