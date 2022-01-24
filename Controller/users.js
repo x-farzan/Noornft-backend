@@ -728,6 +728,9 @@ getFollowersList = async (req, res) => {
       model: "user",
     });
     const { followers } = response;
+    followers.map((element) => {
+      element.image = `${process.env.server}/${element.image}`;
+    });
     console.timeEnd("followers list");
 
     return res.json({
@@ -754,6 +757,9 @@ getFollowingList = async (req, res) => {
       model: "user",
     });
     const { following } = response;
+    following.map((element) => {
+      element.image = `${process.env.server}/${element.image}`;
+    });
     return res.json({
       success: true,
       paginated: following,
@@ -777,18 +783,12 @@ topArtists = async (req, res) => {
         message: `No artists registered yet.`,
       });
     }
-    // for (let i = 0; i < getArtists.length; i++) {
-    //   topArtists.push({
-    //     artistId: getArtists[i]._id,
-    //     username: getArtists[i].username,
-    //     email: getArtists[i].email,
-    //     followers: getArtists[i].followers.length,
-    //     image: `${process.env.server}/${getArtists[i].image}`,
-    //   });
-    // }
 
     //Sorting JSON objects in DESC order.
     topArtists = getArtists.slice().sort((a, b) => b.followers - a.followers);
+    topArtists.map((element) => {
+      element.image = `${process.env.server}/${element.image}`;
+    });
     console.timeEnd("top artists");
 
     return res.json({
