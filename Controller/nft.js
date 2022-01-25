@@ -100,7 +100,7 @@ exports.myOwnedNfts = async (req, res) => {
               model: "collection",
               select: "collectionName",
             },
-          ]);
+          ]).sort({createdAt: -1});
         console.log(getNfts);
         if (getNfts.length < 1) {
           return res.json({

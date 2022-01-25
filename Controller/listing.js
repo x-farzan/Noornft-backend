@@ -74,7 +74,8 @@ exports.myListingNfts = async (req, res) => {
               model: "collection",
               select: "collectionName",
             },
-          ]);
+          ])
+          .sort({ createdAt: -1 });
         if (getNfts.length < 1) {
           return res.json({
             success: false,
@@ -196,7 +197,8 @@ exports.marketplaceListing = async (req, res) => {
           model: "collection",
           select: "collectionName",
         },
-      ]);
+      ])
+      .sort({ createdAt: -1 });;
     if (getNfts.length < 1) {
       return res.json({
         success: false,
