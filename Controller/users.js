@@ -723,32 +723,15 @@ getFollowersList = async (req, res) => {
         message: `Filteration parameters not passed`,
       });
     }
-    let paginated;
-    let results = [];
-    const response = await User.findOne({ _id: req.userData.id });
-    for (let i = 0; i < response.followers.length; i++) {
-      const result = await User.findOne({ _id: response.followers[i] });
-      if (!result) {
-        return res.json({
-          success: false,
-          message: `User not exists.`,
-        });
-      }
-      results.push({
-        _id: result._id,
-        name: result.flname,
-        image: `${process.env.server}/${result.image}`,
-      });
-    }
-
-    if (results.length < 1) {
-      return res.json({
-        success: false,
-        data: [],
-      });
-    }
-
-    paginated = paginator(results, 12, req.query.page);
+    const response = await User.findOne({ _id: req.userData.id }).populate({
+      path: "followers",
+      model: "user",
+    });
+    const { followers } = response;
+    followers.map((element) => {
+      element.image = `${process.env.server}/${element.image}`;
+    });
+    console.timeEnd("followers list");
 
     return res.json({
       success: true,
@@ -769,33 +752,14 @@ getFollowingList = async (req, res) => {
         message: `Filteration parameters not passed.`,
       });
     }
-    let paginated;
-    let results = [];
-    const response = await User.findOne({ _id: req.userData.id });
-    for (let i = 0; i < response.following.length; i++) {
-      const result = await User.findOne({ _id: response.following[i] });
-      if (!result) {
-        return res.json({
-          success: false,
-          message: `User not exists.`,
-        });
-      }
-      console.log(`result : `, result);
-      results.push({
-        _id: result._id,
-        name: result.flname,
-        image: `${process.env.server}/${result.image}`,
-      });
-    }
-    if (results.length < 1) {
-      return res.json({
-        success: false,
-        data: [],
-      });
-    }
-
-    paginated = paginator(results, 12, req.query.page);
-
+    const response = await User.findOne({ _id: req.userData.id }).populate({
+      path: "following",
+      model: "user",
+    });
+    const { following } = response;
+    following.map((element) => {
+      element.image = `${process.env.server}/${element.image}`;
+    });
     return res.json({
       success: true,
       paginated,
@@ -819,18 +783,12 @@ topArtists = async (req, res) => {
       });
     }
 
-    for (let i = 0; i < getArtists.length; i++) {
-      topArtists.push({
-        artistId: getArtists[i]._id,
-        username: getArtists[i].username,
-        email: getArtists[i].email,
-        followers: getArtists[i].followers.length,
-        image: `${process.env.server}/${getArtists[i].image}`,
-      });
-    }
-
     //Sorting JSON objects in DESC order.
-    topArtists = topArtists.slice().sort((a, b) => b.followers - a.followers);
+    topArtists = getArtists.slice().sort((a, b) => b.followers - a.followers);
+    topArtists.map((element) => {
+      element.image = `${process.env.server}/${element.image}`;
+    });
+    console.timeEnd("top artists");
 
     return res.json({
       topArtists,
