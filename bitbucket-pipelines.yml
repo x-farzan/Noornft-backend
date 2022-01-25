@@ -1,0 +1,39 @@
+-image: atlassian/default-image:3
+-pipelines:
+-    branches:
+-      devlop-merge:
+-        - step:
+-            name: Noor Islamic NFT User Panel
+-            image: node:14.18.2
+-            services:
+-            - docker
+-            script:
+-              - npm install
+-              - npm run image:build
+-              - docker login --username farzan98 --password 123456789
+-              - npm run push:image  
+-    custom:
+-        staging:
+-           - step:
+-              name: Ready for Deployment to Staging
+-              deployment: Staging 
+-              script:
+-                -  cd deploy
+-                -  sudo docker-compose down
+-                -  sudo docker-compose pull
+-                -  sudo docker-compose up -d
+-              artifacts:
+-                - build/**
+-           - step:
+-                name: Deploying the app to EC2
+-                deployment: production
+-                script:
+-                 - pipe: atlassian/aws-s3-deploy:0.2.4
+-                   variables:
+-                     AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+-                     AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+-                     AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+-                     AWS_OIDC_ROLE_ARN: $AWS_OIDC_ROLE_ARN
+-                     APPLICATION_NAME: $APPLICATION_NAME
+-                     ENVIRONMENT_NAME: $ENVIRONMENT_NAME
+-                     ZIP_FILE: $ZIP_FILE    
