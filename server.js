@@ -18,6 +18,7 @@ const listing = require("./routes/listing");
 const featuredPrices = require("./routes/featuredPrices");
 const generalSearching = require("./routes/generalSearching");
 
+
 // Database connection
 mongoose
   .connect(

@@ -71,67 +71,46 @@ exports.featuredNfts = async (req, res) => {
 
 exports.getFeaturedNfts = async (req, res) => {
   try {
+    console.time("Get featured NFTS");
     if (!req.query.page) {
       return res.json({
         success: false,
         message: `Filteration parameters not passed.`,
       });
     }
-    let paginated;
-    let finalObj = [];
     for (let i = 0; i < req.perm.perm.length; i++) {
       if (req.perm.perm[i][0].name == req.perm.str) {
-        const getFeatured = await nft.find({
-          artistId: req.userData.id,
-          featured: true,
-          reqStatus: "approved",
-        });
+        const getFeatured = await nft
+          .find({
+            artistId: req.userData.id,
+            featured: true,
+            reqStatus: "approved",
+          })
+          .limit(12 * req.query.page)
+          .populate([
+            {
+              path: "artistId",
+              model: "user",
+              select: "username",
+            },
+            {
+              path: "collectionId",
+              model: "collection",
+              select: "collectionName",
+            },
+          ]);
         if (getFeatured.length < 1) {
           return res.json({
             success: false,
             message: `No featured NFT's to show or NFT has not been approved by the admin.`,
-            data: [],
+            paginated: [],
           });
         }
-        const getUserData = await User.findOne({ _id: req.userData.id });
-        if (!getUserData) {
-          return res.json({
-            success: false,
-            message: `No user found.`,
-            data: [],
-          });
-        }
-        for (let j = 0; j < getFeatured.length; j++) {
-          const getCollectionData = await collection.findOne({
-            _id: getFeatured[j].collectionId,
-          });
-          if (!getCollectionData) {
-            return res.json({
-              success: false,
-              message: `No collections to show.`,
-              data: [],
-            });
-          }
-          getFeatured[j] = {
-            ...getFeatured[j]._doc,
-            collectionName: getCollectionData.collectionName,
-            artistName: getUserData.username,
-          };
-
-          finalObj.push(getFeatured[j]);
-        }
-        if (finalObj.length < 1) {
-          return res.json({
-            success: false,
-            data: [],
-          });
-        }
-
-        paginated = paginator(finalObj, 12, req.query.page);
+        console.timeEnd("Get featured NFTS");
 
         return res.json({
           success: true,
-          paginated,
+          paginated: getFeatured,
         });
       }
     }
@@ -236,49 +215,35 @@ exports.responseFeaturedRequests = async (req, res) => {
 
 exports.getFeaturedNftsOnHomePage = async (req, res) => {
   try {
-    let finalObj = [];
-    const getNfts = await nft.find({
-      featured: true,
-      reqStatus: "approved",
-    });
+    console.time("get featured nfts on homepage");
+    const getNfts = await nft
+      .find({
+        featured: true,
+        reqStatus: "approved",
+      })
+      .populate([
+        {
+          path: "artistId",
+          model: "user",
+          select: "username",
+        },
+        {
+          path: "collectionId",
+          model: "collection",
+          select: "collectionName",
+        },
+      ]);
     if (getNfts.length < 1) {
       return res.json({
         success: false,
         message: `No NFT's to show.`,
       });
     }
-
-    console.log(`getNfts : `, getNfts[0]);
-
-    for (let i = 0; i < getNfts.length; i++) {
-      console.log(getNfts[i].artistId);
-      const getUser = await User.findOne({ _id: getNfts[i].artistId });
-      if (!getUser) {
-        return res.json({
-          success: false,
-          message: `User not found`,
-        });
-      }
-      console.log(`getUser `, getUser);
-      const getCollection = await collection.findOne({
-        _id: getNfts[i].collectionId,
-      });
-      if (!getCollection) {
-        return res.json({
-          success: false,
-          message: `No collections to show.`,
-        });
-      }
-      finalObj.push({
-        ...getNfts[i]._doc,
-        collectionName: getCollection.collectionName,
-        username: getUser.username,
-      });
-    }
+    console.timeEnd("get featured nfts on homepage");
 
     return res.json({
       success: true,
-      finalObj,
+      paginated: getNfts,
     });
   } catch (error) {
     return res.json({
