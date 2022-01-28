@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema(
     address: [
       {
         type: String,
-        // required: true,
+        required: true,
         unique: true,
       },
     ],
@@ -54,7 +54,7 @@ const UserSchema = new mongoose.Schema(
     website: {
       type: String,
       // required: true,
-      unique: true,
+      // unique: true,
     },
 
     description: {

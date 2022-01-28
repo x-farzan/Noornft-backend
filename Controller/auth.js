@@ -13,7 +13,7 @@ const User = require("../models/User");
 
 signup = async (req, res) => {
   let _errors = userFieldsValidator.userFieldsValidator(
-    ["flname", "email", "password", "username"],
+    ["flname", "email", "password", "username", "walletaddress"],
     req.body
   );
   if (_errors.length > 0) {
@@ -46,8 +46,7 @@ signup = async (req, res) => {
                 email: to_lowercase,
                 password: hash,
                 role: req.body.role,
-                description: req.body.description,
-                city: req.body.city,
+                address: req.body.walletaddress,
                 username: req.body.username,
               });
               console.log(`displaying user : `, user);

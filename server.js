@@ -22,7 +22,7 @@ const generalSearching = require("./routes/generalSearching");
 // Database connection
 mongoose
   .connect(
-    "mongodb+srv://Farzan:Mongodb@123@cluster0.gkqpe.mongodb.net/NoorNFT?retryWrites=true&w=majority",
+    "mongodb+srv://Farzan:Mongodb@123@cluster0.7afeh.mongodb.net/NoorNFT_test?retryWrites=true&w=majority",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
