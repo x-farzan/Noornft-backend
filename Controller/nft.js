@@ -81,22 +81,25 @@ exports.createNft = async (req, res) => {
 
 exports.deleteNft = async (req, res) => {
   try {
-    const nftId = req.params.nftId;
-    console.log(nftId);
-    const _nft = await nft.findOne({ _id: nftId });
-    if (!_nft) {
-      return res.json({
-        success: false,
-        message: `NFT with this _id not exists.`,
-        data: [],
-      });
+    for (let i = 0; i < req.perm.perm.length; i++) {
+      if (req.perm.perm[i][0].name == req.perm.str) {
+        const nftId = req.params.nftId;
+        const _nft = await nft.findOne({ _id: nftId });
+        if (!_nft) {
+          return res.json({
+            success: false,
+            message: `NFT with this _id not exists.`,
+            data: [],
+          });
+        }
+        await nft.deleteOne({ _id: nftId });
+        return res.json({
+          success: true,
+          message: "NFT deleted successfully.",
+          data: _nft,
+        });
+      }
     }
-    await nft.deleteOne({ _id: nftId });
-    return res.json({
-      success: true,
-      message: "NFT deleted successfully.",
-      data: _nft,
-    });
   } catch (error) {
     return res.json({
       error: error.message,

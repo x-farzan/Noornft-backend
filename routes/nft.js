@@ -14,7 +14,12 @@ router
     controller.createNft
   );
 
-router.delete("/delete/:nftId",tokenVerifier, controller.deleteNft);
+router.delete(
+  "/delete/:nftId",
+  tokenVerifier,
+  isAuthorized,
+  controller.deleteNft
+);
 
 router
   .route("/myowned")
