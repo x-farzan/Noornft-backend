@@ -40,18 +40,20 @@ Permissions.find()
           result[7]._id,
           result[8]._id,
           result[9]._id,
+          result[10]._id,
+          result[11]._id,
         ],
       }),
       new Roles({
         name: "admin",
         permission: [
-          result[10]._id,
-          result[11]._id,
           result[12]._id,
           result[13]._id,
           result[14]._id,
           result[15]._id,
           result[16]._id,
+          result[17]._id,
+          result[18]._id,
         ],
       }),
     ];

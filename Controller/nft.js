@@ -8,7 +8,8 @@ require("dotenv").config();
 exports.createNft = async (req, res) => {
   try {
     let _errors = userFieldsValidator(
-      ["Title", "Description", "CollectionName", "Category", "Royalty"],
+      ["Title", "Description", "CollectionName", "Category"],
+      // "Royalty"],
       req.body
     );
 
@@ -39,7 +40,7 @@ exports.createNft = async (req, res) => {
     // checking nft, if exists before.
     const checkNft = await nft.findOne({
       title: req.body.Title,
-      collectionId: checkCollection._id,
+      // collectionId: checkCollection._id,
     });
     if (checkNft) {
       return res.json({
@@ -52,6 +53,7 @@ exports.createNft = async (req, res) => {
     for (let i = 0; i < req.perm.perm.length; i++) {
       if (req.perm.perm[i][0].name == req.perm.str) {
         const newNft = new nft({
+          nftId: req.body.nftId,
           title: req.body.Title,
           description: req.body.Description,
           gatewayLink: `${process.env.server}/${req.file.path}`,
@@ -66,12 +68,38 @@ exports.createNft = async (req, res) => {
         return res.json({
           success: true,
           message: `NFT created successfully`,
+          data: newNft.gatewayLink,
         });
       }
     }
   } catch (error) {
     return res.json({
       error,
+    });
+  }
+};
+
+exports.deleteNft = async (req, res) => {
+  try {
+    const nftId = req.params.nftId;
+    console.log(nftId);
+    const _nft = await nft.findOne({ _id: nftId });
+    if (!_nft) {
+      return res.json({
+        success: false,
+        message: `NFT with this _id not exists.`,
+        data: [],
+      });
+    }
+    await nft.deleteOne({ _id: nftId });
+    return res.json({
+      success: true,
+      message: "NFT deleted successfully.",
+      data: _nft,
+    });
+  } catch (error) {
+    return res.json({
+      error: error.message,
     });
   }
 };
@@ -100,7 +128,8 @@ exports.myOwnedNfts = async (req, res) => {
               model: "collection",
               select: "collectionName",
             },
-          ]).sort({createdAt: -1});
+          ])
+          .sort({ createdAt: -1 });
         console.log(getNfts);
         if (getNfts.length < 1) {
           return res.json({
@@ -125,10 +154,16 @@ exports.myOwnedNfts = async (req, res) => {
 
 exports.nftDetail = async (req, res) => {
   try {
-    const is_available = await nft.findOne({
-      _id: req.params.nftId,
-      listing: true,
-    });
+    const is_available = await nft
+      .findOne({
+        _id: req.params.nftId,
+        listing: true,
+      })
+      .populate({
+        path: "artistId",
+        model: "user",
+        select: "projectId",
+      });
     if (!is_available) {
       return res.json({
         success: false,
@@ -192,4 +227,19 @@ exports.searchNft = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+exports.getLink = (req, res) => {
+  if (!req.file) {
+    res.json({
+      success: false,
+      message: "Please upload a file.",
+      data: [],
+    });
+  }
+
+  return res.json({
+    success: true,
+    imageUrl: `${process.env.server}/${req.file.path}`,
+  });
 };

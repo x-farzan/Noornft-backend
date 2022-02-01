@@ -134,6 +134,7 @@ signin = async (req, res) => {
             flname: user[0].flname,
             email: user[0].email,
             image: `${process.env.server}/${user[0].image}`,
+            projectId: user[0].projectId,
           });
         } else {
           return res.status(401).json({

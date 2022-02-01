@@ -40,6 +40,10 @@ const permissions = [
     group: "artist",
   }),
   new Permissions({
+    name: "delete-nft",
+    group: "artist",
+  }),
+  new Permissions({
     name: "create-listing",
     group: "artist",
   }),

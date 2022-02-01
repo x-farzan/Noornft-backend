@@ -5,7 +5,6 @@ const { tokenVerifier } = require("../middleware/tokenVerifier");
 const { upload } = require("../middleware/avatarUpload");
 const { paginator } = require("../helpers/arrayPaginator");
 
-
 router
   .route("/upload/nft")
   .post(upload.single("assetImage"), async (req, res) => {
@@ -76,15 +75,7 @@ router.route("/createProject").post(async (req, res) => {
   return res.json(response);
 });
 
-router.route("/projectId/:_id").post(async (req, res) => {
-  console.log("I am here to check");
-  let _id = req.params._id;
-  console.log(`route _id : `, _id);
-  let projectId = req.body.projectId;
-  console.log(`projectId : `, projectId);
-  const response = await controller.setProjectId(projectId, _id);
-  return res.json(response);
-});
+router.post("/projectId/:_id", controller.setProjectId);
 
 router.route("/getnfts").get(async (req, res) => {
   try {

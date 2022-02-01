@@ -14,6 +14,8 @@ router
     controller.createNft
   );
 
+router.delete("/delete/:nftId",tokenVerifier, controller.deleteNft);
+
 router
   .route("/myowned")
   .get(tokenVerifier, isAuthorized, controller.myOwnedNfts);
@@ -21,5 +23,7 @@ router
 router.get("/detail/:nftId", controller.nftDetail);
 
 router.get("/searchnft", controller.searchNft);
+
+router.post("/getlink", upload.single("imageUpload"), controller.getLink);
 
 module.exports = router;

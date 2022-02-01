@@ -316,8 +316,10 @@ createProject = async (data) => {
   return response;
 };
 
-setProjectId = async (projectId, _id) => {
+setProjectId = async (req, res) => {
   try {
+    let _id = req.params._id;
+    let projectId = req.body.projectId;
     console.log(`projectId is here : `, projectId);
     const response = await User.findOne({ _id: _id })
       .then(async (user) => {
@@ -336,7 +338,10 @@ setProjectId = async (projectId, _id) => {
         console.log("ERROR: ===>>> ", error);
         return error;
       });
-    return response;
+    return res.json({
+      success: true,
+      data: response,
+    });
   } catch (error) {
     return res.json({
       error: error.message,
