@@ -4,7 +4,7 @@ COPY package.json .
 RUN npm install
 COPY . .
 ENV PORT=5000
-ENV MONGODB_URI=mongodb+srv://Farzan:Mongodb@123@cluster0.gkqpe.mongodb.net/NoorNFT?retryWrites=true&w=majority
+ENV MONGODB_URI=mongodb+srv://Farzan:Mongodb@123@cluster0.7afeh.mongodb.net/NoorNFT_test?retryWrites=true&w=majority
 
 
 EXPOSE 5000
