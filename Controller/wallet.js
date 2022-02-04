@@ -14,7 +14,6 @@ exports.convertHexToAddress = (hexAddress) => {
 
 exports.addWallet = async (req, res) => {
   try {
-
     let _errors = userFieldsValidator(["address"], req.body);
     if (_errors.length > 1) {
       return res.json({
@@ -95,5 +94,47 @@ exports.removeWallet = async (req, res) => {
     });
   } catch (error) {
     error: error.message;
+  }
+};
+
+exports.addPrimaryWallet = async (req, res) => {
+  try {
+    // const { primaryAddress } = req.body.primaryAddress;
+    const _user = await User.findOne({ _id: req.userData.id });
+
+    // Check if any wallet is attached before making primary.
+    if (_user.address.length < 1) {
+      return res.json({
+        success: false,
+        message: "Please attach atleast one wallet to make primary.",
+        data: [],
+      });
+    }
+    8
+    if (
+      !_user.primaryAddress ||
+      _user.primaryAddress != req.body.primaryAddress
+    ) {
+      _user.primaryAddress = req.body.primaryAddress;
+      _user.primaryAddressStatus = "pending"
+      await _user.save();
+      console.log("USER : ", _user);
+      return res.json({
+        success: false,
+        message:
+          "You have applied for the wallet verification. You will soon be responded with the status.",
+        data: [],
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: "The address is already selected as the primary address.",
+        data: [],
+      });
+    }
+  } catch (error) {
+    return res.json({
+      error: error.message,
+    });
   }
 };

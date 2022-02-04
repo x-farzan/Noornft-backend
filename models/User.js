@@ -30,10 +30,17 @@ const UserSchema = new mongoose.Schema(
     address: [
       {
         type: String,
-        required: true,
         unique: true,
       },
     ],
+
+    primaryAddress: { type: String, deafult: "null" },
+
+    primaryAddressStatus: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
 
     location: {
       type: String,

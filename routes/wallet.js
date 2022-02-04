@@ -21,6 +21,8 @@ router.route("/getaddress").post((req, res) => {
 
 router.post("/add", tokenVerifier, controller.addWallet);
 
-router.put("/remove", tokenVerifier, controller.removeWallet)
+router.put("/remove", tokenVerifier, controller.removeWallet);
+
+router.post("/primary", tokenVerifier, controller.addPrimaryWallet);
 
 module.exports = router;
