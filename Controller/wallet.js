@@ -39,6 +39,7 @@ exports.addWallet = async (req, res) => {
           success: false,
           message: `This wallet is already linked.`,
           result: serializedAddress,
+          address: getUser.address,
         });
       }
     }
@@ -48,6 +49,7 @@ exports.addWallet = async (req, res) => {
       success: true,
       message: `wallet address : ${serializedAddress} is successfully linked.`,
       result: serializedAddress,
+      address: getUser.address,
     });
   } catch (error) {
     return res.json({
@@ -75,11 +77,14 @@ exports.removeWallet = async (req, res) => {
       });
     }
     for (let i = 0; i < getUser.address.length; i++) {
-      console.log(getUser.address[i]);
-      console.log(req.body.address);
+      // console.log(getUser.address[i]);
+      // console.log(req.body.address);
       if (getUser.address[i] == req.body.address) {
-        console.log("im hereee");
-        getUser.address.pull(req.body.address);
+        // console.log("im hereee");
+        getUser.address.pull(getUser.address[i]);
+        getUser.primaryAddress = "null";
+        getUser.primaryAddressStatus = "null";
+        console.log(getUser);
         await getUser.save();
         return res.json({
           success: true,
@@ -100,23 +105,38 @@ exports.removeWallet = async (req, res) => {
 exports.addPrimaryWallet = async (req, res) => {
   try {
     // const { primaryAddress } = req.body.primaryAddress;
+    let flag;
     const _user = await User.findOne({ _id: req.userData.id });
 
     // Check if any wallet is attached before making primary.
     if (_user.address.length < 1) {
       return res.json({
         success: false,
-        message: "Please attach atleast one wallet to make primary.",
+        message: "Please add atleast one wallet to make primary.",
         data: [],
       });
     }
-    8
+    for (let i = 0; i < _user.address.length; i++) {
+      if (_user.address[i] != req.body.primaryAddress) {
+        flag = false;
+      } else {
+        flag = true;
+      }
+    }
+    if (flag == false) {
+      return res.json({
+        success: false,
+        message: "Please add this address first to make it primary.",
+        data: [],
+      });
+    }
+
     if (
       !_user.primaryAddress ||
       _user.primaryAddress != req.body.primaryAddress
     ) {
       _user.primaryAddress = req.body.primaryAddress;
-      _user.primaryAddressStatus = "pending"
+      _user.primaryAddressStatus = "pending";
       await _user.save();
       console.log("USER : ", _user);
       return res.json({
