@@ -198,12 +198,11 @@ exports.marketplaceListing = async (req, res) => {
           select: "collectionName",
         },
       ])
-      .sort({ createdAt: -1 });;
+      .sort({ createdAt: -1 });
     if (getNfts.length < 1) {
       return res.json({
         success: false,
         message: `No NFT's to show.`,
-        paginated: [],
       });
     }
     console.timeEnd("marketplace listing");
@@ -387,6 +386,13 @@ exports.filterMarketplaceListing = async (req, res) => {
             select: "collectionName",
           },
         ]);
+    }
+
+    if (is_nft_available.length < 1) {
+      return res.json({
+        success: false,
+        message: "No NFT's to show.",
+      });
     }
     console.timeEnd("Filter marketplace");
 

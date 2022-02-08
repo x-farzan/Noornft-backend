@@ -100,12 +100,12 @@ signin = async (req, res) => {
         });
       }
 
-      if (user[0].reqStatus !== "approved" && user[0].role == "artist") {
-        return res.json({
-          message:
-            "Your request is currently under review. You can login after the reviewing process is completed.",
-        });
-      }
+      // if (user[0].reqStatus !== "approved" && user[0].role == "artist") {
+      //   return res.json({
+      //     message:
+      //       "Your request is currently under review. You can login after the reviewing process is completed.",
+      //   });
+      // }
 
       // comparing passwords and assigning token in user's db
       bCrypt.compare(req.body.password, user[0].password, (err, result) => {
@@ -135,6 +135,7 @@ signin = async (req, res) => {
             email: user[0].email,
             image: `${process.env.server}/${user[0].image}`,
             projectId: user[0].projectId,
+            primaryAddress: user[0].primaryAddress,
           });
         } else {
           return res.status(401).json({
