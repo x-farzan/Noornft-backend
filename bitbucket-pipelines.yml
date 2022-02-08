@@ -9,7 +9,10 @@ pipelines:
             - docker
             script:
               - npm install
+<<<<<<< HEAD
               - CI=false npm run build
+=======
+>>>>>>> develop-merged
               - npm run image:build
               - docker login --username farzan98 --password 123456789
               - npm run push:image  
@@ -37,5 +40,9 @@ pipelines:
                      AWS_OIDC_ROLE_ARN: $AWS_OIDC_ROLE_ARN
                      APPLICATION_NAME: $APPLICATION_NAME
                      ENVIRONMENT_NAME: $ENVIRONMENT_NAME
+<<<<<<< HEAD
                      ZIP_FILE: $ZIP_FILE         
      
+=======
+                     ZIP_FILE: $ZIP_FILE    
+>>>>>>> develop-merged
