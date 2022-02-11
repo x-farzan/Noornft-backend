@@ -25,12 +25,14 @@ signup = async (req, res) => {
 
   //checking for the email, if already exists!!
   if (validator.isEmail(to_lowercase)) {
-    await User.find({ email: to_lowercase })
+    await User.find({
+      $or: [{ email: to_lowercase }, { username: req.body.username }],
+    })
       .exec()
       .then((user) => {
         if (user.length >= 1) {
           return res.status(409).json({
-            message: "Email already exists!",
+            message: "Email/Username already exists!",
           });
         } else {
           //
@@ -113,6 +115,8 @@ signin = async (req, res) => {
           const token = jwt.sign(
             {
               id: user[0]._id,
+              username: user[0].username,
+              flname: user[0].flname,
               email: user[0].email,
               address: user[0].address,
               role: user[0].role,

@@ -59,8 +59,11 @@ exports.createNft = async (req, res) => {
           gatewayLink: `${process.env.server}/${req.file.path}`,
           externalLink: req.body.ExternalLink,
           collectionId: checkCollection._id,
+          collectionName: checkCollection.collectionName,
           category: req.body.Category,
           artistId: req.userData.id,
+          username: req.userData.username,
+          flname: req.userData.flname,
           royalty: req.body.Royalty,
         });
         await newNft.save();

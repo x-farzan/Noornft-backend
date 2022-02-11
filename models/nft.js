@@ -7,10 +7,20 @@ const nftSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
     },
 
+    collectionName: {
+      type: String,
+    },
+
     artistId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user"
+      ref: "user",
     },
+
+    username: {
+      type: String,
+    },
+
+    flname: { type: String },
 
     nftId: String,
 
