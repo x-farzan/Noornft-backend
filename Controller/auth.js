@@ -8,6 +8,8 @@ const { check, validationResult } = require("express-validator");
 const userFieldsValidator = require("../helpers/userFieldsValidator");
 const validator = require("validator");
 const User = require("../models/User");
+const { sendMail } = require("../helpers/nodemailer");
+const { linkGenerator } = require("../helpers/signupConfirmationLink");
 
 /* Farzan */
 
@@ -25,12 +27,14 @@ signup = async (req, res) => {
 
   //checking for the email, if already exists!!
   if (validator.isEmail(to_lowercase)) {
-    await User.find({ email: to_lowercase })
+    await User.find({
+      $or: [{ email: to_lowercase }, { username: req.body.username }],
+    })
       .exec()
       .then((user) => {
         if (user.length >= 1) {
           return res.status(409).json({
-            message: "Email already exists!",
+            message: "Email/Username already exists!",
           });
         } else {
           //
@@ -40,21 +44,26 @@ signup = async (req, res) => {
                 message: "Password is required.",
               });
             } else {
-              console.log(`in else block`);
+              // Generating a random code
+              const confirmationCode = linkGenerator();
+
+              // creating a user
               const user = new User({
                 flname: req.body.flname,
                 email: to_lowercase,
                 password: hash,
                 role: req.body.role,
-                // address: req.body.walletaddress,
                 username: req.body.username,
+                confirmationCode: confirmationCode,
               });
               console.log(`displaying user : `, user);
               await user
                 .save()
                 .then((result) => {
-                  res.status(201).json({
-                    message: "User created successfully",
+                  sendMail(to_lowercase, req.body.flname, confirmationCode);
+                  return res.status(201).json({
+                    message:
+                      "User created successfully. Please verify the link sent in the provided email",
                   });
                 })
                 .catch((err) => {
@@ -79,6 +88,25 @@ signup = async (req, res) => {
   }
 };
 
+userVerify = async (req, res) => {
+  const code = req.params.confirmationCode;
+  const user = await User.findOne({
+    confirmationCode: code,
+  });
+  if (!user) {
+    return res.json({
+      success: false,
+      message: "User not exists.",
+    });
+  }
+  user.reqStatus = "approved";
+  await user.save();
+  return res.json({
+    success: true,
+    message: "User is now verified, Login to continue now.",
+  });
+};
+
 signin = async (req, res) => {
   let _errors = userFieldsValidator.userFieldsValidator(
     ["email", "password"],
@@ -100,12 +128,11 @@ signin = async (req, res) => {
         });
       }
 
-      // if (user[0].reqStatus !== "approved" && user[0].role == "artist") {
-      //   return res.json({
-      //     message:
-      //       "Your request is currently under review. You can login after the reviewing process is completed.",
-      //   });
-      // }
+      if (user[0].reqStatus !== "approved") {
+        return res.json({
+          message: "Please verify the link sent in the provided email.",
+        });
+      }
 
       // comparing passwords and assigning token in user's db
       bCrypt.compare(req.body.password, user[0].password, (err, result) => {
@@ -113,6 +140,8 @@ signin = async (req, res) => {
           const token = jwt.sign(
             {
               id: user[0]._id,
+              username: user[0].username,
+              flname: user[0].flname,
               email: user[0].email,
               address: user[0].address,
               role: user[0].role,
@@ -212,4 +241,4 @@ changePassword = async (req, res) => {
 
 /* Farzan */
 
-module.exports = { signup, signin, changePassword };
+module.exports = { signup, userVerify, signin, changePassword };

@@ -83,6 +83,10 @@ const UserSchema = new mongoose.Schema(
       default: "artist",
     },
 
+    confirmationCode: {
+      type: String,
+    },
+
     reqStatus: {
       type: String,
       enum: ["rejected", "approved"],
